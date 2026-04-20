@@ -654,8 +654,8 @@
 
   /* ══════════ MOCK PHONE FRAME ══════════ */
   .phone-frame {
-    width: 140px; height: 248px;
-    border-radius: var(--radius-m); background: #1A1B1F;
+    width: 160px; height: 284px;
+    border-radius: var(--radius-l); background: #1A1B1F;
     border: 1px solid var(--ele-border); overflow: hidden;
     flex-shrink: 0; position: relative; cursor: pointer;
     transition: border-color 0.15s, transform 0.15s;
@@ -678,8 +678,8 @@
 
   /* Web frame */
   .web-frame {
-    width: 220px; height: 148px;
-    border-radius: var(--radius-m); background: #1A1B1F;
+    width: 260px; height: 172px;
+    border-radius: var(--radius-l); background: #1A1B1F;
     border: 1px solid var(--ele-border); overflow: hidden;
     flex-shrink: 0; cursor: pointer; transition: border-color 0.15s, transform 0.15s;
   }
@@ -699,33 +699,19 @@
   /* ══════════ PRODUCTS — IA TREE VIEW ══════════ */
   .products-layout {
     display: flex; gap: 0; min-height: 500px;
-    background: var(--bg-card); border: 1px solid var(--ele-border); border-radius: var(--radius-l); overflow: hidden;
   }
   .ia-sidebar {
-    width: 240px; flex-shrink: 0; border-right: 1px solid var(--ele-border);
-    padding: 0; overflow-y: auto; max-height: 620px;
+    width: 240px; flex-shrink: 0;
+    padding: 0 24px 0 0; overflow-y: auto; max-height: calc(100vh - 120px); position: sticky; top: 72px;
+    border-right: 1px solid var(--ele-border);
   }
-  .ia-sidebar-head { padding: 12px; border-bottom: 1px solid var(--ele-border); }
-  .ia-exchange-tabs { display: flex; gap: 0; margin-bottom: 8px; }
-  .ia-ex-tab {
-    display: flex; align-items: center; gap: 4px; padding: 4px 8px;
-    font-size: 11px; font-weight: 400; color: var(--t3); cursor: pointer;
-    border-radius: var(--radius-xs); border: none; background: none; font-family: inherit; transition: all 0.15s;
-  }
-  .ia-ex-tab:hover { color: var(--t2); background: var(--ele-line); }
-  .ia-ex-tab.active { color: var(--t1); background: var(--ele-line); font-weight: 600; }
-  .ia-ex-tab .dot { width: 6px; height: 6px; border-radius: 50%; }
-  .ia-platform-tabs { display: flex; gap: 2px; }
-  .ia-plat-tab {
-    font-size: 11px; font-weight: 400; color: var(--t3); padding: 2px 8px;
-    border-radius: var(--radius-xs); cursor: pointer; border: none; background: none; font-family: inherit; transition: all 0.15s;
-  }
-  .ia-plat-tab:hover { color: var(--t2); }
-  .ia-plat-tab.active { color: var(--brand-700); background: var(--brand-100); font-weight: 600; }
-  .ia-tree { padding: 8px 0; }
+  .ia-top-filters { margin-bottom: 32px; }
+  .ia-exchange-tabs { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .ia-tree { padding: 4px 0; }
   .tree-label {
-    display: flex; align-items: center; gap: 6px; padding: 6px 12px 6px 16px;
-    font-size: 13px; font-weight: 400; color: var(--t2); cursor: pointer; transition: all 0.1s; user-select: none;
+    display: flex; align-items: center; gap: 8px; padding: 10px 12px;
+    font-size: 14px; font-weight: 400; color: var(--t2); cursor: pointer; transition: all 0.1s; user-select: none;
+    border-radius: var(--radius-s); margin-bottom: 2px;
   }
   .tree-label:hover { background: var(--trans-hover); color: var(--t1); }
   .tree-label.active { background: var(--brand-100); color: var(--brand-700); font-weight: 600; }
@@ -736,50 +722,54 @@
   .tree-label .tree-count { margin-left: auto; font-size: 11px; color: var(--t3); font-weight: 400; }
   .tree-children { display: none; padding-left: 14px; }
   .tree-children.open { display: block; }
-  .ia-main { flex: 1; padding: 20px; overflow-y: auto; max-height: 620px; }
-  .ia-main-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-  .ia-main-title { font-size: 16px; font-weight: 600; color: var(--t1); }
-  .ia-main-meta { font-size: 12px; color: var(--t3); }
-  .ia-screenshots { display: flex; flex-wrap: wrap; gap: 12px; }
-  .screenshot-card { display: flex; flex-direction: column; gap: 6px; }
-  .screenshot-card .sc-title { font-size: 11px; color: var(--t3); max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ia-main { flex: 1; padding: 0 0 0 40px; }
+  .ia-main-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .ia-main-title { font-size: 22px; font-weight: 600; color: var(--t1); }
+  .ia-main-meta { font-size: 13px; color: var(--t3); }
+  .ia-screenshots { display: flex; flex-wrap: wrap; gap: 20px; }
+  .screenshot-card { display: flex; flex-direction: column; gap: 10px; }
+  .screenshot-card .sc-title { font-size: 12px; color: var(--t2); max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   /* ══════════ COMPARE VIEW ══════════ */
-  .compare-controls { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .compare-controls { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
   .compare-chip {
-    padding: 5px 14px; border-radius: var(--radius-s); background: var(--ele-line);
-    color: var(--t2); font-size: 13px; cursor: pointer; border: 1px solid var(--ele-border); font-family: inherit; transition: all 0.15s;
+    padding: 6px 16px; border-radius: var(--radius-m); background: var(--ele-line);
+    color: var(--t2); font-size: 14px; cursor: pointer; border: 1px solid var(--ele-border); font-family: inherit; transition: all 0.15s;
   }
   .compare-chip:hover { color: var(--t1); border-color: var(--t3); }
   .compare-chip.active { background: var(--brand-100); color: var(--brand-700); border-color: var(--brand-700); font-weight: 600; }
-  .compare-sub-chips { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+  .compare-sub-chips { display: flex; gap: 8px; margin-bottom: 32px; flex-wrap: wrap; }
   .compare-sub-chip {
-    padding: 3px 10px; border-radius: var(--radius-xs); background: none; border: 1px solid var(--ele-border);
-    color: var(--t3); font-size: 12px; cursor: pointer; font-family: inherit; transition: all 0.15s;
+    padding: 4px 12px; border-radius: var(--radius-s); background: none; border: 1px solid var(--ele-border);
+    color: var(--t3); font-size: 13px; cursor: pointer; font-family: inherit; transition: all 0.15s;
   }
   .compare-sub-chip:hover { color: var(--t2); border-color: var(--t3); }
   .compare-sub-chip.active { color: var(--brand-700); border-color: var(--brand-700); background: var(--brand-100); }
-  .compare-columns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-  .compare-col { background: var(--bg-card); border: 1px solid var(--ele-border); border-radius: var(--radius-l); overflow: hidden; }
-  .compare-col-header {
-    display: flex; align-items: center; gap: 8px; padding: 12px 16px;
-    border-bottom: 1px solid var(--ele-border); background: var(--ele-line);
+  .compare-rows { display: flex; flex-direction: column; gap: 32px; }
+  .compare-row {}
+  .compare-row-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
   }
-  .compare-col-header .exchange-name { font-size: 13px; font-weight: 600; color: var(--t1); }
-  .compare-col-header .col-count { font-size: 11px; color: var(--t3); margin-left: auto; }
-  .compare-col-body { padding: 12px; display: flex; flex-direction: column; gap: 10px; align-items: center; }
-  .compare-col-body .no-data { font-size: 12px; color: var(--t3); padding: 40px 0; text-align: center; }
+  .compare-row-header .exchange-name { font-size: 16px; font-weight: 600; color: var(--t1); }
+  .compare-row-header .row-count { font-size: 13px; color: var(--t3); }
+  .compare-row-screens {
+    display: flex; gap: 20px; overflow-x: auto; padding-bottom: 8px;
+  }
+  .compare-row-screens::-webkit-scrollbar { height: 4px; }
+  .compare-row-screens::-webkit-scrollbar-thumb { background: var(--t4); border-radius: 2px; }
+  .compare-row-screens .no-data { font-size: 13px; color: var(--t3); padding: 40px 0; }
+  .compare-row-sep { border: none; border-top: 1px solid var(--ele-border); margin: 0; }
 
   /* ══════════ FLOWS VIEW ══════════ */
   .flow-filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-  .flow-list { display: flex; flex-direction: column; gap: 12px; }
+  .flow-list { display: flex; flex-direction: column; gap: 16px; }
   .flow-card {
     background: var(--bg-card); border: 1px solid var(--ele-border);
     border-radius: var(--radius-l); overflow: hidden; transition: border-color 0.15s;
   }
   .flow-card:hover { border-color: #3A3F47; }
   .flow-card-header {
-    display: flex; align-items: center; gap: 12px; padding: 16px 20px; cursor: pointer; user-select: none;
+    display: flex; align-items: center; gap: 12px; padding: 18px 24px; cursor: pointer; user-select: none;
   }
   .flow-exchange-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .flow-title { font-size: 14px; font-weight: 600; color: var(--t1); flex: 1; }
@@ -797,7 +787,7 @@
     width: 32px; height: 56px; border-radius: 3px; background: var(--ele-line); flex-shrink: 0;
     display: flex; align-items: center; justify-content: center; font-size: 7px; color: var(--t3);
   }
-  .flow-detail { display: none; padding: 0 20px 20px; border-top: 1px solid var(--ele-border); }
+  .flow-detail { display: none; padding: 0 24px 24px; border-top: 1px solid var(--ele-border); }
   .flow-detail.open { display: block; }
   .flow-desc { font-size: 13px; color: var(--t2); padding: 14px 0; line-height: 1.5; }
   .flow-steps {
@@ -834,7 +824,6 @@
 
   @media (max-width: 1024px) {
     .summary-bar { grid-template-columns: repeat(2, 1fr); }
-    .compare-columns { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 768px) {
     .summary-bar { grid-template-columns: 1fr; }
@@ -842,9 +831,9 @@
     .container { padding: 20px 16px; }
     .page-title { font-size: 24px; line-height: 32px; }
     .nav-links { display: none; }
-    .compare-columns { grid-template-columns: 1fr; }
     .products-layout { flex-direction: column; }
-    .ia-sidebar { width: 100%; max-height: 300px; border-right: none; border-bottom: 1px solid var(--ele-border); }
+    .ia-sidebar { width: 100%; max-height: 300px; position: static; border-right: none; border-bottom: 1px solid var(--ele-border); padding: 0 0 16px; margin-bottom: 24px; }
+    .ia-main { padding: 0; }
   }
 </style>
 </head>
@@ -857,10 +846,9 @@
       <a class="nav-logo" href="#">BYB<span class="nav-logo-accent">I</span>T</a>
       <div class="nav-divider"></div>
       <div class="nav-links">
-        <a class="nav-link active" data-nav="monitor" data-i18n="nav_monitor">Monitor</a>
-        <a class="nav-link" data-nav="flows" data-i18n="nav_userflow">User Flow</a>
-        <a class="nav-link" data-nav="products" data-i18n="nav_matrix">Feature Matrix</a>
-        <a class="nav-link" data-nav="compare" data-i18n="nav_reports">Compare</a>
+        <a class="nav-link active" data-nav="monitor" data-i18n="nav_update">Updates</a>
+        <a class="nav-link" data-nav="products" data-i18n="nav_screens">Screens & Flows</a>
+        <a class="nav-link" data-nav="compare" data-i18n="nav_compare">Compare</a>
       </div>
     </div>
     <div class="nav-right">
@@ -921,10 +909,10 @@
   <!-- Filter -->
   <div class="filter-bar" id="filterBar">
     <div class="filter-chip active" data-exchange="all" data-i18n="filter_all">All</div>
-    <div class="filter-chip active" data-exchange="binance"><span class="dot" style="background:var(--binance)"></span>Binance</div>
-    <div class="filter-chip active" data-exchange="okx"><span class="dot" style="background:var(--okx)"></span>OKX</div>
-    <div class="filter-chip active" data-exchange="bitget"><span class="dot" style="background:var(--bitget)"></span>Bitget</div>
-    <div class="filter-chip active" data-exchange="coinbase"><span class="dot" style="background:var(--coinbase)"></span>Coinbase</div>
+    <div class="filter-chip" data-exchange="binance"><span class="dot" style="background:var(--binance)"></span>Binance</div>
+    <div class="filter-chip" data-exchange="okx"><span class="dot" style="background:var(--okx)"></span>OKX</div>
+    <div class="filter-chip" data-exchange="bitget"><span class="dot" style="background:var(--bitget)"></span>Bitget</div>
+    <div class="filter-chip" data-exchange="coinbase"><span class="dot" style="background:var(--coinbase)"></span>Coinbase</div>
   </div>
 
   <!-- Section Tabs -->
@@ -933,10 +921,6 @@
     <button class="section-tab" data-section="campaigns" data-i18n="tab_campaigns">Key Campaigns</button>
     <button class="section-tab" data-section="yields" data-i18n="tab_yields">Yield Comparison</button>
     <button class="section-tab" data-section="referral" data-i18n="tab_referral">Referral Comparison</button>
-    <span style="width:1px;height:20px;background:var(--ele-border);margin:0 4px;align-self:center"></span>
-    <button class="section-tab" data-section="products" data-i18n="tab_products">Products</button>
-    <button class="section-tab" data-section="compare" data-i18n="tab_compare">Compare</button>
-    <button class="section-tab" data-section="flows" data-i18n="tab_flows">User Flows</button>
   </div>
 
   <!-- ═══ Section 1: APP Updates ═══ -->
@@ -1247,21 +1231,20 @@
 
   <!-- ═══ Section 5: Products (IA Deep Dive) ═══ -->
   <div class="section-content" id="section-products">
+    <div class="ia-top-filters">
+      <div class="ia-exchange-tabs" id="iaExTabs">
+        <button class="filter-chip active" data-ex="binance"><span class="dot" style="background:var(--binance)"></span>Binance</button>
+        <button class="filter-chip" data-ex="okx"><span class="dot" style="background:var(--okx)"></span>OKX</button>
+        <button class="filter-chip" data-ex="bitget"><span class="dot" style="background:var(--bitget)"></span>Bitget</button>
+        <button class="filter-chip" data-ex="coinbase"><span class="dot" style="background:var(--coinbase)"></span>Coinbase</button>
+        <span style="width:1px;height:20px;background:var(--ele-border);margin:0 4px;align-self:center"></span>
+        <button class="filter-chip active ia-plat-chip" data-plat="ios">iOS</button>
+        <button class="filter-chip ia-plat-chip" data-plat="android">Android</button>
+        <button class="filter-chip ia-plat-chip" data-plat="web">Web</button>
+      </div>
+    </div>
     <div class="products-layout">
       <div class="ia-sidebar">
-        <div class="ia-sidebar-head">
-          <div class="ia-exchange-tabs" id="iaExTabs">
-            <button class="ia-ex-tab active" data-ex="binance"><span class="dot" style="background:var(--binance)"></span>Binance</button>
-            <button class="ia-ex-tab" data-ex="okx"><span class="dot" style="background:var(--okx)"></span>OKX</button>
-            <button class="ia-ex-tab" data-ex="bitget"><span class="dot" style="background:var(--bitget)"></span>Bitget</button>
-            <button class="ia-ex-tab" data-ex="coinbase"><span class="dot" style="background:var(--coinbase)"></span>CB</button>
-          </div>
-          <div class="ia-platform-tabs" id="iaPlatTabs">
-            <button class="ia-plat-tab active" data-plat="ios">iOS</button>
-            <button class="ia-plat-tab" data-plat="android">Android</button>
-            <button class="ia-plat-tab" data-plat="web">Web</button>
-          </div>
-        </div>
         <div class="ia-tree" id="iaTree"></div>
       </div>
       <div class="ia-main" id="iaMain">
@@ -1278,20 +1261,9 @@
   <div class="section-content" id="section-compare">
     <div class="compare-controls" id="compareModules"></div>
     <div class="compare-sub-chips" id="compareSubs"></div>
-    <div class="compare-columns" id="compareCols"></div>
+    <div class="compare-rows" id="compareRows"></div>
   </div>
 
-  <!-- ═══ Section 7: User Flows ═══ -->
-  <div class="section-content" id="section-flows">
-    <div class="flow-filter-bar" id="flowFilterBar">
-      <button class="filter-chip active" data-fex="all">All</button>
-      <button class="filter-chip active" data-fex="binance"><span class="dot" style="background:var(--binance)"></span>Binance</button>
-      <button class="filter-chip active" data-fex="okx"><span class="dot" style="background:var(--okx)"></span>OKX</button>
-      <button class="filter-chip active" data-fex="bitget"><span class="dot" style="background:var(--bitget)"></span>Bitget</button>
-      <button class="filter-chip active" data-fex="coinbase"><span class="dot" style="background:var(--coinbase)"></span>Coinbase</button>
-    </div>
-    <div class="flow-list" id="flowList"></div>
-  </div>
 
   <!-- Footer -->
   <div class="footer">
@@ -1305,7 +1277,7 @@
   let currentLang = 'en';
   const i18n = {
     zh: {
-      nav_monitor: 'Monitor', nav_userflow: 'User Flow', nav_matrix: 'Feature Matrix', nav_reports: 'Reports',
+      nav_update: '动态更新', nav_userflow: 'User Flow', nav_matrix: 'Feature Matrix', nav_reports: 'Compare',
       page_title: '交易所竞品监控', page_subtitle: '追踪各大交易所的功能更新、运营活动、理财利率与邀请返佣',
       sum_total: '本月更新总数', sum_total_sub: '覆盖全部监控交易所',
       sum_active: '最活跃交易所', sum_active_sub: '本月 5 条更新',
@@ -1371,7 +1343,7 @@
       footer_updated: '最后更新：2026-04-18 18:00 UTC',
     },
     en: {
-      nav_monitor: 'Monitor', nav_userflow: 'User Flow', nav_matrix: 'Feature Matrix', nav_reports: 'Reports',
+      nav_update: 'Updates', nav_userflow: 'User Flow', nav_matrix: 'Feature Matrix', nav_reports: 'Compare',
       page_title: 'Exchange Competitor Monitor', page_subtitle: 'Track feature updates, campaigns, yields, and referral programs across major exchanges',
       sum_total: 'Total Updates', sum_total_sub: 'Across all monitored exchanges',
       sum_active: 'Most Active', sum_active_sub: '5 updates this month',
@@ -1460,19 +1432,29 @@
 
   // ── Unified section switching ──
   const NAV_TO_SECTIONS = {
-    monitor: 'updates',  // "Monitor" nav link defaults to APP Updates tab
-    flows: 'flows',
+    monitor: 'updates',
     products: 'products',
     compare: 'compare'
   };
 
+  const VISUAL_SECTIONS = new Set(['products', 'compare']);
+
   function switchSection(sectionId) {
-    document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
-    const tab = document.querySelector(`.section-tab[data-section="${sectionId}"]`);
     const content = document.getElementById('section-' + sectionId);
-    if (tab) tab.classList.add('active');
     if (content) content.classList.add('active');
+    const isVisual = VISUAL_SECTIONS.has(sectionId);
+    // Hide header/summary/filter/sub-tabs for visual sections
+    document.querySelector('.page-header').style.display = isVisual ? 'none' : '';
+    document.querySelector('.summary-bar').style.display = isVisual ? 'none' : '';
+    document.getElementById('filterBar').style.display = isVisual ? 'none' : '';
+    document.querySelector('.section-tabs').style.display = isVisual ? 'none' : '';
+    // Update sub-tab active state only for update tabs
+    if (!isVisual) {
+      document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+      const tab = document.querySelector(`.section-tab[data-section="${sectionId}"]`);
+      if (tab) tab.classList.add('active');
+    }
   }
 
   // Section tabs
@@ -1495,23 +1477,27 @@
     const chip = e.target.closest('.filter-chip');
     if (!chip) return;
     const exchange = chip.dataset.exchange;
+    const allChip = filterBar.querySelector('[data-exchange="all"]');
+    const exChips = filterBar.querySelectorAll('.filter-chip:not([data-exchange="all"])');
     if (exchange === 'all') {
-      const allActive = chip.classList.contains('active');
-      filterBar.querySelectorAll('.filter-chip').forEach(c => {
-        if (allActive) c.classList.remove('active'); else c.classList.add('active');
-      });
+      allChip.classList.add('active');
+      exChips.forEach(c => c.classList.remove('active'));
     } else {
+      allChip.classList.remove('active');
       chip.classList.toggle('active');
-      const exchangeChips = filterBar.querySelectorAll('.filter-chip:not([data-exchange="all"])');
-      const allChip = filterBar.querySelector('[data-exchange="all"]');
-      allChip.classList.toggle('active', [...exchangeChips].every(c => c.classList.contains('active')));
+      if (![...exChips].some(c => c.classList.contains('active'))) allChip.classList.add('active');
     }
     applyFilter();
   });
 
   function applyFilter() {
+    const allActive = filterBar.querySelector('[data-exchange="all"]').classList.contains('active');
     const active = new Set();
-    filterBar.querySelectorAll('.filter-chip.active:not([data-exchange="all"])').forEach(c => active.add(c.dataset.exchange));
+    if (allActive) {
+      filterBar.querySelectorAll('.filter-chip:not([data-exchange="all"])').forEach(c => active.add(c.dataset.exchange));
+    } else {
+      filterBar.querySelectorAll('.filter-chip.active:not([data-exchange="all"])').forEach(c => active.add(c.dataset.exchange));
+    }
     document.querySelectorAll('.exchange-card').forEach(card => {
       card.style.display = active.has(card.dataset.exchange) ? '' : 'none';
     });
@@ -1716,7 +1702,7 @@
   // ── Flow Data ──
   const FLOWS = [
     {
-      id: 'bn-ios-onboard', exchange: 'binance', platform: 'iOS', title: 'New User Onboarding',
+      id: 'bn-ios-onboard', exchange: 'binance', platform: 'iOS', module: 'Profile', title: 'New User Onboarding',
       desc: 'Complete registration and KYC verification flow for new Binance users on iOS.',
       steps: [
         { label: 'Welcome Screen', note: 'App intro carousel' },
@@ -1730,7 +1716,7 @@
       ]
     },
     {
-      id: 'bn-ios-spot', exchange: 'binance', platform: 'iOS', title: 'First Spot Trade',
+      id: 'bn-ios-spot', exchange: 'binance', platform: 'iOS', module: 'Trade/Spot', title: 'First Spot Trade',
       desc: 'How a new user navigates to and completes their first spot trade.',
       steps: [
         { label: 'Home', note: 'Tap "Trade" in tab bar' },
@@ -1743,7 +1729,7 @@
       ]
     },
     {
-      id: 'okx-ios-xperps', exchange: 'okx', platform: 'iOS', title: 'X-Perps Trading (EU)',
+      id: 'okx-ios-xperps', exchange: 'okx', platform: 'iOS', module: 'Trade/X-Perps', title: 'X-Perps Trading (EU)',
       desc: 'New MiFID-compliant derivatives trading flow for European users.',
       steps: [
         { label: 'Trade Tab', note: 'New X-Perps section visible' },
@@ -1756,7 +1742,7 @@
       ]
     },
     {
-      id: 'okx-ios-cedefi', exchange: 'okx', platform: 'iOS', title: 'CeDeFi Subscription',
+      id: 'okx-ios-cedefi', exchange: 'okx', platform: 'iOS', module: 'Earn', title: 'CeDeFi Subscription',
       desc: 'Subscribe to CeDeFi yield product on Ethereum or Arbitrum network.',
       steps: [
         { label: 'Earn Tab', note: 'CeDeFi section' },
@@ -1769,7 +1755,7 @@
       ]
     },
     {
-      id: 'bg-ios-ipoprime', exchange: 'bitget', platform: 'iOS', title: 'IPO Prime Participation',
+      id: 'bg-ios-ipoprime', exchange: 'bitget', platform: 'iOS', module: 'Earn', title: 'IPO Prime Participation',
       desc: 'How users participate in the new IPO Prime product (preSPAX).',
       steps: [
         { label: 'Home Banner', note: 'IPO Prime promotion' },
@@ -1782,7 +1768,7 @@
       ]
     },
     {
-      id: 'bg-ios-copytrade', exchange: 'bitget', platform: 'iOS', title: 'Copy Trading Setup',
+      id: 'bg-ios-copytrade', exchange: 'bitget', platform: 'iOS', module: 'Copy Trade', title: 'Copy Trading Setup',
       desc: 'Discover and follow a trader to start copy trading on Bitget.',
       steps: [
         { label: 'Copy Trade Tab', note: 'Main entry point' },
@@ -1794,7 +1780,7 @@
       ]
     },
     {
-      id: 'cb-ios-buycrypto', exchange: 'coinbase', platform: 'iOS', title: 'First Crypto Purchase',
+      id: 'cb-ios-buycrypto', exchange: 'coinbase', platform: 'iOS', module: 'Trade/Simple', title: 'First Crypto Purchase',
       desc: 'How a new Coinbase user buys crypto for the first time with fiat.',
       steps: [
         { label: 'Home', note: 'Tap "Buy" CTA' },
@@ -1807,7 +1793,7 @@
       ]
     },
     {
-      id: 'bn-web-earn', exchange: 'binance', platform: 'Web', title: 'Simple Earn Subscription',
+      id: 'bn-web-earn', exchange: 'binance', platform: 'Web', module: 'Earn', title: 'Simple Earn Subscription',
       desc: 'How users subscribe to Simple Earn flexible savings on Binance web.',
       steps: [
         { label: 'Earn Landing', note: 'Navigate via top nav' },
@@ -1820,7 +1806,7 @@
       ]
     },
     {
-      id: 'okx-web-equityperps', exchange: 'okx', platform: 'Web', title: 'Equity Perps Trading',
+      id: 'okx-web-equityperps', exchange: 'okx', platform: 'Web', module: 'Trade', title: 'Equity Perps Trading',
       desc: 'Trading stock/index perpetual contracts 24/7 on OKX web platform.',
       steps: [
         { label: 'Trade Menu', note: 'New Equity Perps section' },
@@ -1900,11 +1886,9 @@
 
   function selectIaNode(path) {
     iaCurrentPath = path;
-    // Update active state
     document.querySelectorAll('#iaTree .tree-label').forEach(l => l.classList.remove('active'));
     const active = document.querySelector(`#iaTree .tree-label[data-path="${path}"]`);
     if (active) active.classList.add('active');
-    // Toggle children
     const parts = path.split('/');
     const parentKey = parts[0];
     const arrow = document.querySelector(`.tree-arrow[data-toggle="${parentKey}"]`);
@@ -1913,47 +1897,67 @@
       children.classList.add('open');
       if (arrow) arrow.classList.add('expanded');
     }
-    // Render screenshots
-    const data = IA_DATA[iaCurrentEx]?.[iaCurrentPlat];
-    if (!data) return;
-    let screens = [];
-    if (parts.length === 1) {
-      const node = data[parts[0]];
-      if (node?.screens) screens = node.screens;
-      if (node?.children) Object.entries(node.children).forEach(([k, v]) => { if (v.screens) screens = screens.concat(v.screens.map(s => k + ' / ' + s)); });
-    } else {
-      const node = data[parts[0]]?.children?.[parts[1]];
-      if (node?.screens) screens = node.screens;
-    }
-    const isWeb = iaCurrentPlat === 'web';
+    const platMap = { ios: 'iOS', android: 'Android', web: 'Web' };
+    const platLabel = platMap[iaCurrentPlat] || iaCurrentPlat;
     const color = EXCHANGE_COLORS[iaCurrentEx];
+    const isWeb = iaCurrentPlat === 'web';
+    // Match flows: same exchange + platform, module matches or is under this path
+    const flows = FLOWS.filter(f =>
+      f.exchange === iaCurrentEx &&
+      f.platform === platLabel &&
+      (f.module === path || f.module.startsWith(path + '/') || (parts.length === 1 && f.module.split('/')[0] === parts[0]))
+    );
     document.getElementById('iaMainTitle').textContent = path.replace('/', ' > ');
-    document.getElementById('iaMainMeta').textContent = screens.length + ' screens';
+    document.getElementById('iaMainMeta').textContent = flows.length + (flows.length === 1 ? ' flow' : ' flows');
     const container = document.getElementById('iaScreenshots');
-    container.innerHTML = screens.map(s => `
-      <div class="screenshot-card">
-        ${isWeb ? createWebFrame(s, color) : createPhoneFrame(s, color)}
-        <div class="sc-title">${s}</div>
-      </div>
-    `).join('');
+    if (flows.length === 0) {
+      container.innerHTML = '<div style="color:var(--t3);font-size:14px;padding:24px 0">No user flows captured for this section yet</div>';
+      return;
+    }
+    container.innerHTML = '<div class="flow-list" style="width:100%">' + flows.map(f =>
+      `<div class="flow-card">
+        <div class="flow-card-header" onclick="toggleFlow('${f.id}')">
+          <span class="flow-title">${f.title}</span>
+          <div class="flow-meta">
+            <span class="flow-steps-count">${f.steps.length} steps</span>
+            <span class="flow-toggle" id="ft-${f.id}">&#9654;</span>
+          </div>
+        </div>
+        <div class="flow-detail" id="fd-${f.id}">
+          <div class="flow-desc">${f.desc}</div>
+          <div class="flow-steps">
+            ${f.steps.map((s, i) => `
+              <div class="flow-step">
+                <div class="step-number">${i + 1}</div>
+                ${isWeb ? createWebFrame(s.label, color) : createPhoneFrame(s.label, color)}
+                <div class="step-label">${s.label}</div>
+                <div class="step-note">${s.note}</div>
+              </div>
+              ${i < f.steps.length - 1 ? '<div class="flow-arrow">&#8594;</div>' : ''}
+            `).join('')}
+          </div>
+        </div>
+      </div>`
+    ).join('') + '</div>';
   }
 
-  // IA tab event listeners
+  // IA filter event listeners
   document.getElementById('iaExTabs').addEventListener('click', e => {
-    const tab = e.target.closest('.ia-ex-tab');
-    if (!tab) return;
-    document.querySelectorAll('.ia-ex-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    iaCurrentEx = tab.dataset.ex;
-    renderIaTree();
-  });
-  document.getElementById('iaPlatTabs').addEventListener('click', e => {
-    const tab = e.target.closest('.ia-plat-tab');
-    if (!tab) return;
-    document.querySelectorAll('.ia-plat-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    iaCurrentPlat = tab.dataset.plat;
-    renderIaTree();
+    const chip = e.target.closest('.filter-chip');
+    if (!chip) return;
+    if (chip.dataset.ex) {
+      // Exchange chip — single select
+      document.querySelectorAll('#iaExTabs .filter-chip[data-ex]').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      iaCurrentEx = chip.dataset.ex;
+      renderIaTree();
+    } else if (chip.dataset.plat) {
+      // Platform chip — single select
+      document.querySelectorAll('#iaExTabs .ia-plat-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      iaCurrentPlat = chip.dataset.plat;
+      renderIaTree();
+    }
   });
   // Toggle tree children
   document.getElementById('iaTree').addEventListener('click', e => {
@@ -1980,10 +1984,10 @@
     sc.innerHTML = subs.map(s =>
       `<button class="compare-sub-chip${s === compareSub ? ' active' : ''}" data-sub="${s}">${s}</button>`
     ).join('');
-    // Columns
-    const cols = document.getElementById('compareCols');
+    // Rows — one per exchange
+    const rows = document.getElementById('compareRows');
     const exchanges = ['binance', 'okx', 'bitget', 'coinbase'];
-    cols.innerHTML = exchanges.map(ex => {
+    rows.innerHTML = exchanges.map((ex, idx) => {
       const data = IA_DATA[ex]?.ios;
       let screens = [];
       if (data) {
@@ -1991,26 +1995,28 @@
         if (mod?.children?.[compareSub]) screens = mod.children[compareSub].screens || [];
         else if (mod?.screens) screens = mod.screens.filter(s => s.toLowerCase().includes(compareSub.toLowerCase()) || compareSub === MODULES[compareModule]?.[0]);
         if (screens.length === 0 && mod) {
-          // fallback: show first available screens
-          if (mod.screens) screens = mod.screens.slice(0, 3);
+          if (mod.screens) screens = mod.screens.slice(0, 4);
           else if (mod.children) {
             const first = Object.values(mod.children)[0];
-            if (first?.screens) screens = first.screens.slice(0, 3);
+            if (first?.screens) screens = first.screens.slice(0, 4);
           }
         }
       }
       const name = ex.charAt(0).toUpperCase() + ex.slice(1);
       const color = EXCHANGE_COLORS[ex];
-      return `<div class="compare-col">
-        <div class="compare-col-header">
-          <span class="exchange-dot" style="background:${color}"></span>
-          <span class="exchange-name">${name}</span>
-          <span class="col-count">${screens.length}</span>
-        </div>
-        <div class="compare-col-body">
-          ${screens.length ? screens.map(s => createPhoneFrame(s, color)).join('') : '<div class="no-data">No screens captured</div>'}
-        </div>
-      </div>`;
+      return `${idx > 0 ? '<hr class="compare-row-sep">' : ''}
+        <div class="compare-row">
+          <div class="compare-row-header">
+            <span class="exchange-dot" style="background:${color}"></span>
+            <span class="exchange-name">${name}</span>
+            <span class="row-count">${screens.length} screens</span>
+          </div>
+          <div class="compare-row-screens">
+            ${screens.length
+              ? screens.map(s => `<div class="screenshot-card">${createPhoneFrame(s, color)}<div class="sc-title">${s}</div></div>`).join('')
+              : '<div class="no-data">No screens captured</div>'}
+          </div>
+        </div>`;
     }).join('');
   }
 
@@ -2029,94 +2035,23 @@
   });
 
   // ══════════ FLOWS VIEW ══════════
-  function renderFlows(filterExchanges) {
-    const list = document.getElementById('flowList');
-    const filtered = filterExchanges
-      ? FLOWS.filter(f => filterExchanges.has(f.exchange))
-      : FLOWS;
-    if (!filtered.length) {
-      list.innerHTML = '<div style="padding:24px;color:var(--t3);font-size:14px;text-align:center">No flows match the current filter</div>';
-      return;
-    }
-    list.innerHTML = filtered.map(f => {
-      const color = EXCHANGE_COLORS[f.exchange];
-      const exName = f.exchange.charAt(0).toUpperCase() + f.exchange.slice(1);
-      const isWeb = f.platform === 'Web';
-      return `<div class="flow-card" data-fex="${f.exchange}">
-        <div class="flow-card-header" onclick="toggleFlow('${f.id}')">
-          <span class="flow-exchange-dot" style="background:${color}"></span>
-          <span class="flow-title">${exName} — ${f.title}</span>
-          <div class="flow-meta">
-            <span class="flow-platform">${f.platform}</span>
-            <span class="flow-steps-count">${f.steps.length} steps</span>
-            <span class="flow-toggle" id="ft-${f.id}">&#9654;</span>
-          </div>
-        </div>
-        <div class="flow-preview" id="fp-${f.id}">
-          ${f.steps.map((s, i) => `<div class="mini-thumb">${i + 1}</div>`).join('')}
-        </div>
-        <div class="flow-detail" id="fd-${f.id}">
-          <div class="flow-desc">${f.desc}</div>
-          <div class="flow-steps">
-            ${f.steps.map((s, i) => `
-              <div class="flow-step">
-                <div class="step-number">${i + 1}</div>
-                ${isWeb ? createWebFrame(s.label, color) : createPhoneFrame(s.label, color)}
-                <div class="step-label">${s.label}</div>
-                <div class="step-note">${s.note}</div>
-              </div>
-              ${i < f.steps.length - 1 ? '<div class="flow-arrow">&#8594;</div>' : ''}
-            `).join('')}
-          </div>
-        </div>
-      </div>`;
-    }).join('');
-  }
-
   function toggleFlow(id) {
     const detail = document.getElementById('fd-' + id);
-    const preview = document.getElementById('fp-' + id);
     const toggle = document.getElementById('ft-' + id);
     if (!detail) return;
-    const isOpen = detail.classList.contains('open');
     detail.classList.toggle('open');
-    if (preview) preview.style.display = isOpen ? '' : 'none';
     if (toggle) toggle.classList.toggle('open');
   }
-
-  // Flow filter bar
-  document.getElementById('flowFilterBar').addEventListener('click', e => {
-    const chip = e.target.closest('.filter-chip');
-    if (!chip) return;
-    const bar = document.getElementById('flowFilterBar');
-    const exchange = chip.dataset.fex;
-    if (exchange === 'all') {
-      const allActive = chip.classList.contains('active');
-      bar.querySelectorAll('.filter-chip').forEach(c => {
-        if (allActive) c.classList.remove('active'); else c.classList.add('active');
-      });
-    } else {
-      chip.classList.toggle('active');
-      const exChips = bar.querySelectorAll('.filter-chip:not([data-fex="all"])');
-      const allChip = bar.querySelector('[data-fex="all"]');
-      allChip.classList.toggle('active', [...exChips].every(c => c.classList.contains('active')));
-    }
-    const active = new Set();
-    bar.querySelectorAll('.filter-chip.active:not([data-fex="all"])').forEach(c => active.add(c.dataset.fex));
-    renderFlows(active);
-  });
 
   // ══════════ INIT NEW VIEWS ══════════
   renderIaTree();
   renderCompare();
-  renderFlows(null);
 
-  // Add i18n keys for new tabs
-  i18n.zh.tab_products = '产品架构';
-  i18n.zh.tab_compare = '功能对比';
-  i18n.zh.tab_flows = '用户流程';
-  i18n.en.tab_products = 'Products';
-  i18n.en.tab_compare = 'Compare';
+  // i18n for new nav
+  i18n.zh.nav_screens = '界面 & 流程';
+  i18n.zh.nav_compare = '对比';
+  i18n.en.nav_screens = 'Screens & Flows';
+  i18n.en.nav_compare = 'Compare';
   i18n.en.tab_flows = 'User Flows';
 </script>
 </body>
