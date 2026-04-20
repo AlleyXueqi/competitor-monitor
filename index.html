@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web3 交易所竞品监控</title>
+<style>
+  :root {
+    --bg-primary: #0b0e11;
+    --bg-secondary: #1e2329;
+    --bg-card: #181c22;
+    --bg-hover: #252930;
+    --text-primary: #eaecef;
+    --text-secondary: #848e9c;
+    --text-muted: #5e6673;
+    --accent-yellow: #f0b90b;
+    --accent-green: #0ecb81;
+    --accent-red: #f6465d;
+    --accent-blue: #5a9cff;
+    --border: #2b3139;
+    --binance: #f0b90b;
+    --okx: #ffffff;
+    --bitget: #00f0ff;
+    --coinbase: #0052ff;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    background: rgba(11, 14, 17, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .header h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.3px; }
+  .header .badge {
+    font-size: 11px;
+    background: rgba(240, 185, 11, 0.15);
+    color: var(--accent-yellow);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  /* ── Calendar Picker ── */
+  .month-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+  }
+  .month-nav button {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  .month-nav button:hover { background: var(--bg-hover); }
+  .month-label {
+    font-size: 15px;
+    font-weight: 500;
+    min-width: 120px;
+    text-align: center;
+    cursor: pointer;
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    transition: background 0.2s;
+  }
+  .month-label:hover { background: var(--bg-secondary); }
+
+  /* Calendar dropdown */
+  .calendar-dropdown {
+    display: none;
+    position: absolute;
+    top: 48px;
+    right: 0;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    z-index: 200;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    min-width: 280px;
+  }
+  .calendar-dropdown.open { display: block; }
+  .cal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .cal-header .cal-year {
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .cal-header button {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cal-header button:hover { background: var(--bg-hover); }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+  .cal-month {
+    padding: 10px 4px;
+    text-align: center;
+    font-size: 13px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.15s;
+    border: 1px solid transparent;
+  }
+  .cal-month:hover { background: var(--bg-hover); color: var(--text-primary); }
+  .cal-month.active {
+    background: rgba(240, 185, 11, 0.15);
+    color: var(--accent-yellow);
+    border-color: var(--accent-yellow);
+    font-weight: 600;
+  }
+  .cal-month.has-data::after {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    margin: 4px auto 0;
+  }
+
+  /* ── Layout ── */
+  .container { max-width: 1280px; margin: 0 auto; padding: 24px 32px; }
+
+  /* ── Exchange Filter ── */
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+  .filter-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .filter-chip:hover { border-color: var(--text-muted); }
+  .filter-chip.active {
+    background: rgba(240, 185, 11, 0.1);
+    border-color: var(--accent-yellow);
+    color: var(--text-primary);
+  }
+  .filter-chip .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ── Section Tabs ── */
+  .section-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-tab {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: none;
+    margin-bottom: -1px;
+    transition: all 0.2s;
+  }
+  .section-tab:hover { color: var(--text-primary); }
+  .section-tab.active { color: var(--accent-yellow); border-bottom-color: var(--accent-yellow); }
+
+  /* ── Section Content ── */
+  .section-content { display: none; }
+  .section-content.active { display: block; }
+
+  /* ── Exchange Cards (new style) ── */
+  .exchange-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .exchange-card:hover { border-color: var(--text-muted); }
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .exchange-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .exchange-name { font-size: 16px; font-weight: 600; }
+  .card-summary {
+    font-size: 13px;
+    color: var(--text-secondary);
+    max-width: 500px;
+    text-align: right;
+  }
+  .card-body { padding: 4px 0; }
+  .card-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 20px;
+    font-size: 14px;
+    line-height: 1.6;
+    border-bottom: 1px solid rgba(43, 49, 57, 0.5);
+    transition: background 0.15s;
+  }
+  .card-item:last-child { border-bottom: none; }
+  .card-item:hover { background: var(--bg-hover); }
+  .card-item-text { flex: 1; }
+  .card-item-text .date-inline {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-right: 4px;
+  }
+  .card-item .status-tag {
+    flex-shrink: 0;
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-weight: 500;
+    white-space: nowrap;
+    align-self: center;
+  }
+  .status-ongoing { background: rgba(240, 185, 11, 0.12); color: var(--accent-yellow); }
+  .status-new { background: rgba(14, 203, 129, 0.12); color: var(--accent-green); }
+  .status-limited { background: rgba(246, 70, 93, 0.12); color: var(--accent-red); }
+  .status-upcoming { background: rgba(90, 156, 255, 0.12); color: var(--accent-blue); }
+  .status-compliance { background: rgba(246, 70, 93, 0.12); color: var(--accent-red); }
+  .status-none {
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 12px 20px;
+    font-size: 13px;
+  }
+
+  /* ── Summary Bar ── */
+  .summary-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .summary-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+  .summary-card .label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    letter-spacing: 0.3px;
+  }
+  .summary-card .value { font-size: 22px; font-weight: 700; }
+  .summary-card .sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+  /* ── Comparison Table ── */
+  .comparison-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .comparison-table th {
+    background: var(--bg-secondary);
+    padding: 14px 18px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+  }
+  .comparison-table td {
+    padding: 14px 18px;
+    font-size: 14px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+  }
+  .comparison-table tr:last-child td { border-bottom: none; }
+  .comparison-table tr:hover td { background: var(--bg-hover); }
+  .comparison-table .exchange-cell { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+  .highlight-best { color: var(--accent-green); font-weight: 600; }
+
+  /* ── Insights ── */
+  .insights {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .insight-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+  }
+  .insight-card .insight-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+  .insight-card .insight-value { font-size: 15px; font-weight: 600; }
+  .insight-card .insight-detail { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 48px;
+    padding: 20px 0;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ── Overlay for closing calendar ── */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+  }
+  .overlay.open { display: block; }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-primary); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <h1>交易所竞品监控</h1>
+    <span class="badge">4 个交易所</span>
+  </div>
+  <div class="month-nav">
+    <button onclick="changeMonth(-1)">&larr;</button>
+    <span class="month-label" id="monthLabel" onclick="toggleCalendar()">2026 年 4 月</span>
+    <button onclick="changeMonth(1)">&rarr;</button>
+    <!-- Calendar Dropdown -->
+    <div class="calendar-dropdown" id="calendarDropdown">
+      <div class="cal-header">
+        <button onclick="changeCalYear(-1)">&larr;</button>
+        <span class="cal-year" id="calYear">2026</span>
+        <button onclick="changeCalYear(1)">&rarr;</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="calOverlay" onclick="closeCalendar()"></div>
+
+<div class="container">
+
+  <!-- Summary -->
+  <div class="summary-bar">
+    <div class="summary-card">
+      <div class="label">本月更新总数</div>
+      <div class="value">18</div>
+      <div class="sub">覆盖全部监控交易所</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">最活跃交易所</div>
+      <div class="value" style="color: var(--bitget);">Bitget</div>
+      <div class="sub">本月 5 条更新</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">本月趋势</div>
+      <div class="value" style="font-size:17px;">合规化 & 衍生品</div>
+      <div class="sub">监管驱动的产品上线</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">数据截止</div>
+      <div class="value" style="font-size:17px;">2026-04-18</div>
+      <div class="sub">人工采集</div>
+    </div>
+  </div>
+
+  <!-- Exchange Filter -->
+  <div class="filter-bar" id="filterBar">
+    <div class="filter-chip active" data-exchange="all">全部</div>
+    <div class="filter-chip active" data-exchange="binance"><span class="dot" style="background:var(--binance)"></span> Binance</div>
+    <div class="filter-chip active" data-exchange="okx"><span class="dot" style="background:var(--okx)"></span> OKX</div>
+    <div class="filter-chip active" data-exchange="bitget"><span class="dot" style="background:var(--bitget)"></span> Bitget</div>
+    <div class="filter-chip active" data-exchange="coinbase"><span class="dot" style="background:var(--coinbase)"></span> Coinbase</div>
+  </div>
+
+  <!-- Section Tabs -->
+  <div class="section-tabs">
+    <button class="section-tab active" data-section="updates">APP 更新功能</button>
+    <button class="section-tab" data-section="campaigns">重点活动</button>
+    <button class="section-tab" data-section="yields">理财利率对比</button>
+    <button class="section-tab" data-section="referral">邀请返佣对比</button>
+  </div>
+
+  <!-- ═══ Section 1: APP Updates ═══ -->
+  <div class="section-content active" id="section-updates">
+
+    <div class="exchange-card" data-exchange="binance">
+      <div class="card-header">
+        <div class="card-header-left">
+          <span class="exchange-dot" style="background:var(--binance)"></span>
+          <span class="exchange-name">Binance</span>
+        </div>
+        <div class="card-summary">近期以合约参数调整为主，MENA 区域拓展持续推进</div>
+      </div>
+      <div class="card-body">
+        <div class="card-item">
+          <div class="card-item-text">调整多个 USDS-M 永续合约 Tick Size（4月21日/22日生效）</div>
+          <span class="status-tag status-upcoming">即将生效</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text">推出 MENA 地区限时邀请专属活动页，APP 内可见</div>
+          <span class="status-tag status-ongoing">进行中</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="exchange-card" data-exchange="okx">
+      <div class="card-header">
+        <div class="card-header-left">
+          <span class="exchange-dot" style="background:var(--okx)"></span>
+          <span class="exchange-name">OKX</span>
+        </div>
+        <div class="card-summary">欧洲合规衍生品密集上线，CeDeFi 多链扩展</div>
+      </div>
+      <div class="card-body">
+        <div class="card-item">
+          <div class="card-item-text"><span class="date-inline">4月15日</span>欧洲正式上线 X-Perps（MiFID 监管合规衍生品，最高 10 倍杠杆，面向零售/机构）</div>
+          <span class="status-tag status-new">新上线</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text"><span class="date-inline">4月15日</span>推出股票永续合约（Equity Perps），20+ 股票/指数，24/7 交易</div>
+          <span class="status-tag status-new">新上线</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text">OKX CeDeFi 扩展至以太坊 + Arbitrum 网络</div>
+          <span class="status-tag status-new">新上线</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text">VIP 等级提升活动（4月全月）：升级 VIP 可解锁更低手续费 + 更高 Card 返现</div>
+          <span class="status-tag status-ongoing">进行中</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text"><span class="date-inline">4月19日</span>将在 Abu Dhabi Etihad 体育场举办线下活动</div>
+          <span class="status-tag status-upcoming">即将开始</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="exchange-card" data-exchange="bitget">
+      <div class="card-header">
+        <div class="card-header-left">
+          <span class="exchange-dot" style="background:var(--bitget)"></span>
+          <span class="exchange-name">Bitget</span>
+        </div>
+        <div class="card-summary">IPO Prime 创新产品首发，经纪商激励计划启动；退出法国市场</div>
+      </div>
+      <div class="card-body">
+        <div class="card-item">
+          <div class="card-item-text"><span class="date-inline">4月13日</span>推出 IPO Prime，首个产品 preSPAX（SpaceX 预上市 Token）</div>
+          <span class="status-tag status-new">新上线</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text"><span class="date-inline">4月16日</span>推出 Broker Max Check Program，新经纪商入驻首 60 天最高奖励 12,000 USDT</div>
+          <span class="status-tag status-ongoing">进行中</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text">Bitget 退出法国市场（3月公告），建议法国用户迁移至其他 MiCA 合规平台</div>
+          <span class="status-tag status-compliance">合规调整</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text">TRADOORUSDT 开放合约交易及交易机器人</div>
+          <span class="status-tag status-new">新上线</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="exchange-card" data-exchange="coinbase">
+      <div class="card-header">
+        <div class="card-header-left">
+          <span class="exchange-dot" style="background:var(--coinbase)"></span>
+          <span class="exchange-name">Coinbase</span>
+        </div>
+        <div class="card-summary">近期无重大 APP 版本功能更新</div>
+      </div>
+      <div class="card-body">
+        <div class="status-none">本月暂无重大更新公告，建议查看 App Store 更新日志</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ Section 2: Campaigns ═══ -->
+  <div class="section-content" id="section-campaigns">
+
+    <div class="exchange-card" data-exchange="binance">
+      <div class="card-header">
+        <div class="card-header-left">
+          <span class="exchange-dot" style="background:var(--binance)"></span>
+          <span class="exchange-name">Binance</span>
+        </div>
+        <div class="card-summary">MENA 邀请活动持续，标准返佣常设运行</div>
+      </div>
+      <div class="card-body">
+        <div class="card-item">
+          <div class="card-item-text">
+            <strong>MENA 专属邀请活动</strong>（3/26 ~ 5/17）：每成功邀请 1 人，邀请方得 $4-10 USDT，被邀方得 $3-5 USDT<br>
+            <span style="color:var(--text-secondary);font-size:13px;">Top 100 排行榜额外分享 $20,000 USDT</span>
+          </div>
+          <span class="status-tag status-ongoing">进行中</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text">
+            <strong>标准邀请返佣常设活动</strong>：邀请人最高可得好友手续费的 40% 返佣（持有 ≥500 BNB）
+          </div>
+          <span class="status-tag status-ongoing">长期</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="exchange-card" data-exchange="okx">
+      <div class="card-header">
+        <div class="card-header-left">
+          <span class="exchange-dot" style="background:var(--okx)"></span>
+          <span class="exchange-name">OKX</span>
+        </div>
+        <div class="card-summary">VIP 升级月 + 欧洲新产品庆典</div>
+      </div>
+      <div class="card-body">
+        <div class="card-item">
+          <div class="card-item-text">
+            <strong>VIP 升级月活动</strong>（4月全月）：升级 VIP 享更低费率 + Card 更高返现
+          </div>
+          <span class="status-tag status-ongoing">进行中</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text">
+            <strong>X-Perps 上线庆典活动</strong>（欧洲用户）
+          </div>
+          <span class="status-tag status-new">新上线</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="exchange-card" data-exchange="bitget">
+      <div class="card-header">
+        <div class="card-header-left">
+          <span class="exchange-dot" style="background:var(--bitget)"></span>
+          <span class="exchange-name">Bitget</span>
+        </div>
+        <div class="card-summary">VIP 空投季 + 经纪商激励双线并行</div>
+      </div>
+      <div class="card-body">
+        <div class="card-item">
+          <div class="card-item-text">
+            <strong>UEX VIP 空投季</strong>（4/13 ~ 4/19）：VIP 用户优先获得 preSPAX 空投，总价值约 50 万 USDT
+          </div>
+          <span class="status-tag status-limited">限时</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text">
+            <strong>新 Broker 激励计划</strong>（4/1 起）：首 60 天交易量达标可领最高 $12,000 USDT 奖励
+          </div>
+          <span class="status-tag status-ongoing">进行中</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="exchange-card" data-exchange="coinbase">
+      <div class="card-header">
+        <div class="card-header-left">
+          <span class="exchange-dot" style="background:var(--coinbase)"></span>
+          <span class="exchange-name">Coinbase</span>
+        </div>
+        <div class="card-summary">标准推荐奖励持续运行</div>
+      </div>
+      <div class="card-body">
+        <div class="card-item">
+          <div class="card-item-text">
+            <strong>常设推荐奖励</strong>：邀请新用户获得首 3 个月手续费的 50% 返佣
+          </div>
+          <span class="status-tag status-ongoing">长期</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ Section 3: Yield Comparison ═══ -->
+  <div class="section-content" id="section-yields">
+    <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 16px;">
+      数据采集时间：2026-04-18 | 利率为浮动利率，受市场供需影响实时变动，以各平台「理财/Earn」页面显示为准
+    </p>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>交易所</th>
+          <th>USDT 活期 APR</th>
+          <th>USDC 活期 APR</th>
+          <th>定期产品</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-exchange="binance">
+          <td><div class="exchange-cell"><span class="exchange-dot" style="background:var(--binance)"></span> Binance</div></td>
+          <td>~3-8%</td>
+          <td>~3-8%</td>
+          <td style="color:var(--text-muted)">需登录查看</td>
+        </tr>
+        <tr data-exchange="okx">
+          <td><div class="exchange-cell"><span class="exchange-dot" style="background:var(--okx)"></span> OKX</div></td>
+          <td style="color:var(--text-muted)">需登录查看</td>
+          <td style="color:var(--text-muted)">需登录查看</td>
+          <td style="color:var(--text-muted)">需登录查看</td>
+        </tr>
+        <tr data-exchange="bitget">
+          <td><div class="exchange-cell"><span class="exchange-dot" style="background:var(--bitget)"></span> Bitget</div></td>
+          <td>~4-8%</td>
+          <td>~4-8%</td>
+          <td style="color:var(--text-muted)">需登录查看</td>
+        </tr>
+        <tr data-exchange="coinbase">
+          <td><div class="exchange-cell"><span class="exchange-dot" style="background:var(--coinbase)"></span> Coinbase</div></td>
+          <td style="color:var(--text-muted)">需登录查看</td>
+          <td style="color:var(--text-muted)">需登录查看</td>
+          <td style="color:var(--text-muted)">暂无公开定期</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="insights">
+      <div class="insight-card">
+        <div class="insight-label">第三方参考（bitcompare.net）</div>
+        <div class="insight-value">USDT 最高 ~12%</div>
+        <div class="insight-detail">Nexo，需锁仓 90 天</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-label">第三方参考</div>
+        <div class="insight-value">USDC 最高 ~10.5%</div>
+        <div class="insight-detail">bitcompare.net, 截至 2026-04-18</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Section 4: Referral / Affiliate ═══ -->
+  <div class="section-content" id="section-referral">
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>交易所</th>
+          <th>普通用户邀请返佣</th>
+          <th>代理/联盟</th>
+          <th>备注</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-exchange="binance">
+          <td><div class="exchange-cell"><span class="exchange-dot" style="background:var(--binance)"></span> Binance</div></td>
+          <td>20%（标准）</td>
+          <td>最高 40%</td>
+          <td>持有 ≥500 BNB 解锁 40%；90 天 Cookie</td>
+        </tr>
+        <tr data-exchange="okx">
+          <td><div class="exchange-cell"><span class="exchange-dot" style="background:var(--okx)"></span> OKX</div></td>
+          <td>20%</td>
+          <td>最高 50%</td>
+          <td class="highlight-best">180 天 Cookie（行业最长）</td>
+        </tr>
+        <tr data-exchange="bitget">
+          <td><div class="exchange-cell"><span class="exchange-dot" style="background:var(--bitget)"></span> Bitget</div></td>
+          <td>30%（起步）</td>
+          <td>最高 50%</td>
+          <td>3 层分销体系；日结 USDT</td>
+        </tr>
+        <tr data-exchange="coinbase">
+          <td><div class="exchange-cell"><span class="exchange-dot" style="background:var(--coinbase)"></span> Coinbase</div></td>
+          <td class="highlight-best">50%（首 3 个月）</td>
+          <td>50%（3 个月）</td>
+          <td>法币结算；$10 起提</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="insights">
+      <div class="insight-card">
+        <div class="insight-label">最高用户返佣</div>
+        <div class="insight-value" style="color:var(--coinbase)">Coinbase</div>
+        <div class="insight-detail">首 3 个月 50%，法币结算</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-label">最长 Cookie</div>
+        <div class="insight-value">OKX</div>
+        <div class="insight-detail">180 天归因窗口</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-label">最完善代理体系</div>
+        <div class="insight-value" style="color:var(--bitget)">Bitget</div>
+        <div class="insight-detail">3 层分销 + 日结 USDT</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-label">最易上手</div>
+        <div class="insight-value" style="color:var(--coinbase)">Coinbase</div>
+        <div class="insight-detail">50% 返佣，法币，$10 起提</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span>数据来源：各平台官网公告、App Store/Google Play 更新日志、第三方聚合平台</span>
+    <span>最后更新：2026-04-18 18:00 UTC</span>
+  </div>
+</div>
+
+<script>
+  // ── State ──
+  let currentYear = 2026;
+  let currentMonthNum = 4;
+  let calViewYear = 2026;
+  const monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  // Months that have data (for the green dot indicator)
+  const dataMonths = new Set(['2026-04']);
+
+  // ── Tab Switching ──
+  document.querySelectorAll('.section-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('section-' + tab.dataset.section).classList.add('active');
+    });
+  });
+
+  // ── Exchange Filter ──
+  const filterBar = document.getElementById('filterBar');
+  filterBar.addEventListener('click', (e) => {
+    const chip = e.target.closest('.filter-chip');
+    if (!chip) return;
+    const exchange = chip.dataset.exchange;
+    if (exchange === 'all') {
+      const allActive = chip.classList.contains('active');
+      filterBar.querySelectorAll('.filter-chip').forEach(c => {
+        if (allActive) c.classList.remove('active'); else c.classList.add('active');
+      });
+    } else {
+      chip.classList.toggle('active');
+      const exchangeChips = filterBar.querySelectorAll('.filter-chip:not([data-exchange="all"])');
+      const allChip = filterBar.querySelector('[data-exchange="all"]');
+      allChip.classList.toggle('active', [...exchangeChips].every(c => c.classList.contains('active')));
+    }
+    applyFilter();
+  });
+
+  function applyFilter() {
+    const active = new Set();
+    filterBar.querySelectorAll('.filter-chip.active:not([data-exchange="all"])').forEach(c => active.add(c.dataset.exchange));
+    document.querySelectorAll('.exchange-card').forEach(card => {
+      card.style.display = active.has(card.dataset.exchange) ? '' : 'none';
+    });
+    document.querySelectorAll('.comparison-table tbody tr').forEach(row => {
+      row.style.display = active.has(row.dataset.exchange) ? '' : 'none';
+    });
+  }
+
+  // ── Month Navigation ──
+  function updateMonthLabel() {
+    document.getElementById('monthLabel').textContent = currentYear + ' 年 ' + currentMonthNum + ' 月';
+  }
+
+  function changeMonth(delta) {
+    currentMonthNum += delta;
+    if (currentMonthNum > 12) { currentMonthNum = 1; currentYear++; }
+    if (currentMonthNum < 1) { currentMonthNum = 12; currentYear--; }
+    updateMonthLabel();
+  }
+
+  // ── Calendar Dropdown ──
+  function toggleCalendar() {
+    const dd = document.getElementById('calendarDropdown');
+    const ov = document.getElementById('calOverlay');
+    const isOpen = dd.classList.contains('open');
+    if (isOpen) {
+      closeCalendar();
+    } else {
+      calViewYear = currentYear;
+      renderCalendar();
+      dd.classList.add('open');
+      ov.classList.add('open');
+    }
+  }
+
+  function closeCalendar() {
+    document.getElementById('calendarDropdown').classList.remove('open');
+    document.getElementById('calOverlay').classList.remove('open');
+  }
+
+  function changeCalYear(delta) {
+    calViewYear += delta;
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    document.getElementById('calYear').textContent = calViewYear;
+    const grid = document.getElementById('calGrid');
+    grid.innerHTML = '';
+    for (let m = 1; m <= 12; m++) {
+      const div = document.createElement('div');
+      div.className = 'cal-month';
+      div.textContent = monthNames[m - 1];
+      const key = calViewYear + '-' + String(m).padStart(2, '0');
+      if (calViewYear === currentYear && m === currentMonthNum) div.classList.add('active');
+      if (dataMonths.has(key)) div.classList.add('has-data');
+      div.addEventListener('click', () => {
+        currentYear = calViewYear;
+        currentMonthNum = m;
+        updateMonthLabel();
+        closeCalendar();
+      });
+      grid.appendChild(div);
+    }
+  }
+</script>
+</body>
+</html>
