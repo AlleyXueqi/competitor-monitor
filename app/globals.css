@@ -1,0 +1,67 @@
+:root {
+  /* Bg hierarchy */
+  --bg-page: #000000;
+  --bg-card: #1E2023;
+  --bg-float: #0D0D0D;
+  --ele-line: #1E1F24;
+  --trans-hover: rgba(255,255,255,0.04);
+
+  /* Text */
+  --t1: #FFFFFF;
+  --t2: #6A6E73;
+  --t3: #494C4F;
+  --t4: #383B3D;
+
+  /* Brand */
+  --brand-700: #FF9C2E;
+  --brand-900: #F29229;
+  --brand-600: #FFB040;
+  --brand-800: #D97F1E;
+  --brand-100: rgba(255,156,46,0.1);
+
+  /* Semantic */
+  --green-700: #06C167;
+  --green-100: rgba(6,193,103,0.1);
+  --red-700: #E84064;
+  --red-100: rgba(232,64,100,0.1);
+  --blue-700: #5A9CFF;
+  --blue-100: rgba(90,156,255,0.1);
+  --static-black: #121214;
+
+  /* Border */
+  --ele-border: #2B2F36;
+
+  /* Exchange dots */
+  --binance: #F0B90B;
+  --okx: #FFFFFF;
+  --bitget: #00F0FF;
+  --coinbase: #0052FF;
+
+  /* Radius */
+  --radius-l: 12px;
+  --radius-m: 8px;
+  --radius-s: 6px;
+  --radius-xs: 4px;
+
+  /* Shadow */
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+
+  /* Design system tokens */
+  --background: #000000;
+  --foreground: #FFFFFF;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: var(--bg-page);
+  color: var(--t1);
+  line-height: 1.5;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-page); }
+::-webkit-scrollbar-thumb { background: var(--t4); border-radius: 3px; }
