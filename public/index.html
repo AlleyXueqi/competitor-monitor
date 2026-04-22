@@ -294,6 +294,7 @@
     margin: 0 auto;
     padding: 32px 24px 48px;
   }
+  .container.expanded { max-width: 100%; padding: 0 32px; }
 
   /* Page title area */
   .page-header { margin-bottom: 32px; }
@@ -414,6 +415,7 @@
 
   .section-content { display: none; }
   .section-content.active { display: block; }
+  #section-products.active, #section-compare.active { display: flex; flex-direction: column; height: calc(100vh - 56px); overflow: hidden; }
 
   /* ══════════ EXCHANGE CARDS ══════════ */
   .exchange-card {
@@ -696,16 +698,142 @@
   }
   .web-frame .screen-label { font-size: 10px; font-weight: 600; color: var(--t2); text-align: center; }
 
+  /* ══════════ SCREENSHOT WEB FRAME ══════════ */
+  .web-frame-img {
+    width: 100%; flex-shrink: 0; cursor: pointer;
+    border-radius: var(--radius-l); border: 1px solid var(--ele-border);
+    overflow: hidden; transition: border-color 0.15s, transform 0.15s; background: #111;
+  }
+  .web-frame-img:hover { border-color: var(--brand-700); transform: translateY(-2px); }
+  .web-frame-img .browser-bar {
+    height: 16px; background: #0A0A0A; display: flex; align-items: center; padding: 0 6px; gap: 3px;
+  }
+  .web-frame-img .browser-bar .bdr { width: 5px; height: 5px; border-radius: 50%; background: var(--red-700); }
+  .web-frame-img .browser-bar .bdy { width: 5px; height: 5px; border-radius: 50%; background: var(--brand-700); }
+  .web-frame-img .browser-bar .bdg { width: 5px; height: 5px; border-radius: 50%; background: var(--green-700); }
+  .web-frame-img img {
+    width: 100%; height: 180px; object-fit: cover; object-position: top; display: block;
+  }
+  .ia-screenshots-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%;
+  }
+  .sc-card { display: flex; flex-direction: column; gap: 8px; }
+  .sc-card .sc-label { font-size: 12px; color: var(--t2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Screenshot lightbox */
+  .sc-lightbox {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92);
+    z-index: 600; align-items: center; justify-content: center; padding: 40px 20px;
+  }
+  .sc-lightbox.open { display: flex; }
+  .sc-lightbox-img-wrap {
+    position: relative; overflow: hidden; max-width: 900px; max-height: calc(100vh - 120px);
+    border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); cursor: zoom-in;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sc-lightbox-img-wrap.zoomed { cursor: grab; max-width: none; max-height: none; overflow: visible; }
+  .sc-lightbox-img-wrap.zoomed.dragging { cursor: grabbing; }
+  .sc-lightbox-img-wrap img {
+    max-width: 900px; max-height: calc(100vh - 120px); width: auto; object-fit: contain;
+    transition: transform 0.2s ease; transform-origin: center center; user-select: none; -webkit-user-drag: none;
+  }
+  .sc-lightbox-img-wrap.zoomed img { max-width: none; max-height: none; transition: none; }
+  .sc-lightbox-zoom-hint {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    font-size: 11px; color: var(--t3); background: rgba(0,0,0,0.7);
+    padding: 4px 10px; border-radius: var(--radius-s); z-index: 601;
+    pointer-events: none; opacity: 0; transition: opacity 0.3s;
+  }
+  .sc-lightbox-zoom-hint.visible { opacity: 1; }
+  .sc-lightbox-zoom-level {
+    position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+    font-size: 12px; color: var(--t2); background: rgba(0,0,0,0.7);
+    padding: 4px 12px; border-radius: var(--radius-s); z-index: 601;
+    pointer-events: none; opacity: 0; transition: opacity 0.3s;
+  }
+  .sc-lightbox-zoom-level.visible { opacity: 1; }
+  .sc-lightbox-close {
+    position: fixed; top: 16px; right: 24px; font-size: 28px; color: var(--t2);
+    cursor: pointer; background: rgba(0,0,0,0.5); border: none; border-radius: 50%;
+    width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+    z-index: 601; font-family: inherit;
+  }
+  .sc-lightbox-close:hover { color: var(--t1); }
+  .sc-lightbox-title {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    font-size: 14px; color: var(--t2); background: rgba(0,0,0,0.7);
+    padding: 6px 16px; border-radius: var(--radius-m); z-index: 601; white-space: nowrap;
+  }
+  .sc-lightbox-nav {
+    position: fixed; top: 50%; transform: translateY(-50%); font-size: 32px; color: var(--t2);
+    cursor: pointer; background: rgba(0,0,0,0.5); border: none; border-radius: 50%;
+    width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+    z-index: 601; font-family: inherit; transition: color 0.15s, background 0.15s;
+  }
+  .sc-lightbox-nav:hover { color: var(--t1); background: rgba(255,255,255,0.1); }
+  .sc-lightbox-nav.prev { left: 16px; }
+  .sc-lightbox-nav.next { right: 16px; }
+  .sc-lightbox-counter {
+    position: fixed; bottom: 24px; right: 24px; font-size: 12px; color: var(--t3);
+    background: rgba(0,0,0,0.7); padding: 4px 10px; border-radius: var(--radius-s); z-index: 601;
+  }
+
   /* ══════════ PRODUCTS — IA TREE VIEW ══════════ */
   .products-layout {
-    display: flex; gap: 0; min-height: 500px;
+    display: flex; gap: 0; flex: 1; overflow: hidden; min-height: 0;
   }
   .ia-sidebar {
     width: 240px; flex-shrink: 0;
-    padding: 0 24px 0 0; overflow-y: auto; max-height: calc(100vh - 120px); position: sticky; top: 72px;
+    padding: 0 24px 0 0; overflow-y: auto; height: 100%;
     border-right: 1px solid var(--ele-border);
   }
-  .ia-top-filters { margin-bottom: 32px; }
+  .ia-top-filters { margin-bottom: 0; padding: 24px 0; }
+  .ia-search-wrap {
+    position: relative; flex-shrink: 0; margin-left: auto;
+  }
+  .ia-search-wrap input {
+    width: 200px; height: 34px; padding: 0 12px 0 32px; border-radius: var(--radius-m);
+    background: var(--ele-line); border: 1px solid var(--ele-border); color: var(--t1);
+    font-size: 13px; font-family: inherit; outline: none; transition: border-color 0.15s;
+  }
+  .ia-search-wrap input::placeholder { color: var(--t3); }
+  .ia-search-wrap input:focus { border-color: var(--brand-700); }
+  .ia-search-wrap .ia-search-icon {
+    position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+    pointer-events: none; color: var(--t3); display: flex; align-items: center;
+  }
+  .ia-search-wrap .ia-search-icon svg { width: 14px; height: 14px; }
+  .ia-search-results {
+    position: absolute; top: calc(100% + 6px); right: 0; width: 420px; max-height: 480px;
+    overflow-y: auto; background: var(--bg-card); border: 1px solid var(--ele-border);
+    border-radius: var(--radius-l); box-shadow: var(--shadow-lg); z-index: 100; display: none;
+  }
+  .ia-search-results.open { display: block; }
+  .ia-search-results .search-empty {
+    padding: 24px; text-align: center; color: var(--t3); font-size: 13px;
+  }
+  .ia-search-hit {
+    display: flex; align-items: center; gap: 12px; padding: 10px 16px;
+    cursor: pointer; transition: background 0.1s;
+  }
+  .ia-search-hit:hover { background: var(--trans-hover); }
+  .ia-search-hit .hit-thumb {
+    width: 64px; height: 40px; border-radius: var(--radius-xs); overflow: hidden;
+    background: var(--ele-line); flex-shrink: 0;
+  }
+  .ia-search-hit .hit-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .ia-search-hit .hit-info { flex: 1; min-width: 0; }
+  .ia-search-hit .hit-title {
+    font-size: 13px; color: var(--t1); font-weight: 500;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .ia-search-hit .hit-title mark { background: var(--brand-100); color: var(--brand-700); border-radius: 2px; padding: 0 2px; }
+  .ia-search-hit .hit-meta { font-size: 11px; color: var(--t3); margin-top: 2px; }
+  .ia-search-section {
+    padding: 8px 16px 4px; font-size: 11px; font-weight: 600; color: var(--t3);
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .ia-search-section:not(:first-child) { border-top: 1px solid var(--ele-border); margin-top: 4px; }
   .ia-exchange-tabs { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
   .ia-tree { padding: 4px 0; }
   .tree-label {
@@ -722,29 +850,16 @@
   .tree-label .tree-count { margin-left: auto; font-size: 11px; color: var(--t3); font-weight: 400; }
   .tree-children { display: none; padding-left: 14px; }
   .tree-children.open { display: block; }
-  .ia-main { flex: 1; padding: 0 0 0 40px; }
+  .ia-main { flex: 1; padding: 0 0 0 0; overflow-y: auto; overflow-x: hidden; height: 100%; min-width: 0; }
+  .ia-main-inner { padding: 24px 0 0 40px; }
   .ia-main-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
   .ia-main-title { font-size: 22px; font-weight: 600; color: var(--t1); }
   .ia-main-meta { font-size: 13px; color: var(--t3); }
-  .ia-screenshots { display: flex; flex-wrap: wrap; gap: 20px; }
+  .ia-screenshots { display: block; width: 100%; max-width: 100%; overflow: hidden; }
   .screenshot-card { display: flex; flex-direction: column; gap: 10px; }
   .screenshot-card .sc-title { font-size: 12px; color: var(--t2); max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   /* ══════════ COMPARE VIEW ══════════ */
-  .compare-controls { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
-  .compare-chip {
-    padding: 6px 16px; border-radius: var(--radius-m); background: var(--ele-line);
-    color: var(--t2); font-size: 14px; cursor: pointer; border: 1px solid var(--ele-border); font-family: inherit; transition: all 0.15s;
-  }
-  .compare-chip:hover { color: var(--t1); border-color: var(--t3); }
-  .compare-chip.active { background: var(--brand-100); color: var(--brand-700); border-color: var(--brand-700); font-weight: 600; }
-  .compare-sub-chips { display: flex; gap: 8px; margin-bottom: 32px; flex-wrap: wrap; }
-  .compare-sub-chip {
-    padding: 4px 12px; border-radius: var(--radius-s); background: none; border: 1px solid var(--ele-border);
-    color: var(--t3); font-size: 13px; cursor: pointer; font-family: inherit; transition: all 0.15s;
-  }
-  .compare-sub-chip:hover { color: var(--t2); border-color: var(--t3); }
-  .compare-sub-chip.active { color: var(--brand-700); border-color: var(--brand-700); background: var(--brand-100); }
   .compare-rows { display: flex; flex-direction: column; gap: 32px; }
   .compare-row {}
   .compare-row-header {
@@ -762,10 +877,10 @@
 
   /* ══════════ FLOWS VIEW ══════════ */
   .flow-filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-  .flow-list { display: flex; flex-direction: column; gap: 16px; }
+  .flow-list { display: flex; flex-direction: column; gap: 16px; width: 100%; min-width: 0; overflow: hidden; }
   .flow-card {
     background: var(--bg-card); border: 1px solid var(--ele-border);
-    border-radius: var(--radius-l); overflow: hidden; transition: border-color 0.15s;
+    border-radius: var(--radius-l); overflow: hidden; transition: border-color 0.15s; max-width: 100%;
   }
   .flow-card:hover { border-color: #3A3F47; }
   .flow-card-header {
@@ -800,9 +915,26 @@
     font-size: 10px; font-weight: 600; color: var(--brand-700); background: var(--brand-100);
     width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
   }
-  .flow-step .step-label { font-size: 11px; color: var(--t2); text-align: center; max-width: 140px; }
-  .flow-step .step-note { font-size: 10px; color: var(--t3); text-align: center; max-width: 140px; line-height: 1.3; }
-  .flow-arrow { display: flex; align-items: center; color: var(--t3); font-size: 16px; flex-shrink: 0; padding: 0 6px; margin-top: 110px; }
+  .flow-step .step-label { font-size: 11px; color: var(--t2); text-align: center; max-width: 240px; }
+  .flow-step .step-label .step-link-icon {
+    display: inline-block; color: var(--brand-700); text-decoration: none; font-size: 12px; font-weight: 600;
+    margin-left: 2px; opacity: 0.7; transition: opacity 0.15s;
+  }
+  .flow-step .step-label .step-link-icon:hover { opacity: 1; }
+  .flow-step .step-note { font-size: 10px; color: var(--t3); text-align: center; max-width: 240px; line-height: 1.3; }
+  .flow-arrow { display: flex; align-items: center; color: var(--t3); font-size: 16px; flex-shrink: 0; padding: 0 6px; margin-top: 80px; }
+
+  /* Flow step with real screenshot */
+  .flow-step .step-web-img {
+    width: 240px; border-radius: var(--radius-l); border: 1px solid var(--ele-border);
+    overflow: hidden; background: #111; cursor: pointer; transition: border-color 0.15s;
+  }
+  .flow-step .step-web-img:hover { border-color: var(--brand-700); }
+  .flow-step .step-web-img .browser-bar {
+    height: 14px; background: #0A0A0A; display: flex; align-items: center; padding: 0 6px; gap: 3px;
+  }
+  .flow-step .step-web-img .browser-bar span { width: 5px; height: 5px; border-radius: 50%; }
+  .flow-step .step-web-img img { width: 100%; height: 148px; object-fit: cover; object-position: top; display: block; }
 
   /* ══════════ LIGHTBOX ══════════ */
   .lightbox {
@@ -1241,6 +1373,11 @@
         <button class="filter-chip active ia-plat-chip" data-plat="ios">iOS</button>
         <button class="filter-chip ia-plat-chip" data-plat="android">Android</button>
         <button class="filter-chip ia-plat-chip" data-plat="web">Web</button>
+        <div class="ia-search-wrap">
+          <span class="ia-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+          <input type="text" id="iaSearchInput" placeholder="Search..." autocomplete="off">
+          <div class="ia-search-results" id="iaSearchResults"></div>
+        </div>
       </div>
     </div>
     <div class="products-layout">
@@ -1248,22 +1385,48 @@
         <div class="ia-tree" id="iaTree"></div>
       </div>
       <div class="ia-main" id="iaMain">
-        <div class="ia-main-header">
-          <span class="ia-main-title" id="iaMainTitle">Home</span>
-          <span class="ia-main-meta" id="iaMainMeta">3 screens</span>
+        <div class="ia-main-inner">
+          <div class="ia-main-header">
+            <span class="ia-main-title" id="iaMainTitle">Home</span>
+            <span class="ia-main-meta" id="iaMainMeta">3 screens</span>
+          </div>
+          <div class="ia-screenshots" id="iaScreenshots"></div>
         </div>
-        <div class="ia-screenshots" id="iaScreenshots"></div>
       </div>
     </div>
   </div>
 
   <!-- ═══ Section 6: Compare ═══ -->
   <div class="section-content" id="section-compare">
-    <div class="compare-controls" id="compareModules"></div>
-    <div class="compare-sub-chips" id="compareSubs"></div>
-    <div class="compare-rows" id="compareRows"></div>
+    <div class="products-layout">
+      <div class="ia-sidebar">
+        <div class="ia-tree" id="compareTree"></div>
+      </div>
+      <div class="ia-main">
+        <div class="ia-main-inner">
+          <div class="ia-main-header">
+            <span class="ia-main-title" id="compareMainTitle">Spot</span>
+            <span class="ia-main-meta" id="compareMainMeta"></span>
+          </div>
+          <div class="compare-rows" id="compareRows"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
+
+  <!-- Screenshot Lightbox -->
+  <div class="sc-lightbox" id="scLightbox" onclick="scLightboxBgClick(event)">
+    <button class="sc-lightbox-close" onclick="closeScLightbox()">&times;</button>
+    <button class="sc-lightbox-nav prev" id="scLbPrev" onclick="scLightboxNav(-1)">&#8249;</button>
+    <div class="sc-lightbox-img-wrap" id="scLbWrap">
+      <img id="scLightboxImg" src="" alt="">
+    </div>
+    <button class="sc-lightbox-nav next" id="scLbNext" onclick="scLightboxNav(1)">&#8250;</button>
+    <div class="sc-lightbox-title" id="scLightboxTitle"></div>
+    <div class="sc-lightbox-counter" id="scLbCounter"></div>
+    <div class="sc-lightbox-zoom-level" id="scLbZoomLevel"></div>
+  </div>
 
   <!-- Footer -->
   <div class="footer">
@@ -1444,11 +1607,15 @@
     const content = document.getElementById('section-' + sectionId);
     if (content) content.classList.add('active');
     const isVisual = VISUAL_SECTIONS.has(sectionId);
-    // Hide header/summary/filter/sub-tabs for visual sections
+    // Hide header/summary/filter/sub-tabs/footer for visual sections
     document.querySelector('.page-header').style.display = isVisual ? 'none' : '';
     document.querySelector('.summary-bar').style.display = isVisual ? 'none' : '';
     document.getElementById('filterBar').style.display = isVisual ? 'none' : '';
     document.querySelector('.section-tabs').style.display = isVisual ? 'none' : '';
+    document.querySelector('.footer').style.display = isVisual ? 'none' : '';
+    document.querySelector('.nav-month-picker').style.display = isVisual ? 'none' : '';
+    // Expand container for visual sections
+    document.querySelector('.container').classList.toggle('expanded', isVisual);
     // Update sub-tab active state only for update tabs
     if (!isVisual) {
       document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
@@ -1623,10 +1790,52 @@
         'Assets': { screens: ['Overview', 'Trading Account'] }
       },
       web: {
-        'Home': { screens: ['Landing', 'Dashboard'] },
-        'Trade': { children: { 'Spot': { screens: ['Pro Trading'] }, 'Futures': { screens: ['Perp Trading'] }, 'X-Perps': { screens: ['EU Derivatives'] } } },
-        'Earn': { screens: ['Overview', 'Simple', 'Structured', 'CeDeFi'] },
-        'Discover': { screens: ['Web3', 'NFT'] }
+        'Home': { screens: [{n:'首页',f:'首页.png'}] },
+        'Buy Crypto': {
+          children: {
+            'Quick Buy': { screens: [{n:'快捷买币',f:'快捷买币.png'},{n:'买卖币流程',f:'买卖币流程简单，快速成交.png'}] },
+            'P2P / C2C': { screens: [{n:'C2C 买币',f:'C2C 买币灵活选择，0 交易费.png'},{n:'C2C 交易',f:'C2C 交易.png'},{n:'C2C 认证商家',f:'C2C 认证商家申请.png'}] },
+            'Buy Guides': { screens: [{n:'买币介绍',f:'买币介绍跟随引导，轻松学习购买数字资产.png'},{n:'如何购买比特币',f:'如何购买比特币.png'},{n:'如何购买以太坊',f:'如何购买以太坊.png'},{n:'如何购买 Solana',f:'如何购买 Solana.png'}] },
+            'Buy Specific': { screens: [{n:'购买 USDT',f:'购买泰达币 (USDT).png'},{n:'购买 USDC',f:'购买 USDC.png'},{n:'购买 BTC',f:'购买比特币 (Bitcoin).png'},{n:'购买 ETH',f:'购买以太币 (Ethereum).png'},{n:'购买 ADA',f:'购买 ADA.png'},{n:'购买 SOL',f:'购买 Solana.png'},{n:'购买 LTC',f:'购买 Litecoin.png'},{n:'购买 XRP',f:'购买 XRP.png'}] }
+          }
+        },
+        'Markets': {
+          children: {
+            'Overview': { screens: [{n:'市场总览',f:'市场.png'},{n:'所有数字货币',f:'浏览所有数字货币.png'},{n:'历史行情',f:'历史行情数据.png'}] },
+            'Prices': { screens: [{n:'BTC 价格',f:'比特币 (BTC) 价格.png'},{n:'ETH 价格',f:'以太坊 (ETH) 价格.png'},{n:'SOL 价格',f:'Solana 价格.png'},{n:'XRP 价格',f:'XRP 价格.png'}] },
+            'Predictions': { screens: [{n:'BTC 预测',f:'比特币价格预测.png'},{n:'ETH 预测',f:'以太坊价格预测.png'},{n:'XRP 预测',f:'瑞波币价格预测.png'}] },
+            'Convert': { screens: [{n:'币种换算',f:'币种换算查看实时兑换汇率和币种最新价值.png'},{n:'BTC/USD',f:'BTC 兑换 USD.png'},{n:'ETH/USD',f:'ETH 兑换 USD.png'},{n:'USDT/USD',f:'USDT 兑换 USD.png'},{n:'SOL/USD',f:'SOL 兑换 USD.png'},{n:'XRP/USD',f:'XRP 兑换 USD.png'}] }
+          }
+        },
+        'Trade': {
+          children: {
+            'Spot': { screens: [{n:'现货交易',f:'交易.png'},{n:'现货介绍',f:'现货轻松买卖数字货币.png'},{n:'BTC/USDC',f:'BTC USDC.png'},{n:'ETH/USDC',f:'ETH USDC.png'},{n:'ETH/USDT',f:'ETH USDT.png'},{n:'SOL/USDT',f:'SOL USDT.png'},{n:'XRP/USDT',f:'XRP USDT.png'}] },
+            'Futures': { screens: [{n:'合约交易',f:'合约交易永续和交割合约，灵活使用杠杆.png'}] },
+            'Options': { screens: [{n:'期权总览',f:'期权利用市场波动，赚取收益，降低交易风险.png'},{n:'简易期权',f:'简易期权适合新手用户的期权交易.png'},{n:'专业期权',f:'专业期权运用多种T型报价交易策略.png'}] },
+            'Convert': { screens: [{n:'闪兑',f:'闪兑.png'},{n:'闪兑交易',f:'闪兑币币兑换，0 费率，无滑点.png'}] },
+            'DEX': { screens: [{n:'DEX 交易',f:'DEX使用交易所余额，轻松交易链上代币.png'}] },
+            'Bot / Strategy': { screens: [{n:'策略交易',f:'策略交易多种智能策略，助您轻松交易.png'}] },
+            'Institutional': { screens: [{n:'价差速递',f:'价差速递为合约价差提供深度流动性.png'},{n:'询价单 RFQ',f:'询价单支持自定义多腿策略和大宗交易.png'}] }
+          }
+        },
+        'Copy Trading': { screens: [{n:'跟单首页',f:'跟单与全球顶级交易员一起赚钱.png'},{n:'合约跟单',f:'合约跟单.png'},{n:'现货跟单',f:'现货跟单.png'},{n:'精英交易员招募',f:'精英交易员招募.png'}] },
+        'Earn': {
+          children: {
+            'Overview': { screens: [{n:'赚币总览',f:'赚币.png'},{n:'赚币首页',f:'赚币持币生币， 赚取收益.png'}] },
+            'Products': { screens: [{n:'简单赚币',f:'简单赚币.png'},{n:'链上赚币',f:'链上赚币.png'},{n:'闪赚',f:'闪赚.png'},{n:'USDG 奖励',f:'USDG 奖励.png'},{n:'双币赢',f:'双币赢.png'},{n:'BTC 屯币生息宝',f:'BTC 屯币生息宝.png'}] },
+            'Lending': { screens: [{n:'借贷',f:'借贷质押数字资产，满足您的投资和消费需求.png'}] },
+            'Jumpstart': { screens: [{n:'Jumpstart',f:'Jumpstart抢先发现全球优质新项目.png'}] }
+          }
+        },
+        'Security': { screens: [{n:'资金安全',f:'资金安全.png'},{n:'储备金证明',f:'储备金证明.png'},{n:'欧易 Protect',f:'欧易 Protect.png'},{n:'Status',f:'Status.png'},{n:'xAssets',f:'xAssets.png'}] },
+        'Web3': { screens: [{n:'Web3',f:'Web3.png'}] },
+        'Campaigns': { screens: [{n:'活动中心',f:'活动中心.png'},{n:'我的奖励',f:'我的奖励.png'},{n:'邀请好友',f:'邀请好友.png'},{n:'直播',f:'直播.png'}] },
+        'Growth': { screens: [{n:'节点计划',f:'节点计划.png'},{n:'OKX Ventures',f:'OKX Ventures.png'},{n:'TradingView',f:'使用 TradingView 交易.png'},{n:'上币申请',f:'上币申请.png'},{n:'手续费',f:'手续费.png'}] },
+        'Assets': { screens: [{n:'我的资产',f:'我的资产.png'},{n:'充币',f:'充币.png'},{n:'提币',f:'提币.png'},{n:'资金划转',f:'资金划转.png'},{n:'资产分析',f:'资产分析.png'},{n:'订单中心',f:'订单中心.png'},{n:'我的手续费',f:'我的手续费.png'},{n:'储备金证明报告',f:'储备金证明报告.png'}] },
+        'Account': { screens: [{n:'总览',f:'总览.png'},{n:'个人资料',f:'个人资料.png'},{n:'安全中心',f:'安全中心.png'},{n:'身份认证',f:'身份认证.png'},{n:'偏好设置',f:'偏好设置.png'},{n:'子账户',f:'子账户.png'},{n:'API 管理',f:'API 与连接凭证.png'},{n:'第三方授权',f:'第三方授权管理.png'},{n:'国家/地区',f:'国家_地区.png'}] },
+        'Learn': { screens: [{n:'新手学院',f:'新手学院.png'},{n:'常见问题',f:'常见问题一站式解决交易常见问题.png'},{n:'热门资讯',f:'热门资讯紧跟最新币种资讯，了解趋势动态.png'},{n:'博客文章',f:'博客文章欧易官方发布内容，洞察平台趋势.png'}] },
+        'Support': { screens: [{n:'帮助中心',f:'帮助中心.png'},{n:'客服工单',f:'我的客服工单.png'},{n:'社群',f:'加入欧易社群.png'},{n:'渠道验证',f:'官方渠道验证.png'},{n:'公告',f:'公告.png'}] },
+        'About': { screens: [{n:'关于我们',f:'关于我们.png'},{n:'就业机会',f:'就业机会.png'},{n:'联系我们',f:'联系我们.png'},{n:'服务条款',f:'服务条款.png'},{n:'隐私政策',f:'隐私政策.png'},{n:'免责声明',f:'免责声明.png'}] }
       }
     },
     bitget: {
@@ -1701,6 +1910,110 @@
 
   // ── Flow Data ──
   const FLOWS = [
+    {
+      id: 'okx-web-buy-sol', exchange: 'okx', platform: 'Web', module: 'Buy Crypto', title: 'Buy Solana (购买 SOL)',
+      desc: '从首页出发，通过搜索或导航找到 Solana，查看价格行情后完成快捷购买或现货交易。',
+      steps: [
+        { label: 'OKX 首页', note: '登录首页，点击顶部「买币」导航', img: 'screenshots/okx/flows/buy-sol/01-homepage.png', url: 'https://www.okx.com/zh-hans' },
+        { label: '购买 SOL 页', note: '进入 SOL 专属购买页，显示实时汇率', img: 'screenshots/okx/flows/buy-sol/02-buy-sol-landing.png', url: 'https://www.okx.com/zh-hans/buy-sol' },
+        { label: '填写购买金额', note: '输入支付金额，选择支付币种', img: 'screenshots/okx/flows/buy-sol/03-buy-form.png', url: 'https://www.okx.com/zh-hans/buy-sol' },
+        { label: 'SOL 行情价格', note: '查看 Solana 实时价格、走势图和市场数据', img: 'screenshots/okx/flows/buy-sol/04-sol-price.png', url: 'https://www.okx.com/zh-hans/price/solana-sol' },
+        { label: '购买指南', note: '查看 OKX 官方的 Solana 购买教程', img: 'screenshots/okx/flows/buy-sol/05-how-to-buy.png', url: 'https://www.okx.com/zh-hans/how-to-buy/solana-sol' },
+        { label: '快捷买币入口', note: '通用快捷买币页面，可切换任意币种', img: 'screenshots/okx/flows/buy-sol/06-quick-buy.png', url: 'https://www.okx.com/zh-hans/buy-crypto' },
+        { label: 'SOL/USDT 现货交易', note: '专业交易界面，K线图 + 订单簿 + 下单', img: 'screenshots/okx/flows/buy-sol/07-trade-sol.png', url: 'https://www.okx.com/zh-hans/trade-spot/sol-usdt' }
+      ]
+    },
+    {
+      id: 'okx-web-spot-trade', exchange: 'okx', platform: 'Web', module: 'Trade', title: '现货交易 BTC/USDT',
+      desc: '从首页进入现货交易页面，选择 BTC/USDT 交易对，查看 K 线行情后完成现货买入。',
+      steps: [
+        { label: 'OKX 首页', note: '点击顶部「交易」导航', img: 'screenshots/okx/flows/spot-trade/01-homepage.png', url: 'https://www.okx.com/zh-hans' },
+        { label: '现货交易页', note: '进入 BTC/USDT 默认交易页', img: 'screenshots/okx/flows/spot-trade/02-spot-overview.png', url: 'https://www.okx.com/zh-hans/trade-spot/btc-usdt' },
+        { label: 'K 线图区域', note: '查看实时价格走势、技术指标', img: 'screenshots/okx/flows/spot-trade/03-chart.png', url: 'https://www.okx.com/zh-hans/trade-spot/btc-usdt' },
+        { label: '订单簿', note: '查看买卖盘深度，了解市场供需', img: 'screenshots/okx/flows/spot-trade/04-orderbook.png', url: 'https://www.okx.com/zh-hans/trade-spot/btc-usdt' },
+        { label: '下单区域', note: '选择限价/市价，输入价格和数量', img: 'screenshots/okx/flows/spot-trade/05-order-entry.png', url: 'https://www.okx.com/zh-hans/trade-spot/btc-usdt' },
+        { label: '切换交易对', note: '点击搜索框可切换到其他交易对', img: 'screenshots/okx/flows/spot-trade/06-pair-switch.png', url: 'https://www.okx.com/zh-hans/trade-spot/btc-usdt' }
+      ]
+    },
+    {
+      id: 'okx-web-futures-trade', exchange: 'okx', platform: 'Web', module: 'Trade', title: '合约交易开仓',
+      desc: '进入永续合约交易页面，选择杠杆倍数和保证金模式，完成多/空方向开仓。',
+      steps: [
+        { label: 'OKX 首页', note: '点击顶部「交易」导航', img: 'screenshots/okx/flows/futures-trade/01-homepage.png', url: 'https://www.okx.com/zh-hans' },
+        { label: '合约交易页', note: '进入 BTC/USDT 永续合约', img: 'screenshots/okx/flows/futures-trade/02-futures-page.png', url: 'https://www.okx.com/zh-hans/trade-swap/btc-usdt-swap' },
+        { label: '杠杆设置', note: '点击杠杆按钮调整倍数', img: 'screenshots/okx/flows/futures-trade/03-leverage.png', url: 'https://www.okx.com/zh-hans/trade-swap/btc-usdt-swap' },
+        { label: '保证金模式', note: '选择逐仓或全仓模式', img: 'screenshots/okx/flows/futures-trade/04-margin-mode.png', url: 'https://www.okx.com/zh-hans/trade-swap/btc-usdt-swap' },
+        { label: '下单面板', note: '输入价格、数量，选择开多/开空', img: 'screenshots/okx/flows/futures-trade/05-order-panel.png', url: 'https://www.okx.com/zh-hans/trade-swap/btc-usdt-swap' },
+        { label: '持仓列表', note: '底部查看当前持仓、挂单、历史', img: 'screenshots/okx/flows/futures-trade/06-positions.png', url: 'https://www.okx.com/zh-hans/trade-swap/btc-usdt-swap' }
+      ]
+    },
+    {
+      id: 'okx-web-convert', exchange: 'okx', platform: 'Web', module: 'Trade', title: '闪兑换币',
+      desc: '通过闪兑功能零滑点完成币币兑换，无需挂单等待。',
+      steps: [
+        { label: 'OKX 首页', note: '点击顶部「交易」导航', img: 'screenshots/okx/flows/convert/01-homepage.png', url: 'https://www.okx.com/zh-hans' },
+        { label: '闪兑页面', note: '进入闪兑，选择兑换币种', img: 'screenshots/okx/flows/convert/02-convert-page.png', url: 'https://www.okx.com/zh-hans/trade-convert' },
+        { label: '选择支付币种', note: '点击选择要卖出的币种', img: 'screenshots/okx/flows/convert/03-from-coin.png', url: 'https://www.okx.com/zh-hans/trade-convert' },
+        { label: '选择收到币种', note: '点击选择要买入的币种', img: 'screenshots/okx/flows/convert/04-to-coin.png', url: 'https://www.okx.com/zh-hans/trade-convert' },
+        { label: '确认兑换', note: '查看汇率后点击兑换按钮', img: 'screenshots/okx/flows/convert/05-confirm.png', url: 'https://www.okx.com/zh-hans/trade-convert' }
+      ]
+    },
+    {
+      id: 'okx-web-earn', exchange: 'okx', platform: 'Web', module: 'Earn', title: '赚币申购（简单赚币）',
+      desc: '进入赚币板块，浏览理财产品，选择一个简单赚币产品进行申购。',
+      steps: [
+        { label: 'OKX 首页', note: '点击顶部「金融」导航', img: 'screenshots/okx/flows/earn/01-homepage.png', url: 'https://www.okx.com/zh-hans' },
+        { label: '赚币总览', note: '查看各类赚币产品和当前推荐', img: 'screenshots/okx/flows/earn/02-earn-overview.png', url: 'https://www.okx.com/zh-hans/earn' },
+        { label: '简单赚币列表', note: '浏览可申购的活期/定期产品', img: 'screenshots/okx/flows/earn/03-simple-earn.png', url: 'https://www.okx.com/zh-hans/earn/simple-earn' },
+        { label: '链上赚币', note: '查看去中心化赚币选项', img: 'screenshots/okx/flows/earn/04-onchain-earn.png', url: 'https://www.okx.com/zh-hans/earn/onchain-earn' },
+        { label: '双币赢', note: '结构化产品，设定目标价赚取收益', img: 'screenshots/okx/flows/earn/05-dual.png', url: 'https://www.okx.com/zh-hans/earn/dual' },
+        { label: '闪赚', note: '短期高收益闪赚产品', img: 'screenshots/okx/flows/earn/06-flash-earn.png', url: 'https://www.okx.com/zh-hans/earn/flash-earn' }
+      ]
+    },
+    {
+      id: 'okx-web-copy-trade', exchange: 'okx', platform: 'Web', module: 'Copy Trading', title: '跟单交易',
+      desc: '浏览精英交易员排行，选择一位交易员进行合约或现货跟单。',
+      steps: [
+        { label: 'OKX 首页', note: '点击顶部「交易」导航找到跟单入口', img: 'screenshots/okx/flows/copy-trade/01-homepage.png', url: 'https://www.okx.com/zh-hans' },
+        { label: '跟单首页', note: '浏览顶级交易员排行榜', img: 'screenshots/okx/flows/copy-trade/02-copy-landing.png', url: 'https://www.okx.com/zh-hans/copy-trading' },
+        { label: '现货跟单', note: '切换到现货跟单，查看现货交易员', img: 'screenshots/okx/flows/copy-trade/03-spot-copy.png', url: 'https://www.okx.com/zh-hans/copy-trading/spot' },
+        { label: '精英交易员招募', note: '成为精英交易员的申请入口', img: 'screenshots/okx/flows/copy-trade/04-elite-recruit.png', url: 'https://www.okx.com/zh-hans/copy-trading/trader-recruitment' },
+        { label: '选择交易员', note: '回到列表选择一位交易员跟单', img: 'screenshots/okx/flows/copy-trade/05-back-to-list.png', url: 'https://www.okx.com/zh-hans/copy-trading' }
+      ]
+    },
+    {
+      id: 'okx-web-deposit', exchange: 'okx', platform: 'Web', module: 'Assets', title: '充值加密货币',
+      desc: '从外部钱包或交易所向 OKX 账户充入加密货币。',
+      steps: [
+        { label: 'OKX 首页', note: '点击右上角「充币」按钮', img: 'screenshots/okx/flows/deposit/01-homepage.png', url: 'https://www.okx.com/zh-hans' },
+        { label: '资产总览', note: '查看账户资产概览', img: 'screenshots/okx/flows/deposit/02-assets-overview.png', url: 'https://www.okx.com/zh-hans/balance/overview' },
+        { label: '充币页面', note: '选择要充值的加密货币', img: 'screenshots/okx/flows/deposit/03-deposit-page.png', url: 'https://www.okx.com/zh-hans/balance/recharge' },
+        { label: '选择充值网络', note: '选择链/网络，获取充值地址', img: 'screenshots/okx/flows/deposit/04-deposit-chain.png', url: 'https://www.okx.com/zh-hans/balance/recharge' },
+        { label: '提币页面', note: '如需提币，可切换到提币标签', img: 'screenshots/okx/flows/deposit/05-withdraw.png', url: 'https://www.okx.com/zh-hans/balance/withdrawal' }
+      ]
+    },
+    {
+      id: 'okx-web-p2p-buy', exchange: 'okx', platform: 'Web', module: 'Buy Crypto', title: 'C2C/P2P 买币',
+      desc: '通过 P2P 场外交易，从认证商家处使用法币购买加密货币。',
+      steps: [
+        { label: 'OKX 首页', note: '点击顶部「买币」导航', img: 'screenshots/okx/flows/p2p-buy/01-homepage.png', url: 'https://www.okx.com/zh-hans' },
+        { label: 'P2P 交易页', note: '浏览商家列表，查看报价', img: 'screenshots/okx/flows/p2p-buy/02-p2p-page.png', url: 'https://www.okx.com/zh-hans/p2p' },
+        { label: 'P2P 市场', note: '更多商家和交易对选择', img: 'screenshots/okx/flows/p2p-buy/03-p2p-market.png', url: 'https://www.okx.com/zh-hans/p2p-markets' },
+        { label: '认证商家申请', note: '成为 P2P 认证商家的入口', img: 'screenshots/okx/flows/p2p-buy/04-merchant-apply.png', url: 'https://www.okx.com/zh-hans/p2p/advertiser' },
+        { label: '返回快捷买币', note: '也可通过快捷买币完成购买', img: 'screenshots/okx/flows/p2p-buy/05-quick-buy.png', url: 'https://www.okx.com/zh-hans/buy-crypto' }
+      ]
+    },
+    {
+      id: 'okx-web-trading-bot', exchange: 'okx', platform: 'Web', module: 'Trade', title: '策略交易（网格机器人）',
+      desc: '使用 OKX 智能策略交易工具，创建自动化网格交易机器人。',
+      steps: [
+        { label: 'OKX 首页', note: '点击顶部「交易」导航', img: 'screenshots/okx/flows/trading-bot/01-homepage.png', url: 'https://www.okx.com/zh-hans' },
+        { label: '策略交易首页', note: '查看各种策略类型和推荐', img: 'screenshots/okx/flows/trading-bot/02-bot-landing.png', url: 'https://www.okx.com/zh-hans/trading-bot' },
+        { label: '策略类型介绍', note: '了解网格、DCA、套利等策略', img: 'screenshots/okx/flows/trading-bot/03-bot-scroll.png', url: 'https://www.okx.com/zh-hans/trading-bot' },
+        { label: '更多策略', note: '查看全部可用策略和历史表现', img: 'screenshots/okx/flows/trading-bot/04-bot-more.png', url: 'https://www.okx.com/zh-hans/trading-bot' },
+        { label: '现货网格', note: '在现货交易页创建网格策略', img: 'screenshots/okx/flows/trading-bot/05-bot-spot.png', url: 'https://www.okx.com/zh-hans/trade-spot/btc-usdt' }
+      ]
+    },
     {
       id: 'bn-ios-onboard', exchange: 'binance', platform: 'iOS', module: 'Profile', title: 'New User Onboarding',
       desc: 'Complete registration and KYC verification flow for new Binance users on iOS.',
@@ -1854,6 +2167,225 @@
     return c;
   }
 
+  function getScreenName(s) { return typeof s === 'object' ? s.n : s; }
+  function getScreenImg(s) { return typeof s === 'object' ? s.f : null; }
+
+  function getNodeScreens(path) {
+    const data = IA_DATA[iaCurrentEx]?.[iaCurrentPlat];
+    if (!data) return [];
+    const parts = path.split('/');
+    let node = data[parts[0]];
+    if (!node) return [];
+    if (parts.length > 1 && node.children) node = node.children[parts[1]];
+    if (!node) return [];
+    return node.screens || [];
+  }
+
+  function createWebFrameImg(label, imgSrc) {
+    return `<div class="web-frame-img" onclick="openScLightbox('${imgSrc.replace(/'/g,"\\'")}','${label.replace(/'/g,"\\'")}')">
+      <div class="browser-bar"><span class="bdr"></span><span class="bdy"></span><span class="bdg"></span></div>
+      <img src="screenshots/okx/${encodeURIComponent(imgSrc)}" alt="${label}" loading="lazy" onerror="this.parentElement.style.display='none'">
+    </div>`;
+  }
+
+  // Lightbox gallery state
+  let scLbGallery = []; // [{src, title}]
+  let scLbIndex = 0;
+
+  function openScLightbox(file, title, gallery) {
+    // gallery is optional array of {src, title}
+    if (gallery && gallery.length > 0) {
+      scLbGallery = gallery;
+      scLbIndex = gallery.findIndex(g => g.src === file);
+      if (scLbIndex < 0) scLbIndex = 0;
+    } else {
+      scLbGallery = [{ src: file, title: title }];
+      scLbIndex = 0;
+    }
+    scLbShow();
+  }
+
+  function scLbShow() {
+    const item = scLbGallery[scLbIndex];
+    if (!item) return;
+    lbResetZoom();
+    const lb = document.getElementById('scLightbox');
+    const img = document.getElementById('scLightboxImg');
+    img.src = item.src.startsWith('screenshots/') ? item.src : ('screenshots/okx/' + encodeURIComponent(item.src));
+    document.getElementById('scLightboxTitle').textContent = item.title;
+    const counter = document.getElementById('scLbCounter');
+    const prevBtn = document.getElementById('scLbPrev');
+    const nextBtn = document.getElementById('scLbNext');
+    if (scLbGallery.length > 1) {
+      counter.textContent = (scLbIndex + 1) + ' / ' + scLbGallery.length;
+      counter.style.display = '';
+      prevBtn.style.display = scLbIndex > 0 ? '' : 'none';
+      nextBtn.style.display = scLbIndex < scLbGallery.length - 1 ? '' : 'none';
+    } else {
+      counter.style.display = 'none';
+      prevBtn.style.display = 'none';
+      nextBtn.style.display = 'none';
+    }
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function scLightboxNav(dir) {
+    event.stopPropagation();
+    const next = scLbIndex + dir;
+    if (next >= 0 && next < scLbGallery.length) {
+      scLbIndex = next;
+      scLbShow();
+    }
+  }
+
+  // ══════════ LIGHTBOX ZOOM ══════════
+  let lbZoom = 1;
+  let lbPanX = 0, lbPanY = 0;
+  let lbDragging = false, lbDragStartX = 0, lbDragStartY = 0, lbPanStartX = 0, lbPanStartY = 0;
+  let lbZoomLevelTimer = null;
+
+  function lbResetZoom() {
+    lbZoom = 1; lbPanX = 0; lbPanY = 0;
+    const wrap = document.getElementById('scLbWrap');
+    const img = document.getElementById('scLightboxImg');
+    if (wrap) { wrap.classList.remove('zoomed', 'dragging'); }
+    if (img) { img.style.transform = ''; }
+    document.getElementById('scLbZoomLevel')?.classList.remove('visible');
+  }
+
+  function lbApplyTransform() {
+    const img = document.getElementById('scLightboxImg');
+    const wrap = document.getElementById('scLbWrap');
+    if (!img) return;
+    if (lbZoom <= 1) {
+      lbZoom = 1; lbPanX = 0; lbPanY = 0;
+      img.style.transform = '';
+      wrap?.classList.remove('zoomed');
+    } else {
+      img.style.transform = `scale(${lbZoom}) translate(${lbPanX / lbZoom}px, ${lbPanY / lbZoom}px)`;
+      wrap?.classList.add('zoomed');
+    }
+    // Show zoom level indicator
+    const zl = document.getElementById('scLbZoomLevel');
+    if (zl) {
+      zl.textContent = Math.round(lbZoom * 100) + '%';
+      zl.classList.add('visible');
+      clearTimeout(lbZoomLevelTimer);
+      lbZoomLevelTimer = setTimeout(() => zl.classList.remove('visible'), 1200);
+    }
+  }
+
+  // Pinch-to-zoom + two-finger pan
+  document.getElementById('scLbWrap')?.addEventListener('wheel', e => {
+    // Two-finger scroll when zoomed → pan the image
+    if (!e.ctrlKey && lbZoom > 1) {
+      e.preventDefault();
+      e.stopPropagation();
+      lbPanX -= e.deltaX;
+      lbPanY -= e.deltaY;
+      lbApplyTransform();
+      return;
+    }
+    if (!e.ctrlKey) return; // not zoomed, let normal scroll pass through
+    e.preventDefault();
+    e.stopPropagation();
+    const delta = e.deltaY > 0 ? -0.015 : 0.015;
+    const newZoom = Math.min(4, Math.max(1, lbZoom + delta * lbZoom));
+    if (newZoom <= 1) { lbResetZoom(); lbApplyTransform(); return; }
+    // Zoom toward cursor position
+    const wrap = document.getElementById('scLbWrap');
+    const rect = wrap.getBoundingClientRect();
+    const cx = e.clientX - rect.left - rect.width / 2;
+    const cy = e.clientY - rect.top - rect.height / 2;
+    const ratio = newZoom / lbZoom;
+    lbPanX = cx - ratio * (cx - lbPanX);
+    lbPanY = cy - ratio * (cy - lbPanY);
+    lbZoom = newZoom;
+    lbApplyTransform();
+  }, { passive: false });
+
+  // Double-click to toggle zoom
+  document.getElementById('scLbWrap')?.addEventListener('dblclick', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (lbZoom > 1) {
+      lbResetZoom();
+      lbApplyTransform();
+    } else {
+      // Zoom to 2x centered on click point
+      const wrap = document.getElementById('scLbWrap');
+      const rect = wrap.getBoundingClientRect();
+      const cx = e.clientX - rect.left - rect.width / 2;
+      const cy = e.clientY - rect.top - rect.height / 2;
+      lbZoom = 2;
+      lbPanX = -cx; // offset so click point stays centered
+      lbPanY = -cy;
+      lbApplyTransform();
+    }
+  });
+
+  // Drag to pan when zoomed
+  document.getElementById('scLbWrap')?.addEventListener('mousedown', e => {
+    if (lbZoom <= 1) return;
+    e.preventDefault();
+    lbDragging = true;
+    lbDragStartX = e.clientX;
+    lbDragStartY = e.clientY;
+    lbPanStartX = lbPanX;
+    lbPanStartY = lbPanY;
+    document.getElementById('scLbWrap')?.classList.add('dragging');
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!lbDragging) return;
+    lbPanX = lbPanStartX + (e.clientX - lbDragStartX);
+    lbPanY = lbPanStartY + (e.clientY - lbDragStartY);
+    lbApplyTransform();
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (lbDragging) {
+      lbDragging = false;
+      document.getElementById('scLbWrap')?.classList.remove('dragging');
+    }
+  });
+
+  function scLightboxBgClick(e) {
+    // Close only when clicking the dark background (not the image/wrap)
+    if (e.target === e.currentTarget) {
+      if (lbZoom > 1) { lbResetZoom(); lbApplyTransform(); return; }
+      closeScLightbox();
+    }
+  }
+
+  function closeScLightbox() {
+    lbResetZoom();
+    document.getElementById('scLightbox').classList.remove('open');
+    document.body.style.overflow = '';
+    scLbGallery = [];
+  }
+
+  document.addEventListener('keydown', e => {
+    if (!document.getElementById('scLightbox').classList.contains('open')) return;
+    if (e.key === 'Escape') {
+      if (lbZoom > 1) { lbResetZoom(); lbApplyTransform(); }
+      else closeScLightbox();
+    }
+    else if (e.key === 'ArrowLeft' && lbZoom <= 1) scLightboxNav(-1);
+    else if (e.key === 'ArrowRight' && lbZoom <= 1) scLightboxNav(1);
+    else if (e.key === '0' || e.key === 'r') { lbResetZoom(); lbApplyTransform(); }
+    else if (e.key === '+' || e.key === '=') {
+      lbZoom = Math.min(4, lbZoom * 1.15);
+      lbApplyTransform();
+    }
+    else if (e.key === '-') {
+      lbZoom = Math.max(1, lbZoom / 1.15);
+      if (lbZoom <= 1) { lbResetZoom(); }
+      lbApplyTransform();
+    }
+  });
+
   function renderIaTree() {
     const tree = document.getElementById('iaTree');
     const data = IA_DATA[iaCurrentEx]?.[iaCurrentPlat];
@@ -1907,15 +2439,56 @@
       f.platform === platLabel &&
       (f.module === path || f.module.startsWith(path + '/') || (parts.length === 1 && f.module.split('/')[0] === parts[0]))
     );
+    // Get all screens for this node (including children screens)
+    const nodeScreens = getNodeScreens(path);
+    const hasImages = nodeScreens.length > 0 && getScreenImg(nodeScreens[0]);
+
+    // Also gather children screens if viewing a parent node
+    let allScreens = [...nodeScreens];
+    const data = IA_DATA[iaCurrentEx]?.[iaCurrentPlat];
+    if (data && parts.length === 1 && data[parts[0]]?.children) {
+      Object.entries(data[parts[0]].children).forEach(([ck, cv]) => {
+        if (cv.screens) allScreens = allScreens.concat(cv.screens);
+      });
+    }
+
+    const totalScreens = allScreens.filter(s => getScreenImg(s)).length;
+
     document.getElementById('iaMainTitle').textContent = path.replace('/', ' > ');
-    document.getElementById('iaMainMeta').textContent = flows.length + (flows.length === 1 ? ' flow' : ' flows');
+    const screenLabel = totalScreens > 0 ? totalScreens + ' screens' : '';
+    const flowLabel = flows.length > 0 ? flows.length + (flows.length === 1 ? ' flow' : ' flows') : '';
+    document.getElementById('iaMainMeta').textContent = [screenLabel, flowLabel].filter(Boolean).join(' · ');
+
     const container = document.getElementById('iaScreenshots');
-    if (flows.length === 0) {
-      container.innerHTML = '<div style="color:var(--t3);font-size:14px;padding:24px 0">No user flows captured for this section yet</div>';
+
+    // Render real screenshots if available
+    let screensHtml = '';
+    if (hasImages || allScreens.some(s => getScreenImg(s))) {
+      const screensToShow = allScreens.filter(s => getScreenImg(s));
+      const iaGalleryJson = JSON.stringify(screensToShow.map(s => ({src: 'screenshots/okx/' + getScreenImg(s), title: getScreenName(s)}))).replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+      screensHtml = `<div class="ia-screenshots-grid">${screensToShow.map((s, idx) =>
+        `<div class="sc-card"><div class="web-frame-img" onclick="openScLightbox('screenshots/okx/${getScreenImg(s).replace(/'/g,"\\'")}','${getScreenName(s).replace(/'/g,"\\'")}',JSON.parse(this.closest('.ia-screenshots-grid').dataset.gallery))">
+          <div class="browser-bar"><span class="bdr"></span><span class="bdy"></span><span class="bdg"></span></div>
+          <img src="screenshots/okx/${encodeURIComponent(getScreenImg(s))}" alt="${getScreenName(s)}" loading="lazy" onerror="this.parentElement.style.display='none'">
+        </div><div class="sc-label">${getScreenName(s)}</div></div>`
+      ).join('')}</div>`;
+      // Inject gallery data attribute
+      screensHtml = screensHtml.replace('class="ia-screenshots-grid"', `class="ia-screenshots-grid" data-gallery="${iaGalleryJson}"`);
+    }
+
+    if (flows.length === 0 && !screensHtml) {
+      container.innerHTML = '<div style="color:var(--t3);font-size:14px;padding:24px 0">No screens or flows captured for this section yet</div>';
       return;
     }
-    container.innerHTML = '<div class="flow-list" style="width:100%">' + flows.map(f =>
-      `<div class="flow-card">
+
+    // Build combined output: screenshots grid + flows
+    let html = screensHtml;
+    if (flows.length > 0) {
+      if (screensHtml) html += '<div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--ele-border);overflow:hidden;max-width:100%"><div style="font-size:14px;font-weight:600;color:var(--t2);margin-bottom:16px">User Flows</div>';
+      html += '<div class="flow-list" style="width:100%">' + flows.map(f => {
+        const flowGallery = f.steps.filter(s => s.img).map(s => ({src: s.img, title: s.label}));
+        const galleryJson = JSON.stringify(flowGallery).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+        return `<div class="flow-card">
         <div class="flow-card-header" onclick="toggleFlow('${f.id}')">
           <span class="flow-title">${f.title}</span>
           <div class="flow-meta">
@@ -1929,16 +2502,25 @@
             ${f.steps.map((s, i) => `
               <div class="flow-step">
                 <div class="step-number">${i + 1}</div>
-                ${isWeb ? createWebFrame(s.label, color) : createPhoneFrame(s.label, color)}
-                <div class="step-label">${s.label}</div>
+                ${s.img
+                  ? `<div class="step-web-img" onclick="openScLightbox('${s.img}','${s.label.replace(/'/g,"\\'")}',${JSON.stringify(flowGallery).replace(/"/g,'&quot;')})">
+                      <div class="browser-bar"><span style="background:var(--red-700)"></span><span style="background:var(--brand-700)"></span><span style="background:var(--green-700)"></span></div>
+                      <img src="${s.img}" alt="${s.label}" loading="lazy">
+                    </div>`
+                  : (isWeb ? createWebFrame(s.label, color) : createPhoneFrame(s.label, color))
+                }
+                <div class="step-label">${s.label}${s.url ? ` <a href="${s.url}" target="_blank" rel="noopener" class="step-link-icon" title="打开页面" onclick="event.stopPropagation()">↗</a>` : ''}</div>
                 <div class="step-note">${s.note}</div>
               </div>
               ${i < f.steps.length - 1 ? '<div class="flow-arrow">&#8594;</div>' : ''}
             `).join('')}
           </div>
         </div>
-      </div>`
-    ).join('') + '</div>';
+      </div>`;
+      }).join('') + '</div>';
+      if (screensHtml) html += '</div>';
+    }
+    container.innerHTML = html;
   }
 
   // IA filter event listeners
@@ -1950,6 +2532,12 @@
       document.querySelectorAll('#iaExTabs .filter-chip[data-ex]').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       iaCurrentEx = chip.dataset.ex;
+      // Auto-switch to Web platform for OKX (has real screenshots)
+      if (chip.dataset.ex === 'okx') {
+        document.querySelectorAll('#iaExTabs .ia-plat-chip').forEach(c => c.classList.remove('active'));
+        document.querySelector('#iaExTabs .ia-plat-chip[data-plat="web"]').classList.add('active');
+        iaCurrentPlat = 'web';
+      }
       renderIaTree();
     } else if (chip.dataset.plat) {
       // Platform chip — single select
@@ -1972,19 +2560,69 @@
   let compareModule = 'Trade';
   let compareSub = 'Spot';
 
-  function renderCompare() {
-    // Module chips
-    const mc = document.getElementById('compareModules');
-    mc.innerHTML = Object.keys(MODULES).map(m =>
-      `<button class="compare-chip${m === compareModule ? ' active' : ''}" data-mod="${m}">${m}</button>`
-    ).join('');
-    // Sub chips
-    const sc = document.getElementById('compareSubs');
-    const subs = MODULES[compareModule] || [];
-    sc.innerHTML = subs.map(s =>
-      `<button class="compare-sub-chip${s === compareSub ? ' active' : ''}" data-sub="${s}">${s}</button>`
-    ).join('');
-    // Rows — one per exchange
+  function getCompareScreenCount(mod, sub) {
+    const exchanges = ['binance', 'okx', 'bitget', 'coinbase'];
+    let total = 0;
+    for (const ex of exchanges) {
+      const data = IA_DATA[ex]?.ios;
+      if (!data) continue;
+      const m = data[mod];
+      if (!m) continue;
+      if (sub) {
+        if (m.children?.[sub]) total += (m.children[sub].screens || []).length;
+      } else {
+        if (m.screens) total += m.screens.length;
+        else if (m.children) {
+          for (const c of Object.values(m.children)) total += (c.screens || []).length;
+        }
+      }
+    }
+    return total;
+  }
+
+  function renderCompareTree() {
+    const tree = document.getElementById('compareTree');
+    let html = '';
+    for (const [mod, subs] of Object.entries(MODULES)) {
+      const hasSubs = subs.length > 0;
+      const modCount = getCompareScreenCount(mod);
+      const isModActive = mod === compareModule && !compareSub;
+      const isModExpanded = mod === compareModule;
+
+      if (hasSubs) {
+        html += `<div class="tree-label${isModExpanded ? '' : ''}" data-cmp-mod="${mod}" data-cmp-toggle="${mod}">
+          <span class="tree-arrow${isModExpanded ? ' expanded' : ''}" data-cmp-arrow="${mod}">&#9654;</span>
+          <span style="flex:1">${mod}</span>
+          <span class="tree-count">${modCount}</span>
+        </div>`;
+        html += `<div class="tree-children${isModExpanded ? ' open' : ''}" id="cmp-tc-${mod}">`;
+        for (const sub of subs) {
+          const subCount = getCompareScreenCount(mod, sub);
+          const isSubActive = mod === compareModule && sub === compareSub;
+          html += `<div class="tree-label${isSubActive ? ' active' : ''}" data-cmp-mod="${mod}" data-cmp-sub="${sub}">
+            <span style="width:14px"></span>
+            <span style="flex:1">${sub}</span>
+            <span class="tree-count">${subCount}</span>
+          </div>`;
+        }
+        html += '</div>';
+      } else {
+        html += `<div class="tree-label${isModActive ? ' active' : ''}" data-cmp-mod="${mod}">
+          <span style="width:14px"></span>
+          <span style="flex:1">${mod}</span>
+          <span class="tree-count">${modCount}</span>
+        </div>`;
+      }
+    }
+    tree.innerHTML = html;
+  }
+
+  function renderCompareMain() {
+    const title = compareSub || compareModule;
+    document.getElementById('compareMainTitle').textContent = title;
+    const totalScreens = getCompareScreenCount(compareModule, compareSub || undefined);
+    document.getElementById('compareMainMeta').textContent = totalScreens + ' screens across exchanges';
+
     const rows = document.getElementById('compareRows');
     const exchanges = ['binance', 'okx', 'bitget', 'coinbase'];
     rows.innerHTML = exchanges.map((ex, idx) => {
@@ -1992,13 +2630,23 @@
       let screens = [];
       if (data) {
         const mod = data[compareModule];
-        if (mod?.children?.[compareSub]) screens = mod.children[compareSub].screens || [];
-        else if (mod?.screens) screens = mod.screens.filter(s => s.toLowerCase().includes(compareSub.toLowerCase()) || compareSub === MODULES[compareModule]?.[0]);
-        if (screens.length === 0 && mod) {
-          if (mod.screens) screens = mod.screens.slice(0, 4);
-          else if (mod.children) {
-            const first = Object.values(mod.children)[0];
-            if (first?.screens) screens = first.screens.slice(0, 4);
+        if (mod) {
+          if (compareSub && mod.children?.[compareSub]) {
+            screens = mod.children[compareSub].screens || [];
+          } else if (compareSub && mod.screens) {
+            screens = mod.screens.filter(s => s.toLowerCase().includes(compareSub.toLowerCase()));
+          } else if (!compareSub) {
+            if (mod.screens) screens = mod.screens;
+            else if (mod.children) {
+              for (const c of Object.values(mod.children)) screens = screens.concat(c.screens || []);
+            }
+          }
+          if (screens.length === 0 && mod) {
+            if (mod.screens) screens = mod.screens.slice(0, 4);
+            else if (mod.children) {
+              const first = Object.values(mod.children)[0];
+              if (first?.screens) screens = first.screens.slice(0, 4);
+            }
           }
         }
       }
@@ -2020,17 +2668,34 @@
     }).join('');
   }
 
-  document.getElementById('compareModules').addEventListener('click', e => {
-    const chip = e.target.closest('.compare-chip');
-    if (!chip) return;
-    compareModule = chip.dataset.mod;
-    compareSub = MODULES[compareModule]?.[0] || '';
-    renderCompare();
-  });
-  document.getElementById('compareSubs').addEventListener('click', e => {
-    const chip = e.target.closest('.compare-sub-chip');
-    if (!chip) return;
-    compareSub = chip.dataset.sub;
+  function renderCompare() {
+    renderCompareTree();
+    renderCompareMain();
+  }
+
+  document.getElementById('compareTree').addEventListener('click', e => {
+    const label = e.target.closest('.tree-label');
+    if (!label) return;
+    const mod = label.dataset.cmpMod;
+    const sub = label.dataset.cmpSub;
+    const toggleKey = label.dataset.cmpToggle;
+
+    if (toggleKey && !sub) {
+      // Toggle expand/collapse
+      const children = document.getElementById('cmp-tc-' + toggleKey);
+      const arrow = label.querySelector('[data-cmp-arrow]');
+      if (children) { children.classList.toggle('open'); }
+      if (arrow) { arrow.classList.toggle('expanded'); }
+      // Select first sub
+      compareModule = mod;
+      compareSub = MODULES[mod]?.[0] || '';
+    } else if (sub) {
+      compareModule = mod;
+      compareSub = sub;
+    } else {
+      compareModule = mod;
+      compareSub = '';
+    }
     renderCompare();
   });
 
@@ -2042,6 +2707,158 @@
     detail.classList.toggle('open');
     if (toggle) toggle.classList.toggle('open');
   }
+
+  // ══════════ IA SEARCH ══════════
+  const iaSearchInput = document.getElementById('iaSearchInput');
+  const iaSearchResults = document.getElementById('iaSearchResults');
+  let iaSearchTimer = null;
+
+  function iaSearch(query) {
+    if (!query || query.length < 1) { iaSearchResults.classList.remove('open'); return; }
+    const q = query.toLowerCase();
+    const hits = { screens: [], flows: [] };
+
+    // Search all IA screens across all exchanges/platforms
+    Object.entries(IA_DATA).forEach(([ex, plats]) => {
+      Object.entries(plats).forEach(([plat, modules]) => {
+        Object.entries(modules).forEach(([modKey, mod]) => {
+          const searchScreens = (screens, path) => {
+            (screens || []).forEach(s => {
+              const name = getScreenName(s);
+              const img = getScreenImg(s);
+              if (name.toLowerCase().includes(q)) {
+                hits.screens.push({ name, img: img ? 'screenshots/okx/' + img : null, exchange: ex, platform: plat, path });
+              }
+            });
+          };
+          searchScreens(mod.screens, modKey);
+          if (mod.children) {
+            Object.entries(mod.children).forEach(([ck, cv]) => {
+              searchScreens(cv.screens, modKey + '/' + ck);
+            });
+          }
+        });
+      });
+    });
+
+    // Search all flows
+    FLOWS.forEach(f => {
+      const matchTitle = f.title.toLowerCase().includes(q);
+      const matchDesc = f.desc.toLowerCase().includes(q);
+      const matchSteps = f.steps.some(s => s.label.toLowerCase().includes(q) || s.note.toLowerCase().includes(q));
+      if (matchTitle || matchDesc || matchSteps) {
+        // Find matching steps for thumbnails
+        const matchedSteps = f.steps.filter(s => s.label.toLowerCase().includes(q) || s.note.toLowerCase().includes(q));
+        hits.flows.push({ flow: f, matchedSteps });
+      }
+    });
+
+    if (hits.screens.length === 0 && hits.flows.length === 0) {
+      iaSearchResults.innerHTML = '<div class="search-empty">没有找到匹配的结果</div>';
+      iaSearchResults.classList.add('open');
+      return;
+    }
+
+    let html = '';
+    function hl(text) { return text.replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'), '<mark>$1</mark>'); }
+
+    if (hits.flows.length > 0) {
+      html += '<div class="ia-search-section">User Flows</div>';
+      hits.flows.slice(0, 8).forEach(h => {
+        const f = h.flow;
+        const thumb = f.steps.find(s => s.img)?.img || '';
+        const exName = f.exchange.charAt(0).toUpperCase() + f.exchange.slice(1);
+        html += `<div class="ia-search-hit" data-action="flow" data-ex="${f.exchange}" data-mod="${f.module}" data-flow="${f.id}">
+          <div class="hit-thumb">${thumb ? `<img src="${thumb}" alt="">` : ''}</div>
+          <div class="hit-info">
+            <div class="hit-title">${hl(f.title)}</div>
+            <div class="hit-meta">${exName} · ${f.platform} · ${f.module} · ${f.steps.length} steps</div>
+          </div>
+        </div>`;
+      });
+    }
+
+    if (hits.screens.length > 0) {
+      html += '<div class="ia-search-section">Screens</div>';
+      hits.screens.slice(0, 10).forEach(h => {
+        const exName = h.exchange.charAt(0).toUpperCase() + h.exchange.slice(1);
+        const platMap = { ios: 'iOS', android: 'Android', web: 'Web' };
+        html += `<div class="ia-search-hit" data-action="screen" data-ex="${h.exchange}" data-plat="${h.platform}" data-path="${h.path}">
+          <div class="hit-thumb">${h.img ? `<img src="${h.img}" alt="">` : ''}</div>
+          <div class="hit-info">
+            <div class="hit-title">${hl(h.name)}</div>
+            <div class="hit-meta">${exName} · ${platMap[h.platform] || h.platform} · ${h.path}</div>
+          </div>
+        </div>`;
+      });
+    }
+
+    iaSearchResults.innerHTML = html;
+    iaSearchResults.classList.add('open');
+  }
+
+  iaSearchInput.addEventListener('input', () => {
+    clearTimeout(iaSearchTimer);
+    iaSearchTimer = setTimeout(() => iaSearch(iaSearchInput.value.trim()), 200);
+  });
+
+  iaSearchInput.addEventListener('focus', () => {
+    if (iaSearchInput.value.trim()) iaSearch(iaSearchInput.value.trim());
+  });
+
+  // Click on search result → navigate to the right place
+  iaSearchResults.addEventListener('click', e => {
+    const hit = e.target.closest('.ia-search-hit');
+    if (!hit) return;
+    const action = hit.dataset.action;
+
+    if (action === 'screen') {
+      // Switch exchange/platform, then select the node
+      const ex = hit.dataset.ex;
+      const plat = hit.dataset.plat;
+      const path = hit.dataset.path;
+      document.querySelectorAll('#iaExTabs .filter-chip[data-ex]').forEach(c => c.classList.remove('active'));
+      document.querySelector(`#iaExTabs .filter-chip[data-ex="${ex}"]`)?.classList.add('active');
+      iaCurrentEx = ex;
+      document.querySelectorAll('#iaExTabs .ia-plat-chip').forEach(c => c.classList.remove('active'));
+      document.querySelector(`#iaExTabs .ia-plat-chip[data-plat="${plat}"]`)?.classList.add('active');
+      iaCurrentPlat = plat;
+      renderIaTree();
+      selectIaNode(path);
+    } else if (action === 'flow') {
+      // Switch to the right exchange, set platform to web, navigate to the module
+      const ex = hit.dataset.ex;
+      const mod = hit.dataset.mod;
+      const flowId = hit.dataset.flow;
+      document.querySelectorAll('#iaExTabs .filter-chip[data-ex]').forEach(c => c.classList.remove('active'));
+      document.querySelector(`#iaExTabs .filter-chip[data-ex="${ex}"]`)?.classList.add('active');
+      iaCurrentEx = ex;
+      document.querySelectorAll('#iaExTabs .ia-plat-chip').forEach(c => c.classList.remove('active'));
+      document.querySelector('#iaExTabs .ia-plat-chip[data-plat="web"]')?.classList.add('active');
+      iaCurrentPlat = 'web';
+      renderIaTree();
+      selectIaNode(mod);
+      // Auto-expand the matching flow after a tick
+      setTimeout(() => {
+        const detail = document.getElementById('fd-' + flowId);
+        if (detail && !detail.classList.contains('open')) toggleFlow(flowId);
+        detail?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    }
+
+    iaSearchResults.classList.remove('open');
+    iaSearchInput.value = '';
+  });
+
+  // Close search dropdown on outside click
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.ia-search-wrap')) iaSearchResults.classList.remove('open');
+  });
+
+  // Keyboard: Escape to close search
+  iaSearchInput.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { iaSearchResults.classList.remove('open'); iaSearchInput.blur(); }
+  });
 
   // ══════════ INIT NEW VIEWS ══════════
   renderIaTree();
