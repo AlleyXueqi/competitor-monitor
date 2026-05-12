@@ -1,0 +1,140 @@
+{
+  "exchange": "okx",
+  "platform": "android",
+  "mode": "screen",
+  "flow": null,
+  "startTime": "2026-04-30T03:51:50.612Z",
+  "captures": [
+    {
+      "seq": 1,
+      "file": "001_tap.png",
+      "timestamp": "2026-04-30T03:52:05.589Z",
+      "context": {
+        "activity": "com.okinc.okex.gp/com.okinc.assets.feature.deposit.DepositActivity",
+        "package": "unknown",
+        "trigger": "tap"
+      }
+    },
+    {
+      "seq": 2,
+      "file": "002_tap.png",
+      "timestamp": "2026-04-30T03:52:15.293Z",
+      "context": {
+        "activity": "com.okinc.okex.gp/com.okinc.assets.feature.deposit.DepositActivity",
+        "package": "unknown",
+        "trigger": "tap"
+      }
+    },
+    {
+      "seq": 3,
+      "file": "003_tap.png",
+      "timestamp": "2026-04-30T03:52:51.563Z",
+      "context": {
+        "activity": "com.okinc.okex.gp/com.okinc.assets.feature.deposit.DepositActivity",
+        "package": "unknown",
+        "trigger": "tap"
+      }
+    },
+    {
+      "seq": 4,
+      "file": "004_tap.png",
+      "timestamp": "2026-04-30T03:52:57.625Z",
+      "context": {
+        "activity": "com.okinc.okex.gp/com.okinc.assets.feature.deposit.DepositActivity",
+        "package": "unknown",
+        "trigger": "tap"
+      }
+    },
+    {
+      "seq": 5,
+      "file": "005_tap.png",
+      "timestamp": "2026-04-30T03:53:01.894Z",
+      "context": {
+        "activity": "com.okinc.okex.gp/com.okinc.assets.feature.deposit.DepositActivity",
+        "package": "unknown",
+        "trigger": "tap"
+      }
+    },
+    {
+      "seq": 6,
+      "file": "006_tap.png",
+      "timestamp": "2026-04-30T03:53:47.729Z",
+      "context": {
+        "activity": "com.okinc.okex.gp/com.okinc.core.ok_app.homepage.pro.MainActivity",
+        "package": "unknown",
+        "trigger": "tap"
+      }
+    },
+    {
+      "seq": 7,
+      "file": "007_tap.png",
+      "timestamp": "2026-04-30T03:53:52.105Z",
+      "context": {
+        "activity": "com.okinc.okex.gp/o.vcY",
+        "package": "unknown",
+        "trigger": "tap"
+      }
+    },
+    {
+      "seq": 8,
+      "file": "008_tap.png",
+      "timestamp": "2026-04-30T03:53:55.188Z",
+      "context": {
+        "activity": "com.okinc.okex.gp/com.okinc.core.ok_app.homepage.pro.MainActivity",
+        "package": "unknown",
+        "trigger": "tap"
+      }
+    },
+    {
+      "seq": 9,
+      "file": "009_tap.png",
+      "timestamp": "2026-04-30T03:53:58.769Z",
+      "context": {
+        "activity": "com.okinc.okex.gp/com.okinc.core.ok_app.homepage.pro.MainActivity",
+        "package": "unknown",
+        "trigger": "tap"
+      }
+    },
+    {
+      "seq": 10,
+      "file": "010_tap.png",
+      "timestamp": "2026-04-30T03:54:02.843Z",
+      "context": {
+        "activity": "com.okinc.okex.gp/com.okinc.core.ok_app.homepage.pro.MainActivity",
+        "package": "unknown",
+        "trigger": "tap"
+      }
+    },
+    {
+      "seq": 11,
+      "file": "011_tap.png",
+      "timestamp": "2026-04-30T03:54:05.963Z",
+      "context": {
+        "activity": "com.okinc.okex.gp/com.okinc.core.ok_app.homepage.pro.MainActivity",
+        "package": "unknown",
+        "trigger": "tap"
+      }
+    },
+    {
+      "seq": 12,
+      "file": "012_tap.png",
+      "timestamp": "2026-04-30T03:54:22.118Z",
+      "context": {
+        "activity": "com.okinc.okex.gp/com.okinc.core.ok_app.homepage.pro.MainActivity",
+        "package": "unknown",
+        "trigger": "tap"
+      }
+    },
+    {
+      "seq": 13,
+      "file": "013_tap.png",
+      "timestamp": "2026-04-30T03:54:35.188Z",
+      "context": {
+        "activity": "com.okinc.okex.gp/com.okinc.core.ok_app.homepage.pro.MainActivity",
+        "package": "unknown",
+        "trigger": "tap"
+      }
+    }
+  ],
+  "failures": []
+}

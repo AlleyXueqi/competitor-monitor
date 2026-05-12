@@ -415,7 +415,7 @@
 
   .section-content { display: none; }
   .section-content.active { display: block; }
-  #section-products.active, #section-compare.active { display: flex; flex-direction: column; height: calc(100vh - 56px); overflow: hidden; }
+  #section-products.active, #section-flows.active { display: flex; flex-direction: column; }
 
   /* ══════════ EXCHANGE CARDS ══════════ */
   .exchange-card {
@@ -498,6 +498,18 @@
     margin-right: 8px;
   }
   .card-item-text strong { font-weight: 600; }
+  .card-item-text .src-link {
+    display: inline-block;
+    color: var(--brand-700);
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 6px;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+    vertical-align: middle;
+  }
+  .card-item-text .src-link:hover { opacity: 1; text-decoration: underline; }
   .card-item-text .detail-line {
     display: block;
     font-size: 12px;
@@ -656,7 +668,7 @@
 
   /* ══════════ MOCK PHONE FRAME ══════════ */
   .phone-frame {
-    width: 160px; height: 284px;
+    width: 150px; height: 284px;
     border-radius: var(--radius-l); background: #1A1B1F;
     border: 1px solid var(--ele-border); overflow: hidden;
     flex-shrink: 0; position: relative; cursor: pointer;
@@ -717,27 +729,51 @@
   .ia-screenshots-grid {
     display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%;
   }
+  .ia-screenshots-grid.app-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px;
+  }
   .sc-card { display: flex; flex-direction: column; gap: 8px; }
   .sc-card .sc-label { font-size: 12px; color: var(--t2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ══════════ APP SCREENSHOT THUMBNAIL ══════════ */
+  .app-thumb-img {
+    width: 100%; flex-shrink: 0; cursor: pointer;
+    border-radius: var(--radius-l); border: 1px solid var(--ele-border);
+    overflow: hidden; transition: border-color 0.15s, transform 0.15s; background: #111;
+  }
+  .app-thumb-img:hover { border-color: var(--brand-700); transform: translateY(-2px); }
+  .app-thumb-img img {
+    width: 100%; aspect-ratio: 9/19.5; object-fit: cover; object-position: top; display: block;
+  }
 
   /* Screenshot lightbox */
   .sc-lightbox {
     display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92);
     z-index: 600; align-items: center; justify-content: center; padding: 40px 20px;
   }
-  .sc-lightbox.open { display: flex; }
+  .sc-lightbox.open { display: flex; overscroll-behavior: contain; }
+  .sc-lightbox.zoomed-active {
+    overflow: auto; padding: 0; cursor: grab;
+    align-items: flex-start; justify-content: flex-start;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .sc-lightbox.zoomed-active::-webkit-scrollbar { display: none; }
+  .sc-lightbox.zoomed-active.lb-dragging { cursor: grabbing; }
   .sc-lightbox-img-wrap {
     position: relative; overflow: hidden; max-width: 900px; max-height: calc(100vh - 120px);
     border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); cursor: zoom-in;
     display: flex; align-items: center; justify-content: center;
   }
-  .sc-lightbox-img-wrap.zoomed { cursor: grab; max-width: none; max-height: none; overflow: visible; }
-  .sc-lightbox-img-wrap.zoomed.dragging { cursor: grabbing; }
+  .sc-lightbox-img-wrap.zoomed {
+    max-width: none; max-height: none; overflow: visible;
+    border-radius: 0; box-shadow: none; flex-shrink: 0;
+    display: block;
+  }
   .sc-lightbox-img-wrap img {
     max-width: 900px; max-height: calc(100vh - 120px); width: auto; object-fit: contain;
-    transition: transform 0.2s ease; transform-origin: center center; user-select: none; -webkit-user-drag: none;
+    user-select: none; -webkit-user-drag: none;
   }
-  .sc-lightbox-img-wrap.zoomed img { max-width: none; max-height: none; transition: none; }
+  .sc-lightbox-img-wrap.zoomed img { max-width: none; max-height: none; }
   .sc-lightbox-zoom-hint {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
     font-size: 11px; color: var(--t3); background: rgba(0,0,0,0.7);
@@ -780,14 +816,15 @@
 
   /* ══════════ PRODUCTS — IA TREE VIEW ══════════ */
   .products-layout {
-    display: flex; gap: 0; flex: 1; overflow: hidden; min-height: 0;
+    display: flex; gap: 0; flex: 1; min-height: 0;
   }
   .ia-sidebar {
     width: 240px; flex-shrink: 0;
-    padding: 0 24px 0 0; overflow-y: auto; height: 100%;
+    padding: 0 24px 0 0; overflow-y: auto;
     border-right: 1px solid var(--ele-border);
+    position: sticky; top: 110px; height: calc(100vh - 110px); align-self: flex-start;
   }
-  .ia-top-filters { margin-bottom: 0; padding: 24px 0; }
+  .ia-top-filters { margin-bottom: 0; padding: 16px 0; position: sticky; top: 56px; z-index: 110; background: var(--bg-page); border-bottom: 1px solid var(--ele-border); }
   .ia-search-wrap {
     position: relative; flex-shrink: 0; margin-left: auto;
   }
@@ -850,7 +887,7 @@
   .tree-label .tree-count { margin-left: auto; font-size: 11px; color: var(--t3); font-weight: 400; }
   .tree-children { display: none; padding-left: 14px; }
   .tree-children.open { display: block; }
-  .ia-main { flex: 1; padding: 0 0 0 0; overflow-y: auto; overflow-x: hidden; height: 100%; min-width: 0; }
+  .ia-main { flex: 1; padding: 0 0 0 0; overflow-x: hidden; min-width: 0; }
   .ia-main-inner { padding: 24px 0 0 40px; }
   .ia-main-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
   .ia-main-title { font-size: 22px; font-weight: 600; color: var(--t1); }
@@ -858,6 +895,12 @@
   .ia-screenshots { display: block; width: 100%; max-width: 100%; overflow: hidden; }
   .screenshot-card { display: flex; flex-direction: column; gap: 10px; }
   .screenshot-card .sc-title { font-size: 12px; color: var(--t2); max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ══════════ SECTION BLOCKS (scroll-spy) ══════════ */
+  .ia-section-block { padding: 32px 0 32px 40px; border-bottom: 1px solid var(--ele-border); scroll-margin-top: 120px; }
+  .ia-section-block:last-child { border-bottom: none; padding-bottom: 50vh; }
+  .ia-section-block .section-block-title { font-size: 20px; font-weight: 600; color: var(--t1); margin-bottom: 4px; }
+  .ia-section-block .section-block-meta { font-size: 13px; color: var(--t3); margin-bottom: 20px; }
 
   /* ══════════ COMPARE VIEW ══════════ */
   .compare-rows { display: flex; flex-direction: column; gap: 32px; }
@@ -911,18 +954,21 @@
   .flow-steps::-webkit-scrollbar { height: 4px; }
   .flow-steps::-webkit-scrollbar-thumb { background: var(--t4); border-radius: 2px; }
   .flow-step { display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; }
+  .flow-step.app-step { width: 150px; }
   .flow-step .step-number {
     font-size: 10px; font-weight: 600; color: var(--brand-700); background: var(--brand-100);
     width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
   }
   .flow-step .step-label { font-size: 11px; color: var(--t2); text-align: center; max-width: 240px; }
+  .flow-step.app-step .step-label { max-width: 150px; }
   .flow-step .step-label .step-link-icon {
     display: inline-block; color: var(--brand-700); text-decoration: none; font-size: 12px; font-weight: 600;
     margin-left: 2px; opacity: 0.7; transition: opacity 0.15s;
   }
   .flow-step .step-label .step-link-icon:hover { opacity: 1; }
   .flow-step .step-note { font-size: 10px; color: var(--t3); text-align: center; max-width: 240px; line-height: 1.3; }
-  .flow-arrow { display: flex; align-items: center; color: var(--t3); font-size: 16px; flex-shrink: 0; padding: 0 6px; margin-top: 80px; }
+  .flow-step.app-step .step-note { max-width: 150px; }
+  .flow-arrow { display: flex; align-items: center; color: var(--t3); font-size: 16px; flex-shrink: 0; padding: 0 6px; align-self: center; }
 
   /* Flow step with real screenshot */
   .flow-step .step-web-img {
@@ -935,6 +981,14 @@
   }
   .flow-step .step-web-img .browser-bar span { width: 5px; height: 5px; border-radius: 50%; }
   .flow-step .step-web-img img { width: 100%; height: 148px; object-fit: cover; object-position: top; display: block; }
+
+  /* Flow step with app screenshot */
+  .flow-step .step-app-img {
+    width: 100%; border-radius: var(--radius-l); border: 1px solid var(--ele-border);
+    overflow: hidden; background: #111; cursor: pointer; transition: border-color 0.15s;
+  }
+  .flow-step .step-app-img:hover { border-color: var(--brand-700); }
+  .flow-step .step-app-img img { width: 100%; aspect-ratio: 9/19.5; object-fit: cover; object-position: top; display: block; }
 
   /* ══════════ LIGHTBOX ══════════ */
   .lightbox {
@@ -964,7 +1018,7 @@
     .page-title { font-size: 24px; line-height: 32px; }
     .nav-links { display: none; }
     .products-layout { flex-direction: column; }
-    .ia-sidebar { width: 100%; max-height: 300px; position: static; border-right: none; border-bottom: 1px solid var(--ele-border); padding: 0 0 16px; margin-bottom: 24px; }
+    .ia-sidebar { width: 100%; max-height: 300px; position: static; height: auto; border-right: none; border-bottom: 1px solid var(--ele-border); padding: 0 0 16px; margin-bottom: 24px; }
     .ia-main { padding: 0; }
   }
 </style>
@@ -979,8 +1033,8 @@
       <div class="nav-divider"></div>
       <div class="nav-links">
         <a class="nav-link active" data-nav="monitor" data-i18n="nav_update">Updates</a>
-        <a class="nav-link" data-nav="products" data-i18n="nav_screens">Screens & Flows</a>
-        <a class="nav-link" data-nav="compare" data-i18n="nav_compare">Compare</a>
+        <a class="nav-link" data-nav="products" data-i18n="nav_screens">Screens</a>
+        <a class="nav-link" data-nav="flows" data-i18n="nav_flows">Flows</a>
       </div>
     </div>
     <div class="nav-right">
@@ -1018,22 +1072,22 @@
   <div class="summary-bar">
     <div class="summary-card">
       <div class="label" data-i18n="sum_total">Total Updates</div>
-      <div class="value value-brand">18</div>
+      <div class="value value-brand">40</div>
       <div class="sub" data-i18n="sum_total_sub">Across all monitored exchanges</div>
     </div>
     <div class="summary-card">
       <div class="label" data-i18n="sum_active">Most Active</div>
       <div class="value" style="color:var(--bitget)">Bitget</div>
-      <div class="sub" data-i18n="sum_active_sub">5 updates this month</div>
+      <div class="sub" data-i18n="sum_active_sub">11 updates this month</div>
     </div>
     <div class="summary-card">
       <div class="label" data-i18n="sum_trend">Monthly Trend</div>
-      <div class="value-sm" data-i18n="sum_trend_val">Compliance & Derivatives</div>
-      <div class="sub" data-i18n="sum_trend_sub">Regulation-driven product launches</div>
+      <div class="value-sm" data-i18n="sum_trend_val">AI Agents & RWA Tokenization</div>
+      <div class="sub" data-i18n="sum_trend_sub">AI trading infra + traditional asset derivatives</div>
     </div>
     <div class="summary-card">
       <div class="label" data-i18n="sum_cutoff">Data Cutoff</div>
-      <div class="value-sm">2026-04-18</div>
+      <div class="value-sm">2026-04-27</div>
       <div class="sub" data-i18n="sum_cutoff_sub">Manual collection</div>
     </div>
   </div>
@@ -1063,17 +1117,45 @@
         <div class="card-header-left">
           <span class="exchange-dot" style="background:var(--binance)"></span>
           <span class="exchange-name">Binance</span>
-          <span class="card-count" data-i18n="bn_u_count">2 items</span>
+          <span class="card-count" data-i18n="bn_u_count">9 items</span>
         </div>
-        <div class="card-summary" data-i18n="bn_u_summary">Contract parameter adjustments; MENA expansion ongoing</div>
+        <div class="card-summary" data-i18n="bn_u_summary">Agentic Wallet for AI trading; Binance Chat social; equity perps expansion; Ondo tokenized securities; USDS ecosystem</div>
       </div>
       <div class="card-body">
         <div class="card-item">
-          <div class="card-item-text" data-i18n="bn_u1">Adjusted tick size for multiple USDS-M perpetual contracts (effective Apr 21/22)</div>
-          <span class="status-tag status-upcoming" data-i18n="s_upcoming">Upcoming</span>
+          <div class="card-item-text" data-i18n="bn_u1"><span class="date-tag">Apr 24</span>Launched <strong>Agentic Wallet</strong> — keyless wallet for AI agents with Secure Auto Sign, natural language control, custom spend limits<span class="detail-line">Supports BNB Chain, Solana, Ethereum, Base. Promo: 20 gas-free txs per wallet until May 9</span><a href="https://www.binance.bh/en/support/announcement/detail/0c533c5a820341ce87e5ddda76f36ac0" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
         </div>
         <div class="card-item">
-          <div class="card-item-text" data-i18n="bn_u2">Launched MENA exclusive invite campaign page, visible in-app</div>
+          <div class="card-item-text" data-i18n="bn_u2"><span class="date-tag">Apr 23</span>Launched <strong>Ondo tokenized securities</strong> on Binance Wallet — 80 stocks (TSLAon etc), 20 with limit orders<span class="detail-line">Trading competition: 375 TSLAon prize pool for top 3000 traders</span><a href="https://www.binance.bh/en/support/announcement/detail/36bda2870aef41ee9ed9b507a9be1132" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="bn_u3"><span class="date-tag">Apr 15</span>Launched <strong>Binance Chat</strong> — in-app social messaging with Trade Cards, Red Packets, and instant crypto transfers<a href="https://www.binance.bh/en/support/announcement/detail/ac139e86c1ad4dff97d1eefce4ce3dbb" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="bn_u4"><span class="date-tag">Apr 14</span>Binance Wallet App now supports <strong>perpetual futures trading</strong> via Aster on BSC — crypto, stocks, ETFs, commodities<span class="detail-line">Self-custody trading with multi-asset margin (BNB, USDT, BTC, ETH etc)</span><a href="https://www.binance.bh/en/support/announcement/detail/258767f4577644398fcf3f660a1f4098" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="bn_u5"><span class="date-tag">Apr 2–16</span>Equity perpetual contracts: <strong>QQQ, SPY, AAPL, TSM, MU, SNDK, MSFT, AVGO, BABA</strong> — 10x leverage, 24/7<a href="https://www.binance.bh/en/support/announcement/detail/16fe15060947481ab240fb398230a3ee" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="bn_u6"><span class="date-tag">Apr 23</span><strong>XAUt (Tether Gold)</strong> added to Dual Investment — yield on gold-backed tokens, 3.65% APY+<a href="https://www.binance.bh/en/support/announcement/detail/081ea21c79b84ca297b9694445c33338" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="bn_u7"><span class="date-tag">Apr 9</span><strong>USDS</strong> integrated across Earn, Buy Crypto, Convert, VIP Loan &amp; Margin<a href="https://www.binance.bh/en/support/announcement/detail/0a9581bcaef24410a1dace51722112c8" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="bn_u8"><span class="date-tag">Apr 21</span>Alpha 2.0 <strong>Limit Order Liquidity Provider</strong> rebate program — 0.001% maker rebate, VIP3+ only<a href="https://www.binance.bh/en/support/announcement/detail/ed614a6387524a8d8534ecc39b5974eb" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="bn_u9">Adjusted tick size for multiple USDS-M perpetual contracts (effective Apr 21/22)<a href="https://www.binance.bh/en/support/announcement/detail/b0cea42f963f43e79f3ff35e4b166668" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
           <span class="status-tag status-ongoing" data-i18n="s_ongoing">Ongoing</span>
         </div>
       </div>
@@ -1084,30 +1166,54 @@
         <div class="card-header-left">
           <span class="exchange-dot" style="background:var(--okx)"></span>
           <span class="exchange-name">OKX</span>
-          <span class="card-count" data-i18n="okx_u_count">5 items</span>
+          <span class="card-count" data-i18n="okx_u_count">11 items</span>
         </div>
-        <div class="card-summary" data-i18n="okx_u_summary">EU-compliant derivatives launch; CeDeFi multi-chain expansion</div>
+        <div class="card-summary" data-i18n="okx_u_summary">X-Perps & equity perps launched; USDG yield product; PAXG gold trading; DAI→USDS migration; parameter notification page</div>
       </div>
       <div class="card-body">
         <div class="card-item">
-          <div class="card-item-text" data-i18n="okx_u1"><span class="date-tag">Apr 15</span>Launched X-Perps in Europe (MiFID compliant, up to 10x leverage, retail + institutional)</div>
+          <div class="card-item-text" data-i18n="okx_u1"><span class="date-tag">Apr 15</span>Launched <strong>X-Perps</strong> (USD-margined expiry perpetuals) — 10 pairs: BTC, ETH, SOL, SUI, XRP etc<span class="detail-line">New derivatives category, Web/App/API simultaneous launch</span><a href="https://www.okx.com/zh-hans/help/section/announcements-latest-announcements" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
           <span class="status-tag status-new" data-i18n="s_new">New</span>
         </div>
         <div class="card-item">
-          <div class="card-item-text" data-i18n="okx_u2"><span class="date-tag">Apr 15</span>Launched Equity Perps — 20+ stocks/indices, 24/7 trading</div>
+          <div class="card-item-text" data-i18n="okx_u2"><span class="date-tag">Apr 10</span>Launched <strong>Equity Perpetuals</strong> — IWMUSDT, CRWVUSDT, 0.01-5x leverage, 24/7 trading<span class="detail-line">Traditional stocks enter crypto derivatives framework with 8h funding rate</span><a href="https://www.okx.com/zh-hans/help/section/announcements-latest-announcements" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
           <span class="status-tag status-new" data-i18n="s_new">New</span>
         </div>
         <div class="card-item">
-          <div class="card-item-text" data-i18n="okx_u3">OKX CeDeFi expanded to Ethereum + Arbitrum networks</div>
+          <div class="card-item-text" data-i18n="okx_u3"><span class="date-tag">Apr 24</span>Launched <strong>Parameter Adjustment Notification Page</strong> — centralized view for contract tier, discount rate, tick size, min order changes<span class="detail-line">Replaces individual announcements; supports filtering by pair/status with before/after comparison</span><a href="https://www.okx.com/zh-hans/help/section/announcements-latest-announcements" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
           <span class="status-tag status-new" data-i18n="s_new">New</span>
         </div>
         <div class="card-item">
-          <div class="card-item-text" data-i18n="okx_u4">VIP Tier Upgrade Campaign (full April): lower fees + higher Card cashback</div>
+          <div class="card-item-text" data-i18n="okx_u4"><span class="date-tag">Apr 1</span>Launched <strong>USDG Rewards</strong> — Paxos stablecoin, VIP 4.1% APY, use as margin while earning<span class="detail-line">Zero-fee USDT↔USDG exchange, 0.98 discount rate as collateral</span><a href="https://www.okx.com/zh-hans/help/section/announcements-latest-announcements" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="okx_u5"><span class="date-tag">Apr 23</span><strong>PAXG (gold token)</strong> — margin trading + Simple Earn + flexible loan, all three launched simultaneously<span class="detail-line">Each token = 1oz physical gold (Paxos custody). RWA financialization milestone</span><a href="https://www.okx.com/zh-hans/help/section/announcements-latest-announcements" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="okx_u6"><span class="date-tag">Apr 14</span><strong>Funding rate settlement frequency upgrade</strong> — graduated step-down (8h→4h→2h→1h) replaces instant jump<a href="https://www.okx.com/zh-hans/help/section/announcements-latest-announcements" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="okx_u7"><span class="date-tag">Apr 8–17</span><strong>DAI → USDS migration</strong> complete — 1:1 swap, DAI pairs delisted, USDS/USDT launched Apr 17<a href="https://www.okx.com/zh-hans/help/section/announcements-latest-announcements" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
           <span class="status-tag status-ongoing" data-i18n="s_ongoing">Ongoing</span>
         </div>
         <div class="card-item">
-          <div class="card-item-text" data-i18n="okx_u5"><span class="date-tag">Apr 19</span>Offline event at Abu Dhabi Etihad Stadium</div>
-          <span class="status-tag status-upcoming" data-i18n="s_upcoming">Upcoming</span>
+          <div class="card-item-text" data-i18n="okx_u8"><span class="date-tag">Apr 8</span>Expanded VIP service — $30K threshold for priority support, dedicated group chat &amp; account manager<a href="https://www.okx.com/zh-hans/help/section/announcements-latest-announcements" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-ongoing" data-i18n="s_ongoing">Ongoing</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="okx_u9"><span class="date-tag">Apr 8</span>Dual Investment VIP tier lowered — high-yield from VIP6→VIP5<a href="https://www.okx.com/zh-hans/help/section/announcements-latest-announcements" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-ongoing" data-i18n="s_ongoing">Ongoing</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="okx_u10">OKX CeDeFi expanded to Ethereum + Arbitrum networks</div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="okx_u11"><span class="date-tag">Apr 16</span>Pharos x OKX Wallet airdrop — staking via Wallet app, redeem July 20<a href="https://www.okx.com/zh-hans/help/section/announcements-latest-announcements" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-ongoing" data-i18n="s_ongoing">Ongoing</span>
         </div>
       </div>
     </div>
@@ -1117,26 +1223,54 @@
         <div class="card-header-left">
           <span class="exchange-dot" style="background:var(--bitget)"></span>
           <span class="exchange-name">Bitget</span>
-          <span class="card-count" data-i18n="bg_u_count">4 items</span>
+          <span class="card-count" data-i18n="bg_u_count">11 items</span>
         </div>
-        <div class="card-summary" data-i18n="bg_u_summary">IPO Prime debut; Broker incentive launched; exiting France</div>
+        <div class="card-summary" data-i18n="bg_u_summary">IPO Prime debut; BGBTC Season 2; Agent Hub MCP; CFD copy trading; equity perps expansion; BGB ecosystem upgrade</div>
       </div>
       <div class="card-body">
         <div class="card-item">
-          <div class="card-item-text" data-i18n="bg_u1"><span class="date-tag">Apr 13</span>Launched IPO Prime — first product: preSPAX (SpaceX pre-listing token)</div>
+          <div class="card-item-text" data-i18n="bg_u1"><span class="date-tag">Apr 17</span>Launched <strong>IPO Prime</strong> — first product: preSPAX (SpaceX pre-listing token by Republic)<span class="detail-line">Retail access to unicorn Pre-IPO investment. OpenAI next in pipeline</span><a href="https://www.bitget.com/zh-CN/support/articles/12560603882755" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
           <span class="status-tag status-new" data-i18n="s_new">New</span>
         </div>
         <div class="card-item">
-          <div class="card-item-text" data-i18n="bg_u2"><span class="date-tag">Apr 16</span>Launched Broker Max Check Program — up to 12,000 USDT rewards in first 60 days</div>
+          <div class="card-item-text" data-i18n="bg_u2"><span class="date-tag">Apr 20</span>Launched <strong>BGBTC</strong> (Bitget BTC) Season 2 — 1:1 BTC-pegged, 3-day redemption, works as futures collateral<span class="detail-line">Monthly settlement on 10th, flash swap to BTC/USDT available</span><a href="https://www.bitget.com/zh-CN/support" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="bg_u3"><span class="date-tag">Apr</span>Launched <strong>Agent Hub + MCP Server</strong> — AI agents trade via Claude Code/Cursor, 5 analysis skills + 19 data tools<span class="detail-line">First exchange to bring MCP protocol into production trading infrastructure</span><a href="https://www.bitget.com/zh-CN/support" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="bg_u4"><span class="date-tag">Apr</span>Launched <strong>CFD copy trading</strong> — min 50 USDT, covers forex, commodities &amp; global indices<span class="detail-line">CFD daily volume exceeded $6B. Extends copy-trade model beyond crypto</span><a href="https://www.bitget.com/zh-CN/support" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="bg_u5"><span class="date-tag">Apr 8–22</span><strong>Equity perps expanded to 25+ stocks</strong>: AMD, SNDK, AMAT, NFLX, Boeing, IONQ etc<span class="detail-line">AI/semiconductor/aerospace sectors, up to 25x leverage</span><a href="https://www.bitget.com/zh-CN/support/articles/12560603882710" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="bg_u6"><span class="date-tag">Apr 3</span>Launched <strong>VIP Fast Track</strong> — behavior-driven VIP progression (trading, spot, holdings) with milestone rewards<a href="https://www.bitget.com/zh-CN/support" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="bg_u7"><span class="date-tag">Apr 8</span><strong>BGB ecosystem upgrade</strong> via Morph — 220M BGB burned, 220M locked; BGB becomes on-chain gas + governance token<a href="https://www.bitget.com/zh-CN/support" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="bg_u8"><span class="date-tag">Apr 22</span>USDGO added as <strong>joint margin</strong> for USDT-M futures<a href="https://www.bitget.com/zh-CN/support" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="bg_u9"><span class="date-tag">Apr</span>Grid bot upgrade — adjust price range &amp; grid count <strong>without stopping</strong> the bot<a href="https://www.bitget.com/zh-CN/support" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="bg_u10"><span class="date-tag">Apr 16</span>Launched Broker Max Check Program — up to 12,000 USDT rewards in first 60 days</div>
           <span class="status-tag status-ongoing" data-i18n="s_ongoing">Ongoing</span>
         </div>
         <div class="card-item">
-          <div class="card-item-text" data-i18n="bg_u3">Exiting France market (announced March) — advising users to migrate to MiCA-compliant platforms</div>
+          <div class="card-item-text" data-i18n="bg_u11">Exiting France market (announced March) — advising users to migrate to MiCA-compliant platforms</div>
           <span class="status-tag status-compliance" data-i18n="s_compliance">Compliance</span>
-        </div>
-        <div class="card-item">
-          <div class="card-item-text" data-i18n="bg_u4">TRADOORUSDT contract trading and trading bot now available</div>
-          <span class="status-tag status-new" data-i18n="s_new">New</span>
         </div>
       </div>
     </div>
@@ -1146,12 +1280,47 @@
         <div class="card-header-left">
           <span class="exchange-dot" style="background:var(--coinbase)"></span>
           <span class="exchange-name">Coinbase</span>
-          <span class="card-count" data-i18n="cb_u_count">0 items</span>
+          <span class="card-count" data-i18n="cb_u_count">9 items</span>
         </div>
-        <div class="card-summary" data-i18n="cb_u_summary">No major APP feature updates recently</div>
+        <div class="card-summary" data-i18n="cb_u_summary">Deribit acquired; OCC trust charter; Coinbase Business B2B launch; AI audit tool; UK lending; tGBP stablecoin</div>
       </div>
       <div class="card-body">
-        <div class="status-none" data-i18n="cb_u_none">No significant updates this month — check App Store release notes</div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="cb_u1"><span class="date-tag">Apr 9</span>Completed <strong>Deribit acquisition</strong> ($2.9B) — now covers spot, futures, perpetuals &amp; options<span class="detail-line">Largest crypto acquisition ever. Deribit holds 87% BTC options, 94% ETH options market share</span><a href="https://www.coinbase.com/en-ca/blog" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="cb_u2"><span class="date-tag">Apr 2</span>Received conditional <strong>OCC National Trust Charter</strong> — federal-level institutional custody &amp; fiduciary services<span class="detail-line">Custodian for 8 of 11 spot BTC ETFs, ~$376B AUM. No retail deposits</span><a href="https://www.coinbase.com/en-ca/blog" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="cb_u3"><span class="date-tag">Apr 21</span>Launched <strong>Coinbase Business</strong> — all-in-one financial platform for SMBs<span class="detail-line">Crypto payments, USDC yield (4.1% APY), QuickBooks/Xero integration, 2-day onboarding. Alpha stage</span><a href="https://www.coinbase.com/en-ca/blog" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="cb_u4"><span class="date-tag">Apr 2</span><strong>x402 Foundation</strong> joined Linux Foundation — Google, Visa, Stripe, AWS among 14 founding members<span class="detail-line">AI Agent payment protocol via HTTP 402. 140M+ txs processed, 500K+ agent wallets active</span><a href="https://www.coinbase.com/en-ca/blog" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="cb_u5"><span class="date-tag">Apr 14</span>Launched <strong>"Frosty" AI smart contract auditor</strong> — 1-2hrs per audit, 1/100th cost of manual review<a href="https://www.coinbase.com/en-ca/blog" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="cb_u6"><span class="date-tag">Apr 20</span><strong>UK crypto-backed lending</strong> — borrow USDC against BTC (up to $5M), ETH (up to $1M) via Morpho on Base<span class="detail-line">US market: $2.17B+ USDC lent via Morpho as of Apr 14</span><a href="https://www.coinbase.com/en-ca/blog" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="cb_u7"><span class="date-tag">Apr 22</span>Listed <strong>tGBP</strong> (GBP stablecoin by BCP Technologies) — multi-currency stablecoin expansion<a href="https://www.coinbase.com/en-ca/blog" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="cb_u8"><span class="date-tag">Apr 14</span>$5M bug bounty program covering all on-chain contracts &amp; Base L2<a href="https://www.coinbase.com/en-ca/blog" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
+        <div class="card-item">
+          <div class="card-item-text" data-i18n="cb_u9"><span class="date-tag">Apr 22</span>New Security Page — Consensus 2FA, MPC custody, 98% cold storage, redesigned for beginners<a href="https://www.coinbase.com/en-ca/blog" target="_blank" rel="noopener" class="src-link">Source ↗</a></div>
+          <span class="status-tag status-new" data-i18n="s_new">New</span>
+        </div>
       </div>
     </div>
 
@@ -1244,7 +1413,7 @@
 
   <!-- ═══ Section 3: Yield Comparison ═══ -->
   <div class="section-content" id="section-yields">
-    <p class="data-note" data-i18n="yield_note">Data collected: 2026-04-18 | Rates are floating — refer to each platform's Earn page for live rates</p>
+    <p class="data-note" data-i18n="yield_note">Data collected: 2026-04-27 | Rates are floating — refer to each platform's Earn page for live rates</p>
     <div class="table-wrapper">
       <table class="comparison-table">
         <thead>
@@ -1292,7 +1461,7 @@
       <div class="insight-card">
         <div class="insight-label" data-i18n="yi_ref2_label">3rd Party Reference</div>
         <div class="insight-value" style="color:var(--green-700)">USDC Max ~10.5%</div>
-        <div class="insight-detail" data-i18n="yi_ref2_detail">bitcompare.net, as of 2026-04-18</div>
+        <div class="insight-detail" data-i18n="yi_ref2_detail">bitcompare.net, as of 2026-04-27</div>
       </div>
     </div>
   </div>
@@ -1370,9 +1539,9 @@
         <button class="filter-chip" data-ex="bitget"><span class="dot" style="background:var(--bitget)"></span>Bitget</button>
         <button class="filter-chip" data-ex="coinbase"><span class="dot" style="background:var(--coinbase)"></span>Coinbase</button>
         <span style="width:1px;height:20px;background:var(--ele-border);margin:0 4px;align-self:center"></span>
-        <button class="filter-chip active ia-plat-chip" data-plat="ios">iOS</button>
-        <button class="filter-chip ia-plat-chip" data-plat="android">Android</button>
         <button class="filter-chip ia-plat-chip" data-plat="web">Web</button>
+        <button class="filter-chip active ia-plat-chip" data-plat="android">Android</button>
+        <button class="filter-chip ia-plat-chip" data-plat="ios">iOS</button>
         <div class="ia-search-wrap">
           <span class="ia-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
           <input type="text" id="iaSearchInput" placeholder="Search..." autocomplete="off">
@@ -1384,33 +1553,29 @@
       <div class="ia-sidebar">
         <div class="ia-tree" id="iaTree"></div>
       </div>
-      <div class="ia-main" id="iaMain">
-        <div class="ia-main-inner">
-          <div class="ia-main-header">
-            <span class="ia-main-title" id="iaMainTitle">Home</span>
-            <span class="ia-main-meta" id="iaMainMeta">3 screens</span>
-          </div>
-          <div class="ia-screenshots" id="iaScreenshots"></div>
-        </div>
-      </div>
+      <div class="ia-main" id="iaMain"></div>
     </div>
   </div>
 
-  <!-- ═══ Section 6: Compare ═══ -->
-  <div class="section-content" id="section-compare">
+  <!-- ═══ Section 6: Flows ═══ -->
+  <div class="section-content" id="section-flows">
+    <div class="ia-top-filters">
+      <div class="ia-exchange-tabs" id="flowsExTabs">
+        <button class="filter-chip active" data-fex="binance"><span class="dot" style="background:var(--binance)"></span>Binance</button>
+        <button class="filter-chip" data-fex="okx"><span class="dot" style="background:var(--okx)"></span>OKX</button>
+        <button class="filter-chip" data-fex="bitget"><span class="dot" style="background:var(--bitget)"></span>Bitget</button>
+        <button class="filter-chip" data-fex="coinbase"><span class="dot" style="background:var(--coinbase)"></span>Coinbase</button>
+        <span style="width:1px;height:20px;background:var(--ele-border);margin:0 4px;align-self:center"></span>
+        <button class="filter-chip active flows-plat-chip" data-fplat="web">Web</button>
+        <button class="filter-chip flows-plat-chip" data-fplat="android">Android</button>
+        <button class="filter-chip flows-plat-chip" data-fplat="ios">iOS</button>
+      </div>
+    </div>
     <div class="products-layout">
       <div class="ia-sidebar">
-        <div class="ia-tree" id="compareTree"></div>
+        <div class="ia-tree" id="flowsTree"></div>
       </div>
-      <div class="ia-main">
-        <div class="ia-main-inner">
-          <div class="ia-main-header">
-            <span class="ia-main-title" id="compareMainTitle">Spot</span>
-            <span class="ia-main-meta" id="compareMainMeta"></span>
-          </div>
-          <div class="compare-rows" id="compareRows"></div>
-        </div>
-      </div>
+      <div class="ia-main" id="flowsMain"></div>
     </div>
   </div>
 
@@ -1431,7 +1596,7 @@
   <!-- Footer -->
   <div class="footer">
     <span data-i18n="footer_src">Sources: Official exchange announcements, App Store/Google Play changelogs, third-party aggregators</span>
-    <span data-i18n="footer_updated">Last updated: 2026-04-18 18:00 UTC</span>
+    <span data-i18n="footer_updated">Last updated: 2026-04-27 18:00 UTC</span>
   </div>
 </div>
 
@@ -1443,32 +1608,61 @@
       nav_update: '动态更新', nav_userflow: 'User Flow', nav_matrix: 'Feature Matrix', nav_reports: 'Compare',
       page_title: '交易所竞品监控', page_subtitle: '追踪各大交易所的功能更新、运营活动、理财利率与邀请返佣',
       sum_total: '本月更新总数', sum_total_sub: '覆盖全部监控交易所',
-      sum_active: '最活跃交易所', sum_active_sub: '本月 5 条更新',
-      sum_trend: '本月趋势', sum_trend_val: '合规化 & 衍生品', sum_trend_sub: '监管驱动的产品上线',
+      sum_active: '最活跃交易所', sum_active_sub: '本月 11 条更新',
+      sum_trend: '本月趋势', sum_trend_val: 'AI Agent 交易 & RWA 代币化', sum_trend_sub: 'AI 交易基础设施 + 传统资产衍生品',
       sum_cutoff: '数据截止', sum_cutoff_sub: '人工采集',
       filter_all: '全部',
       tab_updates: 'APP 更新功能', tab_campaigns: '重点活动', tab_yields: '理财利率对比', tab_referral: '邀请返佣对比',
       // Status tags
       s_upcoming: '即将生效', s_ongoing: '进行中', s_new: '新上线', s_limited: '限时', s_compliance: '合规调整', s_evergreen: '长期',
       // Binance updates
-      bn_u_count: '2 条', bn_u_summary: '近期以合约参数调整为主，MENA 区域拓展持续推进',
-      bn_u1: '调整多个 USDS-M 永续合约 Tick Size（4月21日/22日生效）',
-      bn_u2: '推出 MENA 地区限时邀请专属活动页，APP 内可见',
+      bn_u_count: '9 条', bn_u_summary: 'AI Agent 钱包上线；Binance Chat 社交功能；股票合约大规模扩展；Ondo 代币化证券；USDS 全生态集成',
+      bn_u1: '<span class="date-tag">4月24日</span>上线 <strong>Agentic Wallet</strong> — AI Agent 专属无密钥钱包，Secure Auto Sign 自动签名，自然语言控制，自定义消费限额<span class="detail-line">支持 BNB Chain、Solana、Ethereum、Base 四条链。推广期至5月9日：每钱包20笔免Gas交易</span>',
+      bn_u2: '<span class="date-tag">4月23日</span>上线 <strong>Ondo 代币化证券</strong> — 80种股票代币（TSLAon等）可在 Binance Wallet 交易，20种支持限价单<span class="detail-line">配套交易竞赛：375 TSLAon 奖池，前3000名交易者瓜分</span>',
+      bn_u3: '<span class="date-tag">4月15日</span>推出 <strong>Binance Chat</strong> — APP 内社交聊天，支持交易卡片(Trade Cards)、红包、即时加密转账',
+      bn_u4: '<span class="date-tag">4月14日</span>Binance Wallet APP 端新增<strong>永续合约交易</strong>，由 Aster 提供（BSC链）— 支持加密货币、股票、ETF、大宗商品<span class="detail-line">自托管交易，多种保证金资产（BNB、USDT、BTC、ETH 等）</span>',
+      bn_u5: '<span class="date-tag">4月2–16日</span>股票永续合约密集上线：<strong>QQQ、SPY、AAPL、TSM、MU、SNDK、MSFT、AVGO、BABA</strong> — 10倍杠杆，24/7交易',
+      bn_u6: '<span class="date-tag">4月23日</span><strong>XAUt（Tether 黄金代币）</strong>纳入双币投资 — 黄金挂钩代币结构化收益，年化3.65%起',
+      bn_u7: '<span class="date-tag">4月9日</span><strong>USDS</strong> 全平台集成 — 接入 Earn 理财、信用卡买币、闪兑、VIP 借贷、杠杆交易',
+      bn_u8: '<span class="date-tag">4月21日</span>Alpha 2.0 <strong>限价单流动性提供者</strong>返佣计划 — 0.001% Maker 返佣，VIP3+ 准入',
+      bn_u9: '调整多个 USDS-M 永续合约 Tick Size（4月21日/22日生效）',
       // OKX updates
-      okx_u_count: '5 条', okx_u_summary: '欧洲合规衍生品密集上线，CeDeFi 多链扩展',
-      okx_u1: '<span class="date-tag">4月15日</span>欧洲正式上线 X-Perps（MiFID 监管合规衍生品，最高 10 倍杠杆，面向零售/机构）',
-      okx_u2: '<span class="date-tag">4月15日</span>推出股票永续合约（Equity Perps），20+ 股票/指数，24/7 交易',
-      okx_u3: 'OKX CeDeFi 扩展至以太坊 + Arbitrum 网络',
-      okx_u4: 'VIP 等级提升活动（4月全月）：升级 VIP 享更低费率 + Card 更高返现',
-      okx_u5: '<span class="date-tag">4月19日</span>将在 Abu Dhabi Etihad 体育场举办线下活动',
+      okx_u_count: '11 条', okx_u_summary: 'X-Perps & 股票永续上线；USDG 收益产品；PAXG 黄金交易；DAI→USDS 迁移；参数调整通知页',
+      okx_u1: '<span class="date-tag">4月15日</span>推出 <strong>X-Perps</strong>（USD 本位到期永续合约）— 全新衍生品品类，首批10个交易对：BTC、ETH、SOL、SUI、XRP等<span class="detail-line">Web/App/API 同步上线</span>',
+      okx_u2: '<span class="date-tag">4月10日</span>推出<strong>股票永续合约</strong> — IWMUSDT、CRWVUSDT，0.01-5x杠杆，7×24小时交易<span class="detail-line">传统股票进入加密衍生品框架，8小时资金费率结算</span>',
+      okx_u3: '<span class="date-tag">4月24日</span>上线<strong>参数调整通知页面</strong> — 集中展示合约梯度、折扣率、最小精度、最小下单量四类变更<span class="detail-line">替代单条公告；支持按交易对/状态筛选，可视化前后对比</span>',
+      okx_u4: '<span class="date-tag">4月1日</span>推出 <strong>USDG 奖励产品</strong> — Paxos 合规稳定币，VIP 年化4.1%，可同时作为保证金使用<span class="detail-line">零手续费 USDT↔USDG 兑换，0.98 折扣率抵押品</span>',
+      okx_u5: '<span class="date-tag">4月23日</span><strong>PAXG（黄金代币）</strong>同步上线杠杆交易 + 赚币 + 借贷三件套<span class="detail-line">每枚代表1盎司实物黄金（Paxos 托管），RWA 金融化里程碑</span>',
+      okx_u6: '<span class="date-tag">4月14日</span><strong>资金费结算频率升级</strong> — 渐进式调整（8h→4h→2h→1h）替代一步到位跳转',
+      okx_u7: '<span class="date-tag">4月8–17日</span><strong>DAI → USDS 迁移</strong>完成 — 1:1置换，DAI交易对下架，4月17日USDS/USDT上线',
+      okx_u8: '<span class="date-tag">4月8日</span>VIP 服务扩大 — $3万门槛即享优先客服、专属群聊、专属客户经理',
+      okx_u9: '<span class="date-tag">4月8日</span>双币赢 VIP 高收益门槛从 VIP6 降至 VIP5',
+      okx_u10: 'OKX CeDeFi 扩展至以太坊 + Arbitrum 网络',
+      okx_u11: '<span class="date-tag">4月16日</span>Pharos x OKX Wallet 专属质押空投 — 通过 Wallet App 参与，7月20日赎回',
       // Bitget updates
-      bg_u_count: '4 条', bg_u_summary: 'IPO Prime 创新产品首发，经纪商激励计划启动；退出法国市场',
-      bg_u1: '<span class="date-tag">4月13日</span>推出 IPO Prime，首个产品 preSPAX（SpaceX 预上市 Token）',
-      bg_u2: '<span class="date-tag">4月16日</span>推出 Broker Max Check Program，新经纪商入驻首 60 天最高奖励 12,000 USDT',
-      bg_u3: 'Bitget 退出法国市场（3月公告），建议法国用户迁移至其他 MiCA 合规平台',
-      bg_u4: 'TRADOORUSDT 开放合约交易及交易机器人',
+      bg_u_count: '11 条', bg_u_summary: 'IPO Prime 首发；BGBTC Season 2；Agent Hub MCP；CFD跟单；美股合约扩展；BGB生态升级',
+      bg_u1: '<span class="date-tag">4月17日</span>推出 <strong>IPO Prime</strong> — 首个产品 preSPAX（Republic 发行的 SpaceX 预上市合成代币）<span class="detail-line">散户可参与独角兽企业 IPO 前投资，后续计划上线 OpenAI</span>',
+      bg_u2: '<span class="date-tag">4月20日</span>推出 <strong>BGBTC</strong>（Bitget BTC）Season 2 — 1:1 锚定BTC，赎回周期缩至3天，可作合约抵押品<span class="detail-line">每月10日结算收益，支持闪兑为BTC/USDT</span>',
+      bg_u3: '<span class="date-tag">4月</span>推出 <strong>Agent Hub + MCP Server</strong> — AI Agent 通过 Claude Code/Cursor 接入全链路交易，5个分析技能+19个数据工具<span class="detail-line">首批将 MCP 协议引入交易所生产级基础设施的案例</span>',
+      bg_u4: '<span class="date-tag">4月</span>上线 <strong>CFD 跟单交易</strong> — 最低50 USDT 即可参与，覆盖外汇、商品、全球指数<span class="detail-line">CFD 日交易量已突破60亿美元，跟单模式从加密扩展至传统金融</span>',
+      bg_u5: '<span class="date-tag">4月8–22日</span><strong>美股永续合约扩展至25+支</strong>：AMD、SNDK、AMAT、NFLX、波音、IONQ等<span class="detail-line">覆盖AI/半导体/航空板块，最高25倍杠杆</span>',
+      bg_u6: '<span class="date-tag">4月3日</span>推出 <strong>VIP 快速通道</strong> — 交易行为驱动的VIP晋升（合约/现货/持仓三条路径），达成里程碑即时领奖',
+      bg_u7: '<span class="date-tag">4月8日</span><strong>BGB 生态升级</strong>（Morph）— 2.2亿枚销毁+2.2亿枚锁定，BGB升级为链上Gas+治理代币',
+      bg_u8: '<span class="date-tag">4月22日</span>USDGO 新增为 U 本位合约<strong>联合保证金</strong>支持币种',
+      bg_u9: '<span class="date-tag">4月</span>网格交易升级 — 无需停止机器人即可调整<strong>价格区间和网格数</strong>',
+      bg_u10: '<span class="date-tag">4月16日</span>推出 Broker Max Check Program，新经纪商入驻首60天最高奖励 12,000 USDT',
+      bg_u11: 'Bitget 退出法国市场（3月公告），建议法国用户迁移至其他 MiCA 合规平台',
       // Coinbase updates
-      cb_u_count: '0 条', cb_u_summary: '近期无重大 APP 版本功能更新', cb_u_none: '本月暂无重大更新公告，建议查看 App Store 更新日志',
+      cb_u_count: '9 条', cb_u_summary: '收购 Deribit；获 OCC 信托牌照；Coinbase Business B2B上线；AI审计工具；英国借贷；tGBP英镑稳定币',
+      cb_u1: '<span class="date-tag">4月9日</span>完成 <strong>Deribit 收购</strong>（29亿美元）— 现涵盖现货、期货、永续合约、期权全品类<span class="detail-line">加密行业史上最大收购，Deribit 占 BTC 期权87%、ETH 期权94%市场份额</span>',
+      cb_u2: '<span class="date-tag">4月2日</span>获得 <strong>OCC 国家信托牌照</strong>有条件批准 — 联邦级机构托管与受托服务<span class="detail-line">11只现货BTC ETF中8只的托管方，管理资产约3760亿美元</span>',
+      cb_u3: '<span class="date-tag">4月21日</span>推出 <strong>Coinbase Business</strong> — 面向中小企业的一站式加密金融平台<span class="detail-line">加密收付款、USDC 年化4.1%、集成 QuickBooks/Xero、2天内完成注册。Alpha阶段</span>',
+      cb_u4: '<span class="date-tag">4月2日</span><strong>x402 基金会</strong>加入 Linux Foundation — Google、Visa、Stripe、AWS 等14家创始成员<span class="detail-line">AI Agent HTTP 402 支付协议，已处理1.4亿+笔交易，50万+活跃 Agent 钱包</span>',
+      cb_u5: '<span class="date-tag">4月14日</span>推出 <strong>"Frosty" AI 智能合约审计工具</strong> — 每次审计1-2小时，成本仅为人工的1/100',
+      cb_u6: '<span class="date-tag">4月20日</span><strong>英国加密抵押借贷</strong>上线 — BTC 抵押最高借500万美元，ETH 最高100万，基于 Morpho（Base链）<span class="detail-line">美国市场：截至4月14日通过 Morpho 已发放21.7亿+美元 USDC 贷款</span>',
+      cb_u7: '<span class="date-tag">4月22日</span>上线 <strong>tGBP</strong>（英镑稳定币，BCP Technologies 发行）— 多币种稳定币扩展',
+      cb_u8: '<span class="date-tag">4月14日</span>500万美元漏洞赏金计划 — 覆盖所有链上合约及 Base L2',
+      cb_u9: '<span class="date-tag">4月22日</span>全新安全页面 — Consensus 2FA、MPC 托管、98%冷存储，面向新手重新设计',
       // Binance campaigns
       bn_c_count: '2 条', bn_c_summary: 'MENA 邀请活动持续，标准返佣常设运行',
       bn_c1: '<strong>MENA 专属邀请活动</strong>（3/26 ~ 5/17）：每成功邀请 1 人，邀请方得 $4-10 USDT，被邀方得 $3-5 USDT<span class="detail-line">Top 100 排行榜额外分享 $20,000 USDT</span>',
@@ -1485,11 +1679,11 @@
       cb_c_count: '1 条', cb_c_summary: '标准推荐奖励持续运行',
       cb_c1: '<strong>常设推荐奖励</strong>：邀请新用户获得首 3 个月手续费的 50% 返佣',
       // Yield table
-      yield_note: '数据采集时间：2026-04-18 | 利率为浮动利率，受市场供需影响实时变动，以各平台「理财/Earn」页面显示为准',
+      yield_note: '数据采集时间：2026-04-27 | 利率为浮动利率，受市场供需影响实时变动，以各平台「理财/Earn」页面显示为准',
       th_exchange: '交易所', th_usdt: 'USDT 活期 APR', th_usdc: 'USDC 活期 APR', th_fixed: '定期产品',
       login_req: '需登录查看', no_fixed: '暂无公开定期',
       yi_ref1_label: '第三方参考（bitcompare.net）', yi_ref1_detail: 'Nexo，需锁仓 90 天',
-      yi_ref2_label: '第三方参考', yi_ref2_detail: 'bitcompare.net, 截至 2026-04-18',
+      yi_ref2_label: '第三方参考', yi_ref2_detail: 'bitcompare.net, 截至 2026-04-27',
       // Referral table
       th_std_ref: '普通用户邀请返佣', th_agent: '代理/联盟', th_notes: '备注',
       ref_bn_std: '20%（标准）', ref_bn_agent: '最高 40%', ref_bn_note: '持有 ≥500 BNB 解锁 40%；90 天 Cookie',
@@ -1503,33 +1697,62 @@
       ri_4_label: '最易上手', ri_4_detail: '50% 返佣，法币，$10 起提',
       // Footer
       footer_src: '数据来源：各平台官网公告、App Store/Google Play 更新日志、第三方聚合平台',
-      footer_updated: '最后更新：2026-04-18 18:00 UTC',
+      footer_updated: '最后更新：2026-04-27 18:00 UTC',
     },
     en: {
       nav_update: 'Updates', nav_userflow: 'User Flow', nav_matrix: 'Feature Matrix', nav_reports: 'Compare',
       page_title: 'Exchange Competitor Monitor', page_subtitle: 'Track feature updates, campaigns, yields, and referral programs across major exchanges',
       sum_total: 'Total Updates', sum_total_sub: 'Across all monitored exchanges',
-      sum_active: 'Most Active', sum_active_sub: '5 updates this month',
-      sum_trend: 'Monthly Trend', sum_trend_val: 'Compliance & Derivatives', sum_trend_sub: 'Regulation-driven product launches',
+      sum_active: 'Most Active', sum_active_sub: '11 updates this month',
+      sum_trend: 'Monthly Trend', sum_trend_val: 'AI Agents & RWA Tokenization', sum_trend_sub: 'AI trading infra + traditional asset derivatives',
       sum_cutoff: 'Data Cutoff', sum_cutoff_sub: 'Manual collection',
       filter_all: 'All',
       tab_updates: 'APP Updates', tab_campaigns: 'Key Campaigns', tab_yields: 'Yield Comparison', tab_referral: 'Referral Comparison',
       s_upcoming: 'Upcoming', s_ongoing: 'Ongoing', s_new: 'New', s_limited: 'Limited', s_compliance: 'Compliance', s_evergreen: 'Evergreen',
-      bn_u_count: '2 items', bn_u_summary: 'Contract parameter adjustments; MENA expansion ongoing',
-      bn_u1: 'Adjusted tick size for multiple USDS-M perpetual contracts (effective Apr 21/22)',
-      bn_u2: 'Launched MENA exclusive invite campaign page, visible in-app',
-      okx_u_count: '5 items', okx_u_summary: 'EU-compliant derivatives launch; CeDeFi multi-chain expansion',
-      okx_u1: '<span class="date-tag">Apr 15</span>Launched X-Perps in Europe (MiFID compliant, up to 10x leverage, retail + institutional)',
-      okx_u2: '<span class="date-tag">Apr 15</span>Launched Equity Perps \u2014 20+ stocks/indices, 24/7 trading',
-      okx_u3: 'OKX CeDeFi expanded to Ethereum + Arbitrum networks',
-      okx_u4: 'VIP Tier Upgrade Campaign (full April): lower fees + higher Card cashback',
-      okx_u5: '<span class="date-tag">Apr 19</span>Offline event at Abu Dhabi Etihad Stadium',
-      bg_u_count: '4 items', bg_u_summary: 'IPO Prime debut; Broker incentive launched; exiting France',
-      bg_u1: '<span class="date-tag">Apr 13</span>Launched IPO Prime \u2014 first product: preSPAX (SpaceX pre-listing token)',
-      bg_u2: '<span class="date-tag">Apr 16</span>Launched Broker Max Check Program \u2014 up to 12,000 USDT rewards in first 60 days',
-      bg_u3: 'Exiting France market (announced March) \u2014 advising users to migrate to MiCA-compliant platforms',
-      bg_u4: 'TRADOORUSDT contract trading and trading bot now available',
-      cb_u_count: '0 items', cb_u_summary: 'No major APP feature updates recently', cb_u_none: 'No significant updates this month \u2014 check App Store release notes',
+      bn_u_count: '9 items', bn_u_summary: 'Agentic Wallet for AI trading; Binance Chat social; equity perps expansion; Ondo tokenized securities; USDS ecosystem',
+      bn_u1: '<span class="date-tag">Apr 24</span>Launched <strong>Agentic Wallet</strong> \u2014 keyless wallet for AI agents with Secure Auto Sign, natural language control, custom spend limits<span class="detail-line">Supports BNB Chain, Solana, Ethereum, Base. Promo: 20 gas-free txs per wallet until May 9</span>',
+      bn_u2: '<span class="date-tag">Apr 23</span>Launched <strong>Ondo tokenized securities</strong> on Binance Wallet \u2014 80 stocks (TSLAon etc), 20 with limit orders<span class="detail-line">Trading competition: 375 TSLAon prize pool for top 3000 traders</span>',
+      bn_u3: '<span class="date-tag">Apr 15</span>Launched <strong>Binance Chat</strong> \u2014 in-app social messaging with Trade Cards, Red Packets, and instant crypto transfers',
+      bn_u4: '<span class="date-tag">Apr 14</span>Binance Wallet App now supports <strong>perpetual futures trading</strong> via Aster on BSC \u2014 crypto, stocks, ETFs, commodities<span class="detail-line">Self-custody trading with multi-asset margin (BNB, USDT, BTC, ETH etc)</span>',
+      bn_u5: '<span class="date-tag">Apr 2\u201316</span>Equity perpetual contracts: <strong>QQQ, SPY, AAPL, TSM, MU, SNDK, MSFT, AVGO, BABA</strong> \u2014 10x leverage, 24/7',
+      bn_u6: '<span class="date-tag">Apr 23</span><strong>XAUt (Tether Gold)</strong> added to Dual Investment \u2014 yield on gold-backed tokens, 3.65% APY+',
+      bn_u7: '<span class="date-tag">Apr 9</span><strong>USDS</strong> integrated across Earn, Buy Crypto, Convert, VIP Loan & Margin',
+      bn_u8: '<span class="date-tag">Apr 21</span>Alpha 2.0 <strong>Limit Order Liquidity Provider</strong> rebate program \u2014 0.001% maker rebate, VIP3+ only',
+      bn_u9: 'Adjusted tick size for multiple USDS-M perpetual contracts (effective Apr 21/22)',
+      okx_u_count: '11 items', okx_u_summary: 'X-Perps & equity perps launched; USDG yield product; PAXG gold trading; DAI\u2192USDS migration; parameter notification page',
+      okx_u1: '<span class="date-tag">Apr 15</span>Launched <strong>X-Perps</strong> (USD-margined expiry perpetuals) \u2014 new derivatives category, 10 pairs: BTC, ETH, SOL, SUI, XRP etc<span class="detail-line">Web/App/API simultaneous launch</span>',
+      okx_u2: '<span class="date-tag">Apr 10</span>Launched <strong>Equity Perpetuals</strong> \u2014 IWMUSDT, CRWVUSDT, 0.01-5x leverage, 24/7 trading<span class="detail-line">Traditional stocks enter crypto derivatives framework with 8h funding rate</span>',
+      okx_u3: '<span class="date-tag">Apr 24</span>Launched <strong>Parameter Adjustment Notification Page</strong> \u2014 centralized view for contract tier, discount rate, tick size, min order changes<span class="detail-line">Replaces individual announcements; supports filtering by pair/status with before/after comparison</span>',
+      okx_u4: '<span class="date-tag">Apr 1</span>Launched <strong>USDG Rewards</strong> \u2014 Paxos stablecoin, VIP 4.1% APY, use as margin while earning<span class="detail-line">Zero-fee USDT\u2194USDG exchange, 0.98 discount rate as collateral</span>',
+      okx_u5: '<span class="date-tag">Apr 23</span><strong>PAXG (gold token)</strong> \u2014 margin trading + Simple Earn + flexible loan, all three launched simultaneously<span class="detail-line">Each token = 1oz physical gold (Paxos custody). RWA financialization milestone</span>',
+      okx_u6: '<span class="date-tag">Apr 14</span><strong>Funding rate settlement frequency upgrade</strong> \u2014 graduated step-down (8h\u21924h\u21922h\u21921h) replaces instant jump',
+      okx_u7: '<span class="date-tag">Apr 8\u201317</span><strong>DAI \u2192 USDS migration</strong> complete \u2014 1:1 swap, DAI pairs delisted, USDS/USDT launched Apr 17',
+      okx_u8: '<span class="date-tag">Apr 8</span>Expanded VIP service \u2014 $30K threshold for priority support, dedicated group chat & account manager',
+      okx_u9: '<span class="date-tag">Apr 8</span>Dual Investment VIP tier lowered \u2014 high-yield from VIP6\u2192VIP5',
+      okx_u10: 'OKX CeDeFi expanded to Ethereum + Arbitrum networks',
+      okx_u11: '<span class="date-tag">Apr 16</span>Pharos x OKX Wallet airdrop \u2014 staking via Wallet app, redeem July 20',
+      bg_u_count: '11 items', bg_u_summary: 'IPO Prime debut; BGBTC Season 2; Agent Hub MCP; CFD copy trading; equity perps expansion; BGB ecosystem upgrade',
+      bg_u1: '<span class="date-tag">Apr 17</span>Launched <strong>IPO Prime</strong> \u2014 first product: preSPAX (SpaceX pre-listing token by Republic)<span class="detail-line">Retail access to unicorn Pre-IPO investment. OpenAI next in pipeline</span>',
+      bg_u2: '<span class="date-tag">Apr 20</span>Launched <strong>BGBTC</strong> (Bitget BTC) Season 2 \u2014 1:1 BTC-pegged, 3-day redemption, works as futures collateral<span class="detail-line">Monthly settlement on 10th, flash swap to BTC/USDT available</span>',
+      bg_u3: '<span class="date-tag">Apr</span>Launched <strong>Agent Hub + MCP Server</strong> \u2014 AI agents trade via Claude Code/Cursor, 5 analysis skills + 19 data tools<span class="detail-line">First exchange to bring MCP protocol into production trading infrastructure</span>',
+      bg_u4: '<span class="date-tag">Apr</span>Launched <strong>CFD copy trading</strong> \u2014 min 50 USDT, covers forex, commodities & global indices<span class="detail-line">CFD daily volume exceeded $6B. Extends copy-trade model beyond crypto</span>',
+      bg_u5: '<span class="date-tag">Apr 8\u201322</span><strong>Equity perps expanded to 25+ stocks</strong>: AMD, SNDK, AMAT, NFLX, Boeing, IONQ etc<span class="detail-line">AI/semiconductor/aerospace sectors, up to 25x leverage</span>',
+      bg_u6: '<span class="date-tag">Apr 3</span>Launched <strong>VIP Fast Track</strong> \u2014 behavior-driven VIP progression (trading, spot, holdings) with milestone rewards',
+      bg_u7: '<span class="date-tag">Apr 8</span><strong>BGB ecosystem upgrade</strong> via Morph \u2014 220M BGB burned, 220M locked; BGB becomes on-chain gas + governance token',
+      bg_u8: '<span class="date-tag">Apr 22</span>USDGO added as <strong>joint margin</strong> for USDT-M futures',
+      bg_u9: '<span class="date-tag">Apr</span>Grid bot upgrade \u2014 adjust price range & grid count <strong>without stopping</strong> the bot',
+      bg_u10: '<span class="date-tag">Apr 16</span>Launched Broker Max Check Program \u2014 up to 12,000 USDT rewards in first 60 days',
+      bg_u11: 'Exiting France market (announced March) \u2014 advising users to migrate to MiCA-compliant platforms',
+      cb_u_count: '9 items', cb_u_summary: 'Deribit acquired; OCC trust charter; Coinbase Business B2B launch; AI audit tool; UK lending; tGBP stablecoin',
+      cb_u1: '<span class="date-tag">Apr 9</span>Completed <strong>Deribit acquisition</strong> ($2.9B) \u2014 now covers spot, futures, perpetuals & options<span class="detail-line">Largest crypto acquisition ever. Deribit holds 87% BTC options, 94% ETH options market share</span>',
+      cb_u2: '<span class="date-tag">Apr 2</span>Received conditional <strong>OCC National Trust Charter</strong> \u2014 federal-level institutional custody & fiduciary services<span class="detail-line">Custodian for 8 of 11 spot BTC ETFs, ~$376B AUM. No retail deposits</span>',
+      cb_u3: '<span class="date-tag">Apr 21</span>Launched <strong>Coinbase Business</strong> \u2014 all-in-one financial platform for SMBs<span class="detail-line">Crypto payments, USDC yield (4.1% APY), QuickBooks/Xero integration, 2-day onboarding. Alpha stage</span>',
+      cb_u4: '<span class="date-tag">Apr 2</span><strong>x402 Foundation</strong> joined Linux Foundation \u2014 Google, Visa, Stripe, AWS among 14 founding members<span class="detail-line">AI Agent payment protocol via HTTP 402. 140M+ txs processed, 500K+ agent wallets active</span>',
+      cb_u5: '<span class="date-tag">Apr 14</span>Launched <strong>\u201cFrosty\u201d AI smart contract auditor</strong> \u2014 1-2hrs per audit, 1/100th cost of manual review',
+      cb_u6: '<span class="date-tag">Apr 20</span><strong>UK crypto-backed lending</strong> \u2014 borrow USDC against BTC (up to $5M), ETH (up to $1M) via Morpho on Base<span class="detail-line">US market: $2.17B+ USDC lent via Morpho as of Apr 14</span>',
+      cb_u7: '<span class="date-tag">Apr 22</span>Listed <strong>tGBP</strong> (GBP stablecoin by BCP Technologies) \u2014 multi-currency stablecoin expansion',
+      cb_u8: '<span class="date-tag">Apr 14</span>$5M bug bounty program covering all on-chain contracts & Base L2',
+      cb_u9: '<span class="date-tag">Apr 22</span>New Security Page \u2014 Consensus 2FA, MPC custody, 98% cold storage, redesigned for beginners',
       bn_c_count: '2 items', bn_c_summary: 'MENA invite ongoing; standard referral active',
       bn_c1: '<strong>MENA Exclusive Invite</strong> (3/26 ~ 5/17): Referrer $4-10, invitee $3-5 USDT per signup<span class="detail-line">Top 100 leaderboard shares $20,000 USDT pool</span>',
       bn_c2: '<strong>Standard Referral Commission</strong>: Up to 40% of friend\'s trading fees (requires 500+ BNB)',
@@ -1541,11 +1764,11 @@
       bg_c2: '<strong>New Broker Incentive</strong> (from 4/1): Up to $12,000 USDT for volume targets in first 60 days',
       cb_c_count: '1 item', cb_c_summary: 'Standard referral active',
       cb_c1: '<strong>Evergreen Referral Reward</strong>: 50% commission on new user\'s fees for first 3 months',
-      yield_note: 'Data collected: 2026-04-18 | Rates are floating \u2014 refer to each platform\'s Earn page for live rates',
+      yield_note: 'Data collected: 2026-04-27 | Rates are floating \u2014 refer to each platform\'s Earn page for live rates',
       th_exchange: 'Exchange', th_usdt: 'USDT Flexible APR', th_usdc: 'USDC Flexible APR', th_fixed: 'Fixed Products',
       login_req: 'Login required', no_fixed: 'No public fixed products',
       yi_ref1_label: '3rd Party Reference (bitcompare.net)', yi_ref1_detail: 'Nexo, 90-day lock required',
-      yi_ref2_label: '3rd Party Reference', yi_ref2_detail: 'bitcompare.net, as of 2026-04-18',
+      yi_ref2_label: '3rd Party Reference', yi_ref2_detail: 'bitcompare.net, as of 2026-04-27',
       th_std_ref: 'Standard Referral', th_agent: 'Agent / Affiliate', th_notes: 'Notes',
       ref_bn_std: '20% (standard)', ref_bn_agent: 'Up to 40%', ref_bn_note: 'Requires 500+ BNB for 40%; 90-day cookie',
       ref_okx_agent: 'Up to 50%', ref_okx_note: '180-day cookie (industry longest)',
@@ -1556,7 +1779,7 @@
       ri_3_label: 'Best Agent System', ri_3_detail: '3-tier distribution + daily USDT',
       ri_4_label: 'Easiest Onboarding', ri_4_detail: '50% commission, fiat, $10 min',
       footer_src: 'Sources: Official exchange announcements, App Store/Google Play changelogs, third-party aggregators',
-      footer_updated: 'Last updated: 2026-04-18 18:00 UTC',
+      footer_updated: 'Last updated: 2026-04-27 18:00 UTC',
     }
   };
 
@@ -1567,16 +1790,22 @@
     const dict = i18n[lang];
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
-      if (dict[key] !== undefined) el.textContent = dict[key];
+      if (dict[key] === undefined) return;
+      // Preserve source links — they are not translatable
+      const srcLink = el.querySelector('.src-link');
+      if (dict[key].includes('<')) {
+        el.innerHTML = dict[key];
+      } else {
+        el.textContent = dict[key];
+      }
+      if (srcLink) el.appendChild(srcLink);
     });
     document.querySelectorAll('[data-i18n-html]').forEach(el => {
       const key = el.getAttribute('data-i18n-html');
-      if (dict[key] !== undefined) el.innerHTML = dict[key];
-    });
-    // Also update items that use innerHTML (date-tags inside data-i18n)
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-      const key = el.getAttribute('data-i18n');
-      if (dict[key] !== undefined && dict[key].includes('<span')) el.innerHTML = dict[key];
+      if (dict[key] === undefined) return;
+      const srcLink = el.querySelector('.src-link');
+      el.innerHTML = dict[key];
+      if (srcLink) el.appendChild(srcLink);
     });
     updateMonthLabel();
   }
@@ -1597,10 +1826,10 @@
   const NAV_TO_SECTIONS = {
     monitor: 'updates',
     products: 'products',
-    compare: 'compare'
+    flows: 'flows'
   };
 
-  const VISUAL_SECTIONS = new Set(['products', 'compare']);
+  const VISUAL_SECTIONS = new Set(['products', 'flows']);
 
   function switchSection(sectionId) {
     document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
@@ -1616,6 +1845,8 @@
     document.querySelector('.nav-month-picker').style.display = isVisual ? 'none' : '';
     // Expand container for visual sections
     document.querySelector('.container').classList.toggle('expanded', isVisual);
+    // Scroll to top when switching to visual sections
+    if (isVisual) window.scrollTo({ top: 0, behavior: 'instant' });
     // Update sub-tab active state only for update tabs
     if (!isVisual) {
       document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
@@ -1734,35 +1965,107 @@
   // ── IA Data (product information architecture per exchange) ──
   const IA_DATA = {
     binance: {
-      ios: {
-        'Home': { screens: ['Main Feed', 'Search', 'Notifications', 'Announcements'] },
-        'Markets': { screens: ['Watchlist', 'Hot', 'New Listings', 'Sectors'] },
-        'Trade': {
+      android: {
+        'Home': {
           children: {
-            'Spot': { screens: ['Order Entry', 'Chart', 'Order Book', 'Trade History'] },
-            'Futures': { screens: ['USDT-M Overview', 'COIN-M Overview', 'Position', 'Calculator'] },
-            'Options': { screens: ['Options Chain', 'Strategy Builder'] },
-            'Margin': { screens: ['Cross Margin', 'Isolated Margin'] }
+            'Exchange': { screens: [{n:'首页 Exchange',f:'首页_Exchange.png'}] },
+            'Following': { screens: [{n:'Following 信息流',f:'首页_Following.png'},{n:'KOL 动态',f:'首页_Following_KOL动态.png'},{n:'Square 信息流',f:'首页_Following_Square.png'}] },
+            'Hot': { screens: [{n:'Hot 市场情绪',f:'首页_Hot.png'},{n:'Top Reply 帖子',f:'首页_Hot_TopReplyPost.png'},{n:'Trending Topic',f:'首页_Hot_TrendingTopic.png'},{n:'投票结果',f:'首页_Hot_投票结果.png'}] },
+            'Wallet': { screens: [{n:'Wallet 入口',f:'首页_Wallet.png'},{n:'Wallet 下半 (DApps/Events)',f:'首页_Wallet_下半.png'}] },
+            'News & Announcements': { screens: [{n:'新闻列表',f:'首页_News_新闻列表.png'},{n:'公告列表',f:'首页_Announcements_All.png'}] },
+            'Live': { screens: [{n:'直播列表',f:'首页_Live_直播列表.png'}] },
+            'Discover': { screens: [{n:'KOL 动态横幅',f:'首页_Discover_KOL动态横幅.png'}] },
+            'Campaign': { screens: [{n:'CreatorPad 活动',f:'首页_Campaign_CreatorPad.png'}] },
+            'Fear & Greed': { screens: [{n:'恐惧贪婪指数',f:'首页_FearGreed指数_上.png'}] },
+            'Manage Ranking': { screens: [{n:'默认排序',f:'首页_ManageRanking_默认.png'}] }
           }
         },
-        'Earn': { screens: ['Overview', 'Simple Earn', 'Locked', 'Launchpool', 'BNB Vault'] },
-        'Square': { screens: ['Feed', 'Live Stream', 'Creator Profile'] },
-        'Assets': { screens: ['Overview', 'Spot Wallet', 'Funding', 'Earn Wallet'] },
-        'Profile': { screens: ['Account', 'Security', 'Verification', 'Settings'] }
-      },
-      android: {
-        'Home': { screens: ['Main Feed', 'Search', 'Notifications'] },
-        'Markets': { screens: ['Watchlist', 'Hot', 'Gainers/Losers'] },
-        'Trade': { children: { 'Spot': { screens: ['Order Entry', 'Chart'] }, 'Futures': { screens: ['USDT-M', 'COIN-M'] } } },
-        'Earn': { screens: ['Overview', 'Simple Earn', 'Launchpool'] },
-        'Assets': { screens: ['Overview', 'Spot Wallet'] }
-      },
-      web: {
-        'Home': { screens: ['Landing Page', 'Dashboard'] },
-        'Markets': { screens: ['Overview', 'Watchlist', 'Screener'] },
-        'Trade': { children: { 'Spot': { screens: ['Trading View', 'Classic', 'OTC'] }, 'Futures': { screens: ['USDT-M', 'COIN-M', 'Battle'] } } },
-        'Earn': { screens: ['Overview', 'Simple Earn', 'Locked', 'Dual Investment'] },
-        'Square': { screens: ['Feed', 'Academy'] }
+        'Markets': {
+          children: {
+            'Tracker': { screens: [{n:'Traders Hot 排行',f:'Tracker_Traders排行.png'},{n:'Traders All',f:'Tracker_Traders_All.png'},{n:'Monitor 实时交易',f:'Tracker_Monitor.png'},{n:'Signals (Smart Money)',f:'Tracker_Signals.png'}] },
+            'Trenches': { screens: [{n:'Topic Rush',f:'Trenches_TopicRush.png'},{n:'Meme Rank 排行',f:'Trenches_MemeRank.png'}] },
+            'Opportunity': { screens: [{n:'首页',f:'Opportunity_首页.png'},{n:'首页 API3 详情',f:'Opportunity_首页_API3.png'},{n:'CoinRadar',f:'Opportunity_CoinRadar_上.png'},{n:'TopMover',f:'Opportunity_TopMover_上.png'},{n:'Social Echo',f:'Opportunity_SocialEcho.png'},{n:'ETF Flow',f:'Opportunity_Market_ETFFlow.png'}] },
+            'Opportunity Explorer': { screens: [{n:'Funding Rate',f:'Opportunity_Exp_FundingRate.png'},{n:'Token Unlock',f:'Opportunity_Exp_TokenUnlock.png'},{n:'板块轮动',f:'Opportunity_Exp_板块轮动.png'}] }
+          }
+        },
+        'Trade': {
+          children: {
+            'Spot': { screens: [{n:'BIO/USDT 现货',f:'现货交易_BIOUSDT.png'},{n:'BNB/USDC 现货',f:'现货交易_BNBUSDC.png'}] },
+            'Margin': { screens: [{n:'杠杆交易 (受限提示)',f:'杠杆交易_Margin.png'}] },
+            'Futures': { screens: [{n:'U本位 ETHUSDT 永续',f:'合约_ETHUSDT永续.png'},{n:'币本位 BTCUSD 永续',f:'合约_BTCUSD_币本位.png'}] },
+            'Options': { screens: [{n:'ETH 期权交易',f:'期权交易.png'}] },
+            'Convert': { screens: [{n:'闪兑空白态',f:'闪兑_Convert_空白.png'},{n:'BNB→USDC 兑换',f:'闪兑_BNB转USDC.png'},{n:'输入金额',f:'闪兑_BNB转USDC_输入金额.png'},{n:'止盈止损设置',f:'闪兑_BNB转USDC_止盈止损.png'},{n:'订单历史',f:'闪兑_订单历史.png'},{n:'设置',f:'闪兑_设置_Kline关.png'}] },
+            'Convert Limit': { screens: [{n:'限价单空白',f:'闪兑_Limit_空白.png'},{n:'完整表单',f:'闪兑_Limit_完整表单.png'},{n:'低价警告',f:'闪兑_Limit_低价警告.png'},{n:'确认订单',f:'闪兑_Limit_确认订单.png'},{n:'确认订单 (Earn勾选)',f:'闪兑_Limit_确认订单_Earn勾选.png'},{n:'AddFunds 弹窗',f:'闪兑_Limit_AddFunds弹窗_续.png'}] },
+            'Convert Recurring': { screens: [{n:'定投空白',f:'闪兑_Recurring_空白.png'},{n:'填写定投',f:'闪兑_Recurring_填写.png'},{n:'多币种分配',f:'闪兑_Recurring_多币种分配.png'},{n:'确认订单',f:'闪兑_Recurring_确认订单_单币种.png'},{n:'已有计划',f:'闪兑_Recurring_已有计划.png'},{n:'计划详情',f:'闪兑_Recurring_计划详情.png'}] },
+            'Convert Guide': { screens: [{n:'指南文章 (EN)',f:'闪兑_指南文章_EN.png'}] },
+            'Arbitrage Bot': { screens: [{n:'创建空白',f:'套利Bot_创建_空白.png'},{n:'创建 BTCUSDT',f:'套利Bot_创建_BTCUSDT.png'},{n:'完整表单',f:'套利Bot_创建_完整表单.png'},{n:'引导1 选择组合',f:'套利Bot_引导1_选择组合.png'},{n:'引导2 投入金额',f:'套利Bot_引导2_投入金额.png'},{n:'选择交易对',f:'套利Bot_选择交易对_完整列表.png'},{n:'勾选激活',f:'套利Bot_选择交易对_勾选激活.png'},{n:'地区限制弹窗',f:'套利Bot_地区限制弹窗.png'},{n:'激活合约弹窗',f:'套利Bot_激活合约弹窗.png'}] }
+          }
+        },
+        'P2P': {
+          children: {
+            'Buy List': { screens: [{n:'CNY BNB 列表',f:'P2P_买入列表_CNY_BNB.png'},{n:'金额输入弹窗',f:'P2P_买入列表_CNY_金额弹窗.png'},{n:'EUR BNB 列表',f:'P2P_买入列表_EUR_BNB.png'},{n:'Express 快捷买入',f:'P2P_Express_买入_CNY.png'}] },
+            'Buy Order': { screens: [{n:'输入金额',f:'P2P_买入BNB_输入金额.png'},{n:'超额提示',f:'P2P_买入BNB_CNY_超额提示.png'},{n:'价格更新弹窗',f:'P2P_买入BNB_价格更新弹窗.png'},{n:'商家详情',f:'P2P_买入BNB_商家详情_下.png'},{n:'完整订单页',f:'P2P_买入BNB_完整订单页.png'},{n:'安全验证弹窗',f:'P2P_买入_安全验证弹窗.png'}] },
+            'Sell List': { screens: [{n:'CNY 10K 列表',f:'P2P_卖出列表_CNY_10K.png'},{n:'EUR BNB 列表',f:'P2P_卖出列表_EUR_BNB.png'}] },
+            'Sell Order': { screens: [{n:'卖出订单页',f:'P2P_卖出BNB_订单页.png'},{n:'价格变动弹窗',f:'P2P_卖出BNB_价格变动弹窗.png'},{n:'TopUp Transfer',f:'P2P_卖出BNB_TopUp_Transfer.png'},{n:'商家主页 KoAI',f:'P2P_卖出_商家主页_KoAI.png'}] },
+            'Merchant': { screens: [{n:'商家主页 Info',f:'P2P_商家主页_Info.png'},{n:'商家主页 Feedback',f:'P2P_商家主页_Feedback.png'},{n:'大商家 Info',f:'P2P_商家主页_大商家Info.png'},{n:'大商家 Ads',f:'P2P_商家主页_大商家Ads.png'}] },
+            'Profile & Filter': { screens: [{n:'个人主页',f:'P2P_个人主页.png'},{n:'筛选页 (上)',f:'P2P_筛选页_上.png'},{n:'筛选页 (下)',f:'P2P_筛选页_下.png'},{n:'交易要求弹窗',f:'P2P_交易要求弹窗.png'},{n:'新手引导',f:'P2P_新手引导.png'}] }
+          }
+        },
+        'Pay': {
+          children: {
+            'Home': { screens: [{n:'Pay 首页',f:'Pay_首页.png'},{n:'设置',f:'Pay_设置.png'}] },
+            'Send': { screens: [{n:'Send 空白',f:'Pay_Send_空白.png'},{n:'选择币种',f:'Pay_SendCash_选择币种.png'},{n:'多人转账',f:'Pay_SendMultiple.png'},{n:'On-Chain 0G',f:'Pay_SendOnChain_0G.png'},{n:'On-Chain 选择币种',f:'Pay_SendOnChain_选择币种.png'}] },
+            'Receive': { screens: [{n:'QR Code 收款',f:'Pay_Receive_QRCode.png'},{n:'设置币种金额',f:'Pay_Receive_设置币种金额.png'}] },
+            'Red Packet': { screens: [{n:'发红包',f:'Pay_RedPacket_Send.png'},{n:'收红包',f:'Pay_RedPacket_Receive.png'},{n:'创建随机红包',f:'Pay_RedPacket_Create_Random.png'},{n:'定时红包弹窗',f:'Pay_RedPacket_Create_Timed弹窗.png'},{n:'定时红包表单',f:'Pay_RedPacket_Create_Timed_完整表单.png'}] },
+            'Recurring Send': { screens: [{n:'定期转账空白',f:'Pay_RecurringSend_空白.png'},{n:'添加弹窗',f:'Pay_RecurringSend_添加弹窗.png'}] },
+            'Flexible Earn': { screens: [{n:'Flexible Earn 首页',f:'Pay_FlexibleEarn.png'},{n:'Subscribe 空白',f:'Pay_FlexibleEarn_Subscribe_API3_空白.png'},{n:'Subscribe 余额不足',f:'Pay_FlexibleEarn_Subscribe_API3_余额不足.png'}] },
+            'Hot Deals': { screens: [{n:'商城列表',f:'Pay_HotDeals_商城列表.png'},{n:'选择国家',f:'Pay_HotDeals_选择国家.png'},{n:'Apple Gift Card',f:'Pay_HotDeals_AppleGiftCard详情.png'}] },
+            'Mobile TopUp': { screens: [{n:'选择金额',f:'Pay_MobileTopUp_选择金额.png'},{n:'确认付款',f:'Pay_MobileTopUp_确认付款.png'}] },
+            'More': { screens: [{n:'1 Dollar Game',f:'Pay_1DollarGame.png'},{n:'Campaign 规则',f:'Pay_Campaign_规则.png'},{n:'Generate API Key',f:'Pay_GenerateAPIKey.png'},{n:'支付优先级设置',f:'Pay_PaymentPriorityOrder_已设置.png'},{n:'Split Bill',f:'Pay_SplitBill.png'}] }
+          }
+        },
+        'Square': {
+          children: {
+            'KOL Profile': { screens: [{n:'Content 页',f:'Square_KOL主页_Content.png'},{n:'Portfolio 页',f:'Square_KOL主页_Portfolio.png'},{n:'Replies 页',f:'Square_KOL主页_Replies.png'}] },
+            'KOL Portfolio': { screens: [{n:'持仓分配',f:'Square_KOL_Portfolio_Allocation.png'},{n:'资产分析',f:'Square_KOL_Portfolio_AssetAnalysis.png'}] },
+            'Campaigns': { screens: [{n:'Connect X 弹窗',f:'Square_Campaigns_ConnectX弹窗.png'},{n:'X 授权页',f:'Square_ConnectX_授权页.png'}] },
+            'Community': { screens: [{n:'Following 列表',f:'Square_Following列表.png'},{n:'Suggested Creators',f:'Square_SuggestedCreators.png'},{n:'发帖编辑器',f:'发帖编辑器.png'},{n:'用户个人主页',f:'用户个人主页.png'},{n:'Write to Earn',f:'Square_WriteToEarn.png'},{n:'WriteToEarn 排行榜',f:'Square_WriteToEarn_排行榜.png'}] }
+          }
+        },
+        'AI Features': { screens: [{n:'AI 首页',f:'AI_首页.png'},{n:'AI 新闻摘要',f:'AI_新闻摘要.png'},{n:'AI 新闻摘要 (续)',f:'AI_新闻摘要_续.png'},{n:'AI 闪兑内嵌',f:'AI_闪兑内嵌.png'}] },
+        'Academy': { screens: [{n:'首页',f:'Academy_首页.png'},{n:'Binance Academy 主页',f:'Academy_BinanceAcademy主页.png'},{n:'Blockchain 文章',f:'Academy_Blockchain.png'},{n:'文章详情',f:'Academy_文章详情_Blockchain.png'},{n:'Trending Articles',f:'Academy_TrendingArticles.png'}] },
+        'Live Stream': { screens: [{n:'聊天室',f:'直播_聊天室.png'},{n:'打赏礼物',f:'直播_打赏礼物.png'},{n:'打赏确认 (余额不足)',f:'直播_打赏确认_余额不足.png'},{n:'交易对弹窗',f:'直播_交易对弹窗.png'},{n:'主播主页弹窗',f:'直播_主播主页_弹窗.png'}] },
+        'Discover': { screens: [{n:'服务自定义',f:'服务自定义.png'},{n:'Booster 活动',f:'Discover_Booster.png'},{n:'DApps (BNB Chain)',f:'Discover_DApps.png'}] },
+        'Earn': { screens: [{n:'Exclusive TGE',f:'Exclusive_TGE.png'},{n:'wstETH 质押 (风险提示)',f:'Earn_wstETH_风险提示.png'},{n:'产品详情 (Treehouse)',f:'Earn_产品详情.png'},{n:'产品奖励说明',f:'Earn_产品奖励.png'}] },
+        'Web3 Wallet': {
+          children: {
+            'Onboarding': { screens: [{n:'统一账户引导',f:'Wallet引导_统一账户.png'},{n:'空投引导',f:'Wallet引导_空投.png'},{n:'代币兑换引导',f:'Wallet引导_代币兑换.png'},{n:'DApp 浏览器引导',f:'Wallet引导_DApp浏览.png'}] },
+            'Portfolio': { screens: [{n:'钱包总览 (PnL/持仓)',f:'Web3钱包_Portfolio.png'},{n:'交易历史',f:'Web3钱包_交易历史.png'},{n:'选择钱包',f:'选择钱包弹窗.png'}] },
+            'Token': { screens: [{n:'BNB 详情 (K线)',f:'Token详情_BNB.png'},{n:'USDT 详情 (Holders)',f:'Token详情_USDT.png'},{n:'BB 详情 (K线)',f:'Token详情_BB_K线.png'}] },
+            'Airdrop': { screens: [{n:'Alpha Box 空投',f:'Airdrop_AlphaBox.png'},{n:'CHIP 代币领取',f:'Airdrop_CHIP.png'}] },
+            'Send': { screens: [{n:'发送 (Transfer/Send)',f:'Web3_发送.png'}] }
+          }
+        },
+        'Assets': {
+          children: {
+            'Overview': { screens: [{n:'资产总览 + 提现方式',f:'资产总览_提现方式.png'},{n:'资金划转 (Funding→Spot)',f:'资金划转.png'}] },
+            'Deposit': { screens: [{n:'AddFunds 弹窗',f:'充值_AddFunds弹窗.png'},{n:'货币列表',f:'充值_货币列表.png'},{n:'选择方式 EUR',f:'充值_选择方式_EUR.png'},{n:'选择方式 USD',f:'充值_选择方式_USD.png'}] }
+          }
+        },
+        'Security & KYC': {
+          children: {
+            'Authentication': { screens: [{n:'Passkey 验证失败',f:'Passkey验证失败.png'},{n:'额外验证方式弹窗',f:'额外验证弹窗.png'},{n:'邮箱验证码',f:'安全验证_邮箱验证码.png'}] },
+            'Phone Verification': { screens: [{n:'添加手机号',f:'安全验证_添加手机号_空白.png'},{n:'验证码输入',f:'安全验证_添加手机号_验证码.png'}] },
+            'KYC': { screens: [{n:'身份验证入口',f:'KYC_身份验证入口.png'},{n:'验证失败',f:'KYC_验证失败.png'}] }
+          }
+        },
+        'Activities': {
+          children: {
+            'Monthly Challenge': { screens: [{n:'挑战首页',f:'活动_MonthlyChallenge.png'},{n:'任务列表',f:'活动_MonthlyChallenge_任务.png'}] },
+            'Referral': { screens: [{n:'交易任务',f:'活动_邀请好友_交易任务.png'},{n:'排行榜',f:'活动_邀请好友_排行榜.png'},{n:'分享弹窗',f:'活动_邀请好友_分享弹窗.png'},{n:'Squad 进度',f:'活动_邀请好友_Squad进度.png'}] },
+            'Gold vs BTC': { screens: [{n:'活动首页',f:'活动_黄金vsBTC_首页.png'},{n:'奖励结构',f:'活动_黄金vsBTC_奖励结构.png'},{n:'排行榜',f:'活动_黄金vsBTC_排行榜.png'},{n:'战队列表',f:'活动_黄金vsBTC_战队列表.png'},{n:'规则',f:'活动_黄金vsBTC_规则.png'},{n:'任务',f:'活动_黄金vsBTC_任务.png'},{n:'加入比赛',f:'活动_黄金vsBTC_加入比赛.png'},{n:'创建/加入团队',f:'活动_黄金vsBTC_创建加入团队.png'},{n:'队长报名申请',f:'活动_黄金vsBTC_队长报名申请.png'},{n:'队长报名完整',f:'活动_黄金vsBTC_队长报名完整.png'}] }
+          }
+        }
       }
     },
     okx: {
@@ -1783,11 +2086,54 @@
         'Profile': { screens: ['Account', 'VIP Level', 'Security'] }
       },
       android: {
-        'Home': { screens: ['Dashboard', 'Quick Actions'] },
-        'Markets': { screens: ['Overview', 'Watchlist'] },
-        'Trade': { children: { 'Spot': { screens: ['Order Entry', 'Chart'] }, 'Futures': { screens: ['Perp', 'Position'] } } },
-        'Earn': { screens: ['Overview', 'Simple', 'Structured'] },
-        'Assets': { screens: ['Overview', 'Trading Account'] }
+        'Home': {
+          screens: [
+            {n:'欧易首页',f:'app_欧易首页.png'},
+            {n:'首页-行情概览',f:'app_欧易首页-行情概览.png'},
+            {n:'首页-公告区',f:'app_欧易首页-公告.png'}
+          ]
+        },
+        'Explore': {
+          children: {
+            'Overview': { screens: [{n:'探索页',f:'app_探索页.png'},{n:'赚币与策略交易',f:'app_探索页-赚币与策略.png'}] },
+            'Search': { screens: [{n:'热门搜索',f:'app_搜索页.png'}] },
+            'Simple Earn': { screens: [{n:'简单赚币产品列表',f:'app_简单赚币.png'}] }
+          }
+        },
+        'Trade': {
+          children: {
+            'Spot': { screens: [{n:'现货交易 BTC/USDT',f:'app_现货交易.png'}] },
+            'Futures': { screens: [{n:'合约交易 BTC/USDT 50x',f:'app_合约交易.png'}] },
+            'Strategy': { screens: [{n:'策略交易推荐',f:'app_策略交易.png'}] },
+            'Flash Swap': { screens: [{n:'闪兑 USDT→BTC',f:'app_闪兑.png'}] },
+            'DEX': { screens: [{n:'DEX 交易 xBTC',f:'app_DEX交易.png'}] },
+            'K-Line': { screens: [{n:'K线详情 (横屏)',f:'app_K线详情.png'}] }
+          }
+        },
+        'Planet': {
+          screens: [{n:'星球 (社区/消息)',f:'app_星球.png'}]
+        },
+        'Assets': {
+          children: {
+            'Overview': { screens: [{n:'资产总览',f:'app_资产总览.png'}] },
+            'Deposit': { screens: [{n:'充币入口',f:'app_充币.png'}] },
+            'Withdraw': { screens: [{n:'提币入口',f:'app_提币.png'}] },
+            'Transfer': { screens: [{n:'划转 (资金→交易)',f:'app_划转.png'}] },
+            'Earn': { screens: [{n:'赚币产品',f:'app_赚币入口.png'}] }
+          }
+        },
+        'Web3 Wallet': {
+          screens: [
+            {n:'Web3 钱包入口',f:'app_Web3钱包.png'},
+            {n:'支持 130+ 网络',f:'app_Web3钱包-更多.png'}
+          ]
+        },
+        'Profile': {
+          children: {
+            'Overview': { screens: [{n:'个人中心',f:'app_个人中心.png'},{n:'功能全览',f:'app_个人中心-更多.png'}] },
+            'Settings': { screens: [{n:'账号设置',f:'app_账号设置.png'}] }
+          }
+        }
       },
       web: {
         'Home': { screens: [{n:'首页',f:'首页.png'}] },
@@ -1883,11 +2229,188 @@
         'Settings': { screens: ['Account', 'Security', 'Privacy', 'Card'] }
       },
       android: {
-        'Home': { screens: ['Portfolio', 'Watchlist'] },
-        'Explore': { screens: ['Trending', 'Categories'] },
-        'Trade': { children: { 'Simple': { screens: ['Buy/Sell'] }, 'Advanced': { screens: ['Pro Trading'] } } },
-        'Earn': { screens: ['Staking', 'USDC Rewards'] },
-        'Settings': { screens: ['Account', 'Security'] }
+        'Spot': { screens: [
+          {n:'Spot 市场列表',f:'首页_Spot列表.png'},
+          {n:'BTC-USD 现货交易',f:'现货交易_BTC-USD.png'},
+          {n:'SOL-USD 现货交易',f:'现货交易_SOL-USD.png'},
+          {n:'SOL-USDC 现货交易',f:'现货交易_SOL-USDC.png'},
+          {n:'限价单',f:'现货交易_限价单.png'},
+          {n:'止损单',f:'现货交易_止损单.png'},
+          {n:'市价单',f:'现货交易_市价单.png'},
+          {n:'高级图表',f:'现货交易_高级图表.png'},
+          {n:'K线图全屏',f:'现货交易_K线图全屏.png'},
+          {n:'指标选择',f:'现货交易_指标选择.png'},
+          {n:'图表设置',f:'现货交易_图表设置.png'},
+          {n:'订单簿',f:'现货交易_订单簿.png'},
+          {n:'SOL-USDC 订单簿',f:'现货交易_SOL-USDC_订单簿.png'},
+          {n:'交易历史',f:'现货交易_交易历史.png'},
+          {n:'我的挂单',f:'现货交易_我的挂单.png'}
+        ]},
+        'Derivatives': {
+          children: {
+            'Perpetuals': { screens: [
+              {n:'永续合约列表',f:'永续合约_列表.png'},
+              {n:'ETH PERP 行情',f:'永续合约_ETH行情.png'},
+              {n:'持仓详情',f:'永续合约_持仓详情.png'},
+              {n:'Position Details',f:'永续合约_Position_Details.png'}
+            ]},
+            'Futures': { screens: [{n:'期货列表 (空态)',f:'期货_列表空态.png'}] },
+            'TP/SL': { screens: [
+              {n:'TP/SL 订单列表',f:'TPSL订单列表.png'},
+              {n:'添加 TP/SL 表单',f:'TPSL_添加表单.png'},
+              {n:'输入止盈百分比',f:'TPSL_输入止盈百分比.png'},
+              {n:'止盈止损完整填写',f:'TPSL_止盈止损填写完整.png'},
+              {n:'TP/SL 下单成功',f:'TPSL_下单成功.png'}
+            ]},
+            'Close Position': { screens: [
+              {n:'平仓 - 市价单',f:'平仓_市价单.png'},
+              {n:'平仓 - 限价单',f:'平仓_限价单.png'}
+            ]},
+            'Margin': { screens: [{n:'CDE 全仓保证金',f:'CDE全仓保证金.png'}] },
+            'Orders': { screens: [
+              {n:'TP/SL 订单详情 (已取消)',f:'订单详情_TPSL已取消.png'},
+              {n:'限价单详情 (已成交)',f:'订单详情_限价单已成交.png'}
+            ]}
+          }
+        },
+        'Portfolio': {
+          children: {
+            'Overview': { screens: [
+              {n:'投资组合总览',f:'投资组合_总览.png'},
+              {n:'Portfolio Overview',f:'投资组合_Overview.png'},
+              {n:'Overview 下滑',f:'投资组合_Overview_下滑.png'},
+              {n:'下滑 - 推荐',f:'投资组合_下滑_推荐.png'},
+              {n:'交易记录',f:'投资组合_交易记录.png'},
+              {n:'横屏辅助视图',f:'投资组合_横屏辅助视图.png'}
+            ]},
+            'Sub-Portfolios': { screens: [
+              {n:'Primary 投资组合详情',f:'Primary投资组合_详情.png'},
+              {n:'Perpetuals 投资组合',f:'Perpetuals投资组合.png'},
+              {n:'Perpetuals 投资组合下滑',f:'Perpetuals投资组合_下滑.png'}
+            ]},
+            'Transfer': { screens: [
+              {n:'Transfer 弹窗',f:'投资组合_Transfer弹窗.png'},
+              {n:'Convert 弹窗',f:'投资组合_Convert弹窗.png'},
+              {n:'划转 Primary→Perpetuals',f:'划转_Primary到Perpetuals.png'},
+              {n:'划转 Perpetuals→Primary',f:'划转_Perpetuals到Primary.png'}
+            ]},
+            'Assets': { screens: [
+              {n:'SOL 资产详情',f:'SOL资产详情.png'},
+              {n:'现金余额详情',f:'现金余额详情.png'}
+            ]}
+          }
+        },
+        'Deposit & Withdraw': {
+          children: {
+            'Deposit Crypto': { screens: [
+              {n:'充值 USDC - 选择网络',f:'充值USDC_选择网络.png'},
+              {n:'充值 USDC - Coinbase 网络',f:'充值USDC_Coinbase网络.png'},
+              {n:'充值 USDC - 地址展示',f:'充值USDC_地址展示.png'},
+              {n:'充值 USDC - 二维码',f:'充值USDC_二维码.png'},
+              {n:'充值 USDC - Base 网络',f:'充值USDC_Base网络.png'},
+              {n:'充值 USDC - SOL 网络',f:'充值USDC_SOL网络.png'}
+            ]},
+            'Deposit Fiat': { screens: [
+              {n:'充值法币 - 选择币种',f:'充值法币_选择币种.png'},
+              {n:'充值 SGD - 选择方式',f:'充值SGD_选择方式.png'},
+              {n:'PayNow QR - 选择银行',f:'充值SGD_PayNow选择银行.png'},
+              {n:'PayNow QR - 说明',f:'充值SGD_PayNow说明.png'},
+              {n:'PayNow QR - 二维码',f:'充值SGD_PayNow二维码.png'},
+              {n:'FAST 不可用',f:'充值SGD_FAST不可用.png'}
+            ]},
+            'Withdraw': { screens: [{n:'提现 USDC - 输入金额',f:'提现USDC_输入金额.png'}] },
+            'Send': { screens: [{n:'请求付款 - BTC',f:'请求付款_BTC.png'}] }
+          }
+        },
+        'Sell / Convert': { screens: [
+          {n:'卖出 USDC - 输入金额',f:'卖出USDC_输入金额.png'},
+          {n:'卖出 USDC - 输入数量',f:'卖出USDC_输入数量.png'},
+          {n:'卖出 USDC - Sell All',f:'卖出USDC_Sell_All.png'},
+          {n:'卖出 USDC - 确认页',f:'卖出USDC_确认页.png'},
+          {n:'卖出 USDC - 提交成功',f:'卖出USDC_提交成功.png'},
+          {n:'卖出 USDC - 交易成功',f:'卖出USDC_交易成功.png'}
+        ]},
+        'Coinbase One': {
+          children: {
+            'Plans': { screens: [
+              {n:'Coinbase One 入口',f:'CoinbaseOne入口.png'},
+              {n:'套餐选择',f:'CoinbaseOne套餐选择.png'},
+              {n:'对比 - Basic',f:'CoinbaseOne对比_Basic.png'},
+              {n:'对比 - Preferred',f:'CoinbaseOne对比_Preferred.png'},
+              {n:'对比 - Premium',f:'CoinbaseOne对比_Premium.png'},
+              {n:'落地页',f:'CoinbaseOne落地页.png'},
+              {n:'落地页 (简版)',f:'CoinbaseOne落地页_简版.png'}
+            ]},
+            'Membership': { screens: [
+              {n:'欢迎 Premium',f:'CoinbaseOne欢迎_Premium.png'},
+              {n:'会员首页',f:'CoinbaseOne会员首页.png'},
+              {n:'附加权益',f:'CoinbaseOne附加权益.png'},
+              {n:'管理订阅',f:'CoinbaseOne管理订阅.png'},
+              {n:'取消确认',f:'CoinbaseOne取消确认.png'},
+              {n:'取消成功',f:'CoinbaseOne取消成功.png'},
+              {n:'取消后权益页',f:'CoinbaseOne取消后权益页.png'}
+            ]},
+            'Account Protection': { screens: [
+              {n:'账户保护激活',f:'CoinbaseOne账户保护激活.png'},
+              {n:'保护确认弹窗',f:'CoinbaseOne账户保护确认弹窗.png'},
+              {n:'账户保护状态',f:'CoinbaseOne账户保护状态.png'}
+            ]}
+          }
+        },
+        'Notifications': {
+          children: {
+            'Settings': { screens: [
+              {n:'通知设置总览',f:'通知设置_总览.png'},
+              {n:'通知设置下滑',f:'通知设置_下滑.png'},
+              {n:'价格提醒设置',f:'通知设置_价格提醒.png'},
+              {n:'自定义提醒设置',f:'通知设置_自定义提醒.png'},
+              {n:'Trading Insights',f:'通知设置_Trading_Insights.png'},
+              {n:'安全提醒',f:'通知设置_安全提醒.png'},
+              {n:'账户活动',f:'通知设置_账户活动.png'},
+              {n:'高级交易通知',f:'通知设置_高级交易.png'},
+              {n:'优惠公告',f:'通知设置_优惠公告.png'}
+            ]},
+            'Custom Alerts': { screens: [
+              {n:'自定义提醒设置页',f:'自定义提醒_设置页.png'},
+              {n:'选择资产',f:'自定义提醒_选择资产.png'},
+              {n:'价格目标',f:'自定义提醒_价格目标.png'},
+              {n:'输入价格',f:'自定义提醒_输入价格.png'},
+              {n:'已保存',f:'自定义提醒_已保存.png'},
+              {n:'编辑/删除',f:'自定义提醒_编辑删除.png'}
+            ]}
+          }
+        },
+        'Settings': { screens: [
+          {n:'账户设置',f:'账户设置.png'},
+          {n:'隐私设置',f:'隐私设置.png'},
+          {n:'登录与安全',f:'登录与安全.png'},
+          {n:'双重验证',f:'双重验证.png'},
+          {n:'通知偏好',f:'通知偏好.png'}
+        ]},
+        'Menu': { screens: [
+          {n:'侧边菜单 (完整)',f:'侧边菜单_完整.png'},
+          {n:'菜单下半部分',f:'侧边菜单_下半部分.png'},
+          {n:'Trade 入口',f:'侧边菜单_Trade.png'},
+          {n:'Spot 入口',f:'侧边菜单_Spot.png'}
+        ]},
+        'Help & Support': { screens: [
+          {n:'帮助中心 (个性化)',f:'帮助中心_个性化.png'},
+          {n:'帮助中心 (主页)',f:'帮助中心_主页完整.png'},
+          {n:'自助链接',f:'帮助中心_自助链接.png'},
+          {n:'搜索帮助',f:'帮助中心_搜索.png'},
+          {n:'搜索 (带键盘)',f:'帮助中心_搜索_带键盘.png'},
+          {n:'帮助首页 (旧)',f:'帮助中心_首页.png'}
+        ]},
+        'Other': { screens: [
+          {n:'Concierge 客服',f:'Concierge客服.png'},
+          {n:'推荐计划',f:'推荐计划.png'},
+          {n:'反馈 - 分类',f:'反馈_分类选择.png'},
+          {n:'反馈 - 功能',f:'反馈_功能类别.png'},
+          {n:'反馈 - 产品类型',f:'反馈_产品类型.png'},
+          {n:'Chrome 内嵌页',f:'Chrome内嵌页.png'},
+          {n:'KYC - 验证身份证',f:'KYC_验证身份证.png'},
+          {n:'KYC - 允许相机',f:'KYC_允许相机访问.png'}
+        ]}
       },
       web: {
         'Home': { screens: ['Dashboard', 'Portfolio'] },
@@ -1896,16 +2419,6 @@
         'Explore': { screens: ['Assets', 'Learn'] }
       }
     }
-  };
-
-  // ── Compare Data (module → sub → exchange → screens) ──
-  const MODULES = {
-    'Home':    ['Dashboard', 'Feed', 'Search'],
-    'Markets': ['Watchlist', 'Overview', 'Screener'],
-    'Trade':   ['Spot', 'Futures', 'Options', 'Copy Trade'],
-    'Earn':    ['Overview', 'Flexible', 'Fixed', 'Structured'],
-    'Assets':  ['Overview', 'Wallet', 'History'],
-    'Profile': ['Account', 'Security', 'VIP']
   };
 
   // ── Flow Data ──
@@ -2106,6 +2619,93 @@
       ]
     },
     {
+      id: 'cb-android-sell-usdc', exchange: 'coinbase', platform: 'Android', module: 'Sell/Convert', title: '卖出 USDC 完整流程',
+      desc: 'Portfolio 页面发起 USDC 卖出，输入金额 → 确认 → 成交，观察 0.05% spread 和 SGD 结算。',
+      steps: [
+        { label: 'Portfolio 总览', note: '$103.94 总资产，Primary $35.38 / Perpetuals $68.56，底栏5个tab', img: 'screenshots/coinbase/投资组合_总览.png' },
+        { label: 'Convert 弹窗', note: '点击 Convert 按钮弹出三选项：Convert to crypto / to cash / between crypto', img: 'screenshots/coinbase/投资组合_Convert弹窗.png' },
+        { label: '输入卖出金额', note: '选择 Sell USDC → SGD Wallet，One-time order 模式，内置数字键盘', img: 'screenshots/coinbase/卖出USDC_输入金额.png' },
+        { label: 'Sell All 输入完成', note: '点击 Sell all → 20.000009 USDC，SGD Wallet S$19.59', img: 'screenshots/coinbase/卖出USDC_Sell_All.png' },
+        { label: '确认页', note: 'Sell 20.000009 USDC / USDC price S$1.27 / Total S$25.46 incl. 0.05% spread', img: 'screenshots/coinbase/卖出USDC_确认页.png' },
+        { label: '订单已提交', note: 'Order submitted + "You might also like" USDC/SOL/ETH 推荐', img: 'screenshots/coinbase/卖出USDC_提交成功.png' },
+        { label: '交易成功', note: 'Trade successful! You sold 20.000009 USDC + 金色星星动效', img: 'screenshots/coinbase/卖出USDC_交易成功.png' }
+      ]
+    },
+    {
+      id: 'cb-android-deposit-usdc', exchange: 'coinbase', platform: 'Android', module: 'Deposit', title: '充值 USDC 多网络选择',
+      desc: '从 Portfolio → Deposit 进入充值流程，展示 Coinbase/Base/Ethereum/Solana 多网络选择和二维码地址。',
+      steps: [
+        { label: '选择网络', note: '充值 USDC 选择网络：Coinbase (Instant, Free) / Base / Ethereum / Solana / Stellar / Polygon', img: 'screenshots/coinbase/充值USDC_选择网络.png' },
+        { label: 'Coinbase 网络', note: 'Coinbase 网络免费即时转账，显示唯一标识码', img: 'screenshots/coinbase/充值USDC_Coinbase网络.png' },
+        { label: '地址展示', note: '显示钱包地址 + 复制按钮 + 安全提示', img: 'screenshots/coinbase/充值USDC_地址展示.png' },
+        { label: '二维码', note: '充值地址二维码 + 地址文字 + 复制/分享按钮', img: 'screenshots/coinbase/充值USDC_二维码.png' },
+        { label: 'Base 网络', note: '切换 Base 网络，显示不同地址', img: 'screenshots/coinbase/充值USDC_Base网络.png' },
+        { label: 'Solana 网络', note: '切换 Solana 网络，SPL Token 地址', img: 'screenshots/coinbase/充值USDC_SOL网络.png' }
+      ]
+    },
+    {
+      id: 'cb-android-deposit-sgd', exchange: 'coinbase', platform: 'Android', module: 'Deposit', title: '充值 SGD (PayNow QR)',
+      desc: '法币入金流程：选择币种 → 选择 PayNow/FAST → 选择银行 → 获取 QR 二维码。新加坡本地化方案。',
+      steps: [
+        { label: '选择入金币种', note: 'Deposit cash: SGD (Instant, No fees) vs USD (1-3 business days, Bank fees)', img: 'screenshots/coinbase/充值法币_选择币种.png' },
+        { label: '选择充值方式', note: 'PayNow QR (Recommended, No fees, Instant) vs FAST bank transfer (No fees, Instant)', img: 'screenshots/coinbase/充值SGD_选择方式.png' },
+        { label: '选择银行', note: 'DBS / OCBC / UOB / SCB / Trust Bank / HSBC / Other banks，Not supported: Grab, Wise, LifeSG, GovWallet', img: 'screenshots/coinbase/充值SGD_PayNow选择银行.png' },
+        { label: 'PayNow QR 说明', note: '姓名必须匹配 + 每24h限10笔 + 单笔限额 SGD 200,000', img: 'screenshots/coinbase/充值SGD_PayNow说明.png' },
+        { label: 'PayNow QR 二维码', note: 'DBS PayNow QR 二维码 + 扫码指引 + "I\'ve made my deposit" 确认按钮', img: 'screenshots/coinbase/充值SGD_PayNow二维码.png' },
+        { label: 'FAST 不可用', note: '"Payment method not available" 错误弹窗 + Try different method / Contact support', img: 'screenshots/coinbase/充值SGD_FAST不可用.png' }
+      ]
+    },
+    {
+      id: 'cb-android-coinbase-one', exchange: 'coinbase', platform: 'Android', module: 'Coinbase One', title: 'Coinbase One 订阅全流程',
+      desc: '从入口浏览套餐 → 对比 Basic/Preferred/Premium → 订阅 Premium → 激活保护 → 管理/取消订阅。',
+      steps: [
+        { label: 'Coinbase One 入口', note: '落地页展示 3.50% USDC / 零手续费 / 账户保护 / 报税 / Onchain 权益', img: 'screenshots/coinbase/CoinbaseOne入口.png' },
+        { label: '套餐选择', note: 'Onchain benefits 下方选择方案：Monthly S$4.99/mo vs Annual S$49.99/yr (SAVE S$9)', img: 'screenshots/coinbase/CoinbaseOne套餐选择.png' },
+        { label: '对比 - Basic', note: 'S$500/mo 零手续费 + S$1K 保护 + 3.50% APY + Token sale boost + 报税 + Onchain', img: 'screenshots/coinbase/CoinbaseOne对比_Basic.png' },
+        { label: '对比 - Preferred', note: 'S$10K/mo 零手续费 + S$10K 保护 + 24/7 Priority support + 50% boost，S$29.99/mo', img: 'screenshots/coinbase/CoinbaseOne对比_Preferred.png' },
+        { label: '对比 - Premium', note: 'Unlimited 零手续费 + S$250K 保护 + Concierge video support + 100% boost，S$299.99/mo', img: 'screenshots/coinbase/CoinbaseOne对比_Premium.png' },
+        { label: '欢迎 Premium', note: '"You\'re in. Welcome to Coinbase One Premium" 全屏欢迎页', img: 'screenshots/coinbase/CoinbaseOne欢迎_Premium.png' },
+        { label: '账户保护激活', note: 'Activate account protection: 资产保护 S$250,000 + passkey 设置', img: 'screenshots/coinbase/CoinbaseOne账户保护激活.png' },
+        { label: '会员首页', note: 'Premium dashboard: 余额低提醒 + Unlimited trading / Activate protection / Concierge', img: 'screenshots/coinbase/CoinbaseOne会员首页.png' },
+        { label: '附加权益', note: '3.50% USDC APY + Token sale boost + 报税 + Onchain benefits ($60+ value)', img: 'screenshots/coinbase/CoinbaseOne附加权益.png' },
+        { label: '管理订阅', note: 'Premium S$299.99/month + 支付方式 + Switch to Preferred 降级推荐 + Cancel', img: 'screenshots/coinbase/CoinbaseOne管理订阅.png' },
+        { label: '取消确认', note: '"Are you sure?" 列出将失去的权益：零手续费/S$250K 保护/3.50% APY/token sale/gas rebates', img: 'screenshots/coinbase/CoinbaseOne取消确认.png' },
+        { label: '取消成功', note: '"Your membership is canceled" 仍可使用到 May 27, 2026', img: 'screenshots/coinbase/CoinbaseOne取消成功.png' }
+      ]
+    },
+    {
+      id: 'cb-android-tpsl', exchange: 'coinbase', platform: 'Android', module: 'Derivatives', title: '永续合约 TP/SL 设置',
+      desc: '为 ETH PERP 持仓设置止盈止损：查看现有 TP/SL → 添加新订单 → 填写参数 → 下单成功。',
+      steps: [
+        { label: 'TP/SL 订单列表', note: '已有一笔 TP/SL sell @ 3,205.27 / 1,068.42 USDC (Mar 24)', img: 'screenshots/coinbase/TPSL订单列表.png' },
+        { label: '添加 TP/SL 表单', note: 'ETH PERP LONG 50X / Avg entry 2,136.85 / Amount 0.0051 ETH / TP+SL 输入框 + 百分比滑杆', img: 'screenshots/coinbase/TPSL_添加表单.png' },
+        { label: '输入止盈 20%', note: 'Take profit: 2,564.22 USDC (20%) / P&L est.: +2.18 USDC，数字键盘输入', img: 'screenshots/coinbase/TPSL_输入止盈百分比.png' },
+        { label: '止盈止损完整', note: 'TP 2,564.22 (20%) + SL 1,709.48 (20%) / P&L +2.18/-2.18 USDC，Confirm 按钮', img: 'screenshots/coinbase/TPSL_止盈止损填写完整.png' },
+        { label: '下单成功', note: '两笔 TP/SL 订单显示，toast "Order has been placed"', img: 'screenshots/coinbase/TPSL_下单成功.png' }
+      ]
+    },
+    {
+      id: 'cb-android-close-position', exchange: 'coinbase', platform: 'Android', module: 'Derivatives', title: '平仓 ETH PERP',
+      desc: '从持仓详情发起平仓：Market 或 Limit 两种方式，显示 P&L 和 ROI。',
+      steps: [
+        { label: '持仓详情', note: 'ETH PERP Long 50X Cross / Entry 2,136.85 / Mark 2,319.35 / P&L +0.93 USDC / TP/SL 1 order', img: 'screenshots/coinbase/永续合约_Position_Details.png' },
+        { label: '平仓 - 市价单', note: 'Close ETH PERP: Market tab / 0.0051 ETH 100% / P&L 0.94 USDC (ROI 395.98%)', img: 'screenshots/coinbase/平仓_市价单.png' },
+        { label: '平仓 - 限价单', note: 'Limit tab / Price 2320.56 (MID|ASK) / Amount 0.0051 ETH / P&L 0.94 USDC', img: 'screenshots/coinbase/平仓_限价单.png' }
+      ]
+    },
+    {
+      id: 'cb-android-custom-alert', exchange: 'coinbase', platform: 'Android', module: 'Notifications', title: '自定义价格提醒',
+      desc: '从通知设置进入自定义提醒 → 选择 BTC → 设置价格目标 → 保存 → 管理（编辑/删除）。',
+      steps: [
+        { label: '自定义提醒设置', note: 'Custom alerts: Push + In-app 开启 / "Add alert" 按钮 / BTC 预览卡', img: 'screenshots/coinbase/自定义提醒_设置页.png' },
+        { label: '选择资产', note: '按市值排序的币种选择器：BTC $77,734 / ETH $2,321 / XRP / BNB / SOL / DOGE...', img: 'screenshots/coinbase/自定义提醒_选择资产.png' },
+        { label: '价格方向', note: '"Choose price movement for Bitcoin": Moves above / Moves below + Price target 输入', img: 'screenshots/coinbase/自定义提醒_价格目标.png' },
+        { label: '输入目标价', note: '输入 $50 → "99.94% below the current $77,739.01 BTC price" 实时校验', img: 'screenshots/coinbase/自定义提醒_输入价格.png' },
+        { label: '提醒已保存', note: 'Bitcoin alerts 页 / Price moves above $50.00 toggle + toast "saved"', img: 'screenshots/coinbase/自定义提醒_已保存.png' },
+        { label: '编辑/删除', note: '长按提醒 → 底部弹出 Edit / Delete 操作菜单', img: 'screenshots/coinbase/自定义提醒_编辑删除.png' }
+      ]
+    },
+    {
       id: 'bn-web-earn', exchange: 'binance', platform: 'Web', module: 'Earn', title: 'Simple Earn Subscription',
       desc: 'How users subscribe to Simple Earn flexible savings on Binance web.',
       steps: [
@@ -2157,7 +2757,7 @@
 
   // ══════════ PRODUCTS VIEW ══════════
   let iaCurrentEx = 'binance';
-  let iaCurrentPlat = 'ios';
+  let iaCurrentPlat = 'android';
   let iaCurrentPath = null;
 
   function countScreens(node) {
@@ -2181,10 +2781,13 @@
     return node.screens || [];
   }
 
+  function getScreenshotPrefix() { return 'screenshots/' + iaCurrentEx + '/'; }
+
   function createWebFrameImg(label, imgSrc) {
+    const prefix = getScreenshotPrefix();
     return `<div class="web-frame-img" onclick="openScLightbox('${imgSrc.replace(/'/g,"\\'")}','${label.replace(/'/g,"\\'")}')">
       <div class="browser-bar"><span class="bdr"></span><span class="bdy"></span><span class="bdg"></span></div>
-      <img src="screenshots/okx/${encodeURIComponent(imgSrc)}" alt="${label}" loading="lazy" onerror="this.parentElement.style.display='none'">
+      <img src="${prefix}${encodeURIComponent(imgSrc)}" alt="${label}" loading="lazy" onerror="this.parentElement.style.display='none'">
     </div>`;
   }
 
@@ -2211,7 +2814,7 @@
     lbResetZoom();
     const lb = document.getElementById('scLightbox');
     const img = document.getElementById('scLightboxImg');
-    img.src = item.src.startsWith('screenshots/') ? item.src : ('screenshots/okx/' + encodeURIComponent(item.src));
+    img.src = item.src.startsWith('screenshots/') ? item.src : (getScreenshotPrefix() + encodeURIComponent(item.src));
     document.getElementById('scLightboxTitle').textContent = item.title;
     const counter = document.getElementById('scLbCounter');
     const prevBtn = document.getElementById('scLbPrev');
@@ -2227,6 +2830,7 @@
       nextBtn.style.display = 'none';
     }
     lb.classList.add('open');
+    document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
   }
 
@@ -2239,34 +2843,75 @@
     }
   }
 
-  // ══════════ LIGHTBOX ZOOM ══════════
+  // ══════════ LIGHTBOX ZOOM (native-scroll based) ══════════
   let lbZoom = 1;
-  let lbPanX = 0, lbPanY = 0;
-  let lbDragging = false, lbDragStartX = 0, lbDragStartY = 0, lbPanStartX = 0, lbPanStartY = 0;
   let lbZoomLevelTimer = null;
+  let lbDragging = false, lbDragStartX = 0, lbDragStartY = 0, lbScrollStartX = 0, lbScrollStartY = 0;
+
+  function lbGetBaseSize() {
+    const img = document.getElementById('scLightboxImg');
+    if (!img || !img.naturalWidth) return { w: 0, h: 0 };
+    const maxW = 900, maxH = window.innerHeight - 120;
+    const s = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight, 1);
+    return { w: img.naturalWidth * s, h: img.naturalHeight * s };
+  }
 
   function lbResetZoom() {
-    lbZoom = 1; lbPanX = 0; lbPanY = 0;
+    lbZoom = 1;
     const wrap = document.getElementById('scLbWrap');
     const img = document.getElementById('scLightboxImg');
-    if (wrap) { wrap.classList.remove('zoomed', 'dragging'); }
-    if (img) { img.style.transform = ''; }
+    const lb = document.getElementById('scLightbox');
+    if (wrap) wrap.classList.remove('zoomed');
+    if (lb) lb.classList.remove('zoomed-active', 'lb-dragging');
+    if (img) { img.style.width = ''; img.style.height = ''; }
     document.getElementById('scLbZoomLevel')?.classList.remove('visible');
   }
 
-  function lbApplyTransform() {
+  function lbApplyZoom(focusX, focusY) {
     const img = document.getElementById('scLightboxImg');
     const wrap = document.getElementById('scLbWrap');
+    const lb = document.getElementById('scLightbox');
     if (!img) return;
+    const base = lbGetBaseSize();
+    const vw = lb.clientWidth, vh = lb.clientHeight;
+
     if (lbZoom <= 1) {
-      lbZoom = 1; lbPanX = 0; lbPanY = 0;
-      img.style.transform = '';
+      lbZoom = 1;
+      img.style.width = ''; img.style.height = '';
+      wrap.style.padding = '';
       wrap?.classList.remove('zoomed');
+      lb?.classList.remove('zoomed-active', 'lb-dragging');
     } else {
-      img.style.transform = `scale(${lbZoom}) translate(${lbPanX / lbZoom}px, ${lbPanY / lbZoom}px)`;
+      const wasZoomed = wrap.classList.contains('zoomed');
+      const oldW = wasZoomed ? img.offsetWidth : base.w;
+      const oldH = wasZoomed ? img.offsetHeight : base.h;
+      const oldPadX = wasZoomed ? Math.max(0, (vw - oldW) / 2) : (vw - oldW) / 2;
+      const oldPadY = wasZoomed ? Math.max(0, (vh - oldH) / 2) : (vh - oldH) / 2;
+
+      const newW = base.w * lbZoom;
+      const newH = base.h * lbZoom;
+      const padX = Math.max(0, (vw - newW) / 2);
+      const padY = Math.max(0, (vh - newH) / 2);
+
+      img.style.width = newW + 'px';
+      img.style.height = newH + 'px';
+      wrap.style.padding = padY + 'px ' + padX + 'px';
       wrap?.classList.add('zoomed');
+      lb?.classList.add('zoomed-active');
+
+      requestAnimationFrame(() => {
+        if (focusX !== undefined && focusY !== undefined) {
+          const imgX = (wasZoomed ? lb.scrollLeft : 0) + focusX - oldPadX;
+          const imgY = (wasZoomed ? lb.scrollTop : 0) + focusY - oldPadY;
+          const ratio = newW / oldW;
+          lb.scrollLeft = padX + imgX * ratio - focusX;
+          lb.scrollTop = padY + imgY * ratio - focusY;
+        } else {
+          lb.scrollLeft = (lb.scrollWidth - vw) / 2;
+          lb.scrollTop = (lb.scrollHeight - vh) / 2;
+        }
+      });
     }
-    // Show zoom level indicator
     const zl = document.getElementById('scLbZoomLevel');
     if (zl) {
       zl.textContent = Math.round(lbZoom * 100) + '%';
@@ -2276,33 +2921,17 @@
     }
   }
 
-  // Pinch-to-zoom + two-finger pan
-  document.getElementById('scLbWrap')?.addEventListener('wheel', e => {
-    // Two-finger scroll when zoomed → pan the image
-    if (!e.ctrlKey && lbZoom > 1) {
-      e.preventDefault();
-      e.stopPropagation();
-      lbPanX -= e.deltaX;
-      lbPanY -= e.deltaY;
-      lbApplyTransform();
-      return;
-    }
-    if (!e.ctrlKey) return; // not zoomed, let normal scroll pass through
+  // Pinch-to-zoom (ctrlKey wheel) — panning is handled natively by scroll
+  document.addEventListener('wheel', e => {
+    const lb = document.getElementById('scLightbox');
+    if (!lb || !lb.classList.contains('open')) return;
+    if (!e.ctrlKey) return;
     e.preventDefault();
-    e.stopPropagation();
     const delta = e.deltaY > 0 ? -0.015 : 0.015;
     const newZoom = Math.min(4, Math.max(1, lbZoom + delta * lbZoom));
-    if (newZoom <= 1) { lbResetZoom(); lbApplyTransform(); return; }
-    // Zoom toward cursor position
-    const wrap = document.getElementById('scLbWrap');
-    const rect = wrap.getBoundingClientRect();
-    const cx = e.clientX - rect.left - rect.width / 2;
-    const cy = e.clientY - rect.top - rect.height / 2;
-    const ratio = newZoom / lbZoom;
-    lbPanX = cx - ratio * (cx - lbPanX);
-    lbPanY = cy - ratio * (cy - lbPanY);
+    if (newZoom <= 1) { lbResetZoom(); lbApplyZoom(); return; }
     lbZoom = newZoom;
-    lbApplyTransform();
+    lbApplyZoom(e.clientX, e.clientY);
   }, { passive: false });
 
   // Double-click to toggle zoom
@@ -2311,50 +2940,68 @@
     e.stopPropagation();
     if (lbZoom > 1) {
       lbResetZoom();
-      lbApplyTransform();
+      lbApplyZoom();
     } else {
-      // Zoom to 2x centered on click point
-      const wrap = document.getElementById('scLbWrap');
-      const rect = wrap.getBoundingClientRect();
-      const cx = e.clientX - rect.left - rect.width / 2;
-      const cy = e.clientY - rect.top - rect.height / 2;
       lbZoom = 2;
-      lbPanX = -cx; // offset so click point stays centered
-      lbPanY = -cy;
-      lbApplyTransform();
+      lbApplyZoom(e.clientX, e.clientY);
     }
   });
 
   // Drag to pan when zoomed
-  document.getElementById('scLbWrap')?.addEventListener('mousedown', e => {
-    if (lbZoom <= 1) return;
+  document.addEventListener('mousedown', e => {
+    const lb = document.getElementById('scLightbox');
+    if (!lb || !lb.classList.contains('open') || lbZoom <= 1) return;
+    if (e.target.closest('.sc-lightbox-close, .sc-lightbox-nav')) return;
     e.preventDefault();
     lbDragging = true;
     lbDragStartX = e.clientX;
     lbDragStartY = e.clientY;
-    lbPanStartX = lbPanX;
-    lbPanStartY = lbPanY;
-    document.getElementById('scLbWrap')?.classList.add('dragging');
+    lbScrollStartX = lb.scrollLeft;
+    lbScrollStartY = lb.scrollTop;
+    lb.classList.add('lb-dragging');
   });
 
   document.addEventListener('mousemove', e => {
     if (!lbDragging) return;
-    lbPanX = lbPanStartX + (e.clientX - lbDragStartX);
-    lbPanY = lbPanStartY + (e.clientY - lbDragStartY);
-    lbApplyTransform();
+    const lb = document.getElementById('scLightbox');
+    if (!lb) return;
+    lb.scrollLeft = lbScrollStartX - (e.clientX - lbDragStartX);
+    lb.scrollTop = lbScrollStartY - (e.clientY - lbDragStartY);
   });
 
   document.addEventListener('mouseup', () => {
     if (lbDragging) {
       lbDragging = false;
-      document.getElementById('scLbWrap')?.classList.remove('dragging');
+      document.getElementById('scLightbox')?.classList.remove('lb-dragging');
     }
   });
 
+  // Safari gesture events for pinch-to-zoom
+  let lbGestureStartZoom = 1;
+  document.addEventListener('gesturestart', e => {
+    const lb = document.getElementById('scLightbox');
+    if (!lb || !lb.classList.contains('open')) return;
+    e.preventDefault();
+    lbGestureStartZoom = lbZoom;
+  });
+  document.addEventListener('gesturechange', e => {
+    const lb = document.getElementById('scLightbox');
+    if (!lb || !lb.classList.contains('open')) return;
+    e.preventDefault();
+    const newZoom = Math.min(4, Math.max(1, lbGestureStartZoom * e.scale));
+    if (newZoom <= 1) { lbResetZoom(); lbApplyZoom(); return; }
+    lbZoom = newZoom;
+    lbApplyZoom(window.innerWidth / 2, window.innerHeight / 2);
+  });
+  document.addEventListener('gestureend', e => {
+    const lb = document.getElementById('scLightbox');
+    if (!lb || !lb.classList.contains('open')) return;
+    e.preventDefault();
+  });
+
   function scLightboxBgClick(e) {
-    // Close only when clicking the dark background (not the image/wrap)
     if (e.target === e.currentTarget) {
-      if (lbZoom > 1) { lbResetZoom(); lbApplyTransform(); return; }
+      if (lbZoom > 1) { lbResetZoom(); lbApplyZoom(); return; }
       closeScLightbox();
     }
   }
@@ -2362,6 +3009,7 @@
   function closeScLightbox() {
     lbResetZoom();
     document.getElementById('scLightbox').classList.remove('open');
+    document.documentElement.style.overflow = '';
     document.body.style.overflow = '';
     scLbGallery = [];
   }
@@ -2369,41 +3017,43 @@
   document.addEventListener('keydown', e => {
     if (!document.getElementById('scLightbox').classList.contains('open')) return;
     if (e.key === 'Escape') {
-      if (lbZoom > 1) { lbResetZoom(); lbApplyTransform(); }
+      if (lbZoom > 1) { lbResetZoom(); lbApplyZoom(); }
       else closeScLightbox();
     }
     else if (e.key === 'ArrowLeft' && lbZoom <= 1) scLightboxNav(-1);
     else if (e.key === 'ArrowRight' && lbZoom <= 1) scLightboxNav(1);
-    else if (e.key === '0' || e.key === 'r') { lbResetZoom(); lbApplyTransform(); }
+    else if (e.key === '0' || e.key === 'r') { lbResetZoom(); lbApplyZoom(); }
     else if (e.key === '+' || e.key === '=') {
       lbZoom = Math.min(4, lbZoom * 1.15);
-      lbApplyTransform();
+      lbApplyZoom();
     }
     else if (e.key === '-') {
       lbZoom = Math.max(1, lbZoom / 1.15);
       if (lbZoom <= 1) { lbResetZoom(); }
-      lbApplyTransform();
+      lbApplyZoom();
     }
   });
+
+  let iaObserver = null;
 
   function renderIaTree() {
     const tree = document.getElementById('iaTree');
     const data = IA_DATA[iaCurrentEx]?.[iaCurrentPlat];
-    if (!data) { tree.innerHTML = '<div style="padding:16px;color:var(--t3);font-size:13px">No data for this combination</div>'; return; }
+    if (!data) { tree.innerHTML = '<div style="padding:16px;color:var(--t3);font-size:13px">No data for this combination</div>'; document.getElementById('iaMain').innerHTML = ''; return; }
     let html = '';
     Object.entries(data).forEach(([key, val]) => {
       const total = countScreens(val);
       const hasChildren = val.children && Object.keys(val.children).length > 0;
       html += `<div class="tree-node">`;
-      html += `<div class="tree-label" data-path="${key}" onclick="selectIaNode('${key}')">`;
-      if (hasChildren) html += `<span class="tree-arrow" data-toggle="${key}">&#9654;</span>`;
+      html += `<div class="tree-label" data-path="${key}" onclick="scrollToIaSection('${key}')">`;
+      if (hasChildren) html += `<span class="tree-arrow expanded" data-toggle="${key}">&#9654;</span>`;
       else html += `<span style="width:14px"></span>`;
       html += `<span>${key}</span><span class="tree-count">${total}</span></div>`;
       if (hasChildren) {
-        html += `<div class="tree-children" id="tc-${key}">`;
+        html += `<div class="tree-children open" id="tc-${key}">`;
         Object.entries(val.children).forEach(([ck, cv]) => {
           const sc = countScreens(cv);
-          html += `<div class="tree-label" data-path="${key}/${ck}" onclick="selectIaNode('${key}/${ck}')">`;
+          html += `<div class="tree-label" data-path="${key}/${ck}" onclick="scrollToIaSection('${key}/${ck}')">`;
           html += `<span style="width:14px"></span><span>${ck}</span><span class="tree-count">${sc}</span></div>`;
         });
         html += `</div>`;
@@ -2411,116 +3061,121 @@
       html += `</div>`;
     });
     tree.innerHTML = html;
-    // Select first node
-    const firstKey = Object.keys(data)[0];
-    if (firstKey) selectIaNode(firstKey);
+    renderAllIaSections();
+    // Highlight first item
+    const firstLabel = tree.querySelector('.tree-label');
+    if (firstLabel) firstLabel.classList.add('active');
   }
 
-  function selectIaNode(path) {
-    iaCurrentPath = path;
-    document.querySelectorAll('#iaTree .tree-label').forEach(l => l.classList.remove('active'));
-    const active = document.querySelector(`#iaTree .tree-label[data-path="${path}"]`);
-    if (active) active.classList.add('active');
-    const parts = path.split('/');
-    const parentKey = parts[0];
-    const arrow = document.querySelector(`.tree-arrow[data-toggle="${parentKey}"]`);
-    const children = document.getElementById('tc-' + parentKey);
-    if (children && parts.length > 0) {
-      children.classList.add('open');
-      if (arrow) arrow.classList.add('expanded');
-    }
-    const platMap = { ios: 'iOS', android: 'Android', web: 'Web' };
-    const platLabel = platMap[iaCurrentPlat] || iaCurrentPlat;
-    const color = EXCHANGE_COLORS[iaCurrentEx];
-    const isWeb = iaCurrentPlat === 'web';
-    // Match flows: same exchange + platform, module matches or is under this path
-    const flows = FLOWS.filter(f =>
-      f.exchange === iaCurrentEx &&
-      f.platform === platLabel &&
-      (f.module === path || f.module.startsWith(path + '/') || (parts.length === 1 && f.module.split('/')[0] === parts[0]))
-    );
-    // Get all screens for this node (including children screens)
-    const nodeScreens = getNodeScreens(path);
-    const hasImages = nodeScreens.length > 0 && getScreenImg(nodeScreens[0]);
-
-    // Also gather children screens if viewing a parent node
-    let allScreens = [...nodeScreens];
+  function scrollToIaSection(path) {
+    // For parent nodes with children but no own screens, scroll to first child
     const data = IA_DATA[iaCurrentEx]?.[iaCurrentPlat];
-    if (data && parts.length === 1 && data[parts[0]]?.children) {
-      Object.entries(data[parts[0]].children).forEach(([ck, cv]) => {
-        if (cv.screens) allScreens = allScreens.concat(cv.screens);
-      });
+    let targetPath = path;
+    if (data && data[path]?.children && !data[path]?.screens) {
+      const firstChild = Object.keys(data[path].children)[0];
+      if (firstChild) targetPath = path + '/' + firstChild;
+    }
+    const section = document.getElementById('ia-sec-' + targetPath.replace(/\//g, '-'));
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Manually highlight sidebar (observer will also do this, but immediate feedback is nice)
+      document.querySelectorAll('#iaTree .tree-label').forEach(l => l.classList.remove('active'));
+      const label = document.querySelector(`#iaTree .tree-label[data-path="${path}"]`);
+      if (label) label.classList.add('active');
+    }
+  }
+
+  function renderAllIaSections() {
+    const data = IA_DATA[iaCurrentEx]?.[iaCurrentPlat];
+    const container = document.getElementById('iaMain');
+    if (!data) { container.innerHTML = ''; return; }
+    const isWeb = iaCurrentPlat === 'web';
+    const scPrefix = getScreenshotPrefix();
+    let html = '';
+
+    function buildSectionBlock(path, label, screens) {
+      const screensWithImg = screens.filter(s => getScreenImg(s));
+      const safePath = path.replace(/\//g, '-');
+      let s = `<div class="ia-section-block" data-path="${path}" id="ia-sec-${safePath}">`;
+      s += `<div class="section-block-title">${label}</div>`;
+      s += `<div class="section-block-meta">${screensWithImg.length} screens</div>`;
+      if (screensWithImg.length > 0) {
+        const galleryJson = JSON.stringify(screensWithImg.map(sc => ({src: scPrefix + getScreenImg(sc), title: getScreenName(sc)}))).replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+        const gridCls = isWeb ? 'ia-screenshots-grid' : 'ia-screenshots-grid app-grid';
+        s += `<div class="${gridCls}" data-gallery="${galleryJson}">`;
+        screensWithImg.forEach(sc => {
+          const img = getScreenImg(sc), name = getScreenName(sc);
+          if (isWeb) {
+            s += `<div class="sc-card"><div class="web-frame-img" onclick="openScLightbox('${scPrefix}${img.replace(/'/g,"\\'")}','${name.replace(/'/g,"\\'")}',JSON.parse(this.closest('.ia-screenshots-grid').dataset.gallery))">
+              <div class="browser-bar"><span class="bdr"></span><span class="bdy"></span><span class="bdg"></span></div>
+              <img src="${scPrefix}${encodeURIComponent(img)}" alt="${name}" loading="lazy" onerror="this.parentElement.style.display='none'">
+            </div><div class="sc-label">${name}</div></div>`;
+          } else {
+            s += `<div class="sc-card"><div class="app-thumb-img" onclick="openScLightbox('${scPrefix}${img.replace(/'/g,"\\'")}','${name.replace(/'/g,"\\'")}',JSON.parse(this.closest('.ia-screenshots-grid').dataset.gallery))">
+              <img src="${scPrefix}${encodeURIComponent(img)}" alt="${name}" loading="lazy" onerror="this.parentElement.style.display='none'">
+            </div><div class="sc-label">${name}</div></div>`;
+          }
+        });
+        s += '</div>';
+      } else if (screens.length > 0) {
+        s += `<div style="color:var(--t3);font-size:14px;padding:24px 0">No screenshots captured yet</div>`;
+      }
+      s += '</div>';
+      return s;
     }
 
-    const totalScreens = allScreens.filter(s => getScreenImg(s)).length;
+    Object.entries(data).forEach(([key, val]) => {
+      const hasChildren = val.children && Object.keys(val.children).length > 0;
+      if (!hasChildren) {
+        html += buildSectionBlock(key, key, val.screens || []);
+      } else {
+        // If parent has own screens, render them
+        if (val.screens && val.screens.length > 0) {
+          html += buildSectionBlock(key, key, val.screens);
+        }
+        // Render each child
+        Object.entries(val.children).forEach(([ck, cv]) => {
+          html += buildSectionBlock(key + '/' + ck, key + ' › ' + ck, cv.screens || []);
+        });
+      }
+    });
 
-    document.getElementById('iaMainTitle').textContent = path.replace('/', ' > ');
-    const screenLabel = totalScreens > 0 ? totalScreens + ' screens' : '';
-    const flowLabel = flows.length > 0 ? flows.length + (flows.length === 1 ? ' flow' : ' flows') : '';
-    document.getElementById('iaMainMeta').textContent = [screenLabel, flowLabel].filter(Boolean).join(' · ');
-
-    const container = document.getElementById('iaScreenshots');
-
-    // Render real screenshots if available
-    let screensHtml = '';
-    if (hasImages || allScreens.some(s => getScreenImg(s))) {
-      const screensToShow = allScreens.filter(s => getScreenImg(s));
-      const iaGalleryJson = JSON.stringify(screensToShow.map(s => ({src: 'screenshots/okx/' + getScreenImg(s), title: getScreenName(s)}))).replace(/'/g, '&#39;').replace(/"/g, '&quot;');
-      screensHtml = `<div class="ia-screenshots-grid">${screensToShow.map((s, idx) =>
-        `<div class="sc-card"><div class="web-frame-img" onclick="openScLightbox('screenshots/okx/${getScreenImg(s).replace(/'/g,"\\'")}','${getScreenName(s).replace(/'/g,"\\'")}',JSON.parse(this.closest('.ia-screenshots-grid').dataset.gallery))">
-          <div class="browser-bar"><span class="bdr"></span><span class="bdy"></span><span class="bdg"></span></div>
-          <img src="screenshots/okx/${encodeURIComponent(getScreenImg(s))}" alt="${getScreenName(s)}" loading="lazy" onerror="this.parentElement.style.display='none'">
-        </div><div class="sc-label">${getScreenName(s)}</div></div>`
-      ).join('')}</div>`;
-      // Inject gallery data attribute
-      screensHtml = screensHtml.replace('class="ia-screenshots-grid"', `class="ia-screenshots-grid" data-gallery="${iaGalleryJson}"`);
-    }
-
-    if (flows.length === 0 && !screensHtml) {
-      container.innerHTML = '<div style="color:var(--t3);font-size:14px;padding:24px 0">No screens or flows captured for this section yet</div>';
-      return;
-    }
-
-    // Build combined output: screenshots grid + flows
-    let html = screensHtml;
-    if (flows.length > 0) {
-      if (screensHtml) html += '<div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--ele-border);overflow:hidden;max-width:100%"><div style="font-size:14px;font-weight:600;color:var(--t2);margin-bottom:16px">User Flows</div>';
-      html += '<div class="flow-list" style="width:100%">' + flows.map(f => {
-        const flowGallery = f.steps.filter(s => s.img).map(s => ({src: s.img, title: s.label}));
-        const galleryJson = JSON.stringify(flowGallery).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-        return `<div class="flow-card">
-        <div class="flow-card-header" onclick="toggleFlow('${f.id}')">
-          <span class="flow-title">${f.title}</span>
-          <div class="flow-meta">
-            <span class="flow-steps-count">${f.steps.length} steps</span>
-            <span class="flow-toggle" id="ft-${f.id}">&#9654;</span>
-          </div>
-        </div>
-        <div class="flow-detail" id="fd-${f.id}">
-          <div class="flow-desc">${f.desc}</div>
-          <div class="flow-steps">
-            ${f.steps.map((s, i) => `
-              <div class="flow-step">
-                <div class="step-number">${i + 1}</div>
-                ${s.img
-                  ? `<div class="step-web-img" onclick="openScLightbox('${s.img}','${s.label.replace(/'/g,"\\'")}',${JSON.stringify(flowGallery).replace(/"/g,'&quot;')})">
-                      <div class="browser-bar"><span style="background:var(--red-700)"></span><span style="background:var(--brand-700)"></span><span style="background:var(--green-700)"></span></div>
-                      <img src="${s.img}" alt="${s.label}" loading="lazy">
-                    </div>`
-                  : (isWeb ? createWebFrame(s.label, color) : createPhoneFrame(s.label, color))
-                }
-                <div class="step-label">${s.label}${s.url ? ` <a href="${s.url}" target="_blank" rel="noopener" class="step-link-icon" title="打开页面" onclick="event.stopPropagation()">↗</a>` : ''}</div>
-                <div class="step-note">${s.note}</div>
-              </div>
-              ${i < f.steps.length - 1 ? '<div class="flow-arrow">&#8594;</div>' : ''}
-            `).join('')}
-          </div>
-        </div>
-      </div>`;
-      }).join('') + '</div>';
-      if (screensHtml) html += '</div>';
-    }
     container.innerHTML = html;
+    setupIaScrollSpy();
+  }
+
+  function setupIaScrollSpy() {
+    if (iaObserver) iaObserver.disconnect();
+    const sections = document.querySelectorAll('#iaMain .ia-section-block');
+    if (sections.length === 0) return;
+    iaObserver = new IntersectionObserver((entries) => {
+      // Find the topmost intersecting section
+      let topEntry = null;
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          if (!topEntry || entry.boundingClientRect.top < topEntry.boundingClientRect.top) topEntry = entry;
+        }
+      });
+      if (topEntry) {
+        const path = topEntry.target.dataset.path;
+        document.querySelectorAll('#iaTree .tree-label').forEach(l => l.classList.remove('active'));
+        const label = document.querySelector(`#iaTree .tree-label[data-path="${path}"]`);
+        if (label) {
+          label.classList.add('active');
+          label.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+        // Also expand parent tree if needed
+        const parts = path.split('/');
+        if (parts.length > 1) {
+          const parentKey = parts[0];
+          const children = document.getElementById('tc-' + parentKey);
+          const arrow = document.querySelector(`.tree-arrow[data-toggle="${parentKey}"]`);
+          if (children) children.classList.add('open');
+          if (arrow) arrow.classList.add('expanded');
+        }
+      }
+    }, { rootMargin: '-120px 0px -60% 0px', threshold: 0 });
+    sections.forEach(s => iaObserver.observe(s));
   }
 
   // IA filter event listeners
@@ -2532,11 +3187,19 @@
       document.querySelectorAll('#iaExTabs .filter-chip[data-ex]').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       iaCurrentEx = chip.dataset.ex;
-      // Auto-switch to Web platform for OKX (has real screenshots)
-      if (chip.dataset.ex === 'okx') {
+      // Auto-switch to best platform with real screenshots
+      if (chip.dataset.ex === 'binance') {
+        document.querySelectorAll('#iaExTabs .ia-plat-chip').forEach(c => c.classList.remove('active'));
+        document.querySelector('#iaExTabs .ia-plat-chip[data-plat="android"]').classList.add('active');
+        iaCurrentPlat = 'android';
+      } else if (chip.dataset.ex === 'okx') {
         document.querySelectorAll('#iaExTabs .ia-plat-chip').forEach(c => c.classList.remove('active'));
         document.querySelector('#iaExTabs .ia-plat-chip[data-plat="web"]').classList.add('active');
         iaCurrentPlat = 'web';
+      } else if (chip.dataset.ex === 'coinbase') {
+        document.querySelectorAll('#iaExTabs .ia-plat-chip').forEach(c => c.classList.remove('active'));
+        document.querySelector('#iaExTabs .ia-plat-chip[data-plat="android"]').classList.add('active');
+        iaCurrentPlat = 'android';
       }
       renderIaTree();
     } else if (chip.dataset.plat) {
@@ -2547,159 +3210,279 @@
       renderIaTree();
     }
   });
-  // Toggle tree children
+  // Toggle tree children (arrow only — don't scroll)
   document.getElementById('iaTree').addEventListener('click', e => {
     const arrow = e.target.closest('.tree-arrow');
-    if (!arrow) return;
-    const key = arrow.dataset.toggle;
-    const children = document.getElementById('tc-' + key);
-    if (children) { children.classList.toggle('open'); arrow.classList.toggle('expanded'); }
-  });
-
-  // ══════════ COMPARE VIEW ══════════
-  let compareModule = 'Trade';
-  let compareSub = 'Spot';
-
-  function getCompareScreenCount(mod, sub) {
-    const exchanges = ['binance', 'okx', 'bitget', 'coinbase'];
-    let total = 0;
-    for (const ex of exchanges) {
-      const data = IA_DATA[ex]?.ios;
-      if (!data) continue;
-      const m = data[mod];
-      if (!m) continue;
-      if (sub) {
-        if (m.children?.[sub]) total += (m.children[sub].screens || []).length;
-      } else {
-        if (m.screens) total += m.screens.length;
-        else if (m.children) {
-          for (const c of Object.values(m.children)) total += (c.screens || []).length;
-        }
-      }
+    if (arrow) {
+      e.stopPropagation();
+      const key = arrow.dataset.toggle;
+      const children = document.getElementById('tc-' + key);
+      if (children) { children.classList.toggle('open'); arrow.classList.toggle('expanded'); }
     }
-    return total;
-  }
-
-  function renderCompareTree() {
-    const tree = document.getElementById('compareTree');
-    let html = '';
-    for (const [mod, subs] of Object.entries(MODULES)) {
-      const hasSubs = subs.length > 0;
-      const modCount = getCompareScreenCount(mod);
-      const isModActive = mod === compareModule && !compareSub;
-      const isModExpanded = mod === compareModule;
-
-      if (hasSubs) {
-        html += `<div class="tree-label${isModExpanded ? '' : ''}" data-cmp-mod="${mod}" data-cmp-toggle="${mod}">
-          <span class="tree-arrow${isModExpanded ? ' expanded' : ''}" data-cmp-arrow="${mod}">&#9654;</span>
-          <span style="flex:1">${mod}</span>
-          <span class="tree-count">${modCount}</span>
-        </div>`;
-        html += `<div class="tree-children${isModExpanded ? ' open' : ''}" id="cmp-tc-${mod}">`;
-        for (const sub of subs) {
-          const subCount = getCompareScreenCount(mod, sub);
-          const isSubActive = mod === compareModule && sub === compareSub;
-          html += `<div class="tree-label${isSubActive ? ' active' : ''}" data-cmp-mod="${mod}" data-cmp-sub="${sub}">
-            <span style="width:14px"></span>
-            <span style="flex:1">${sub}</span>
-            <span class="tree-count">${subCount}</span>
-          </div>`;
-        }
-        html += '</div>';
-      } else {
-        html += `<div class="tree-label${isModActive ? ' active' : ''}" data-cmp-mod="${mod}">
-          <span style="width:14px"></span>
-          <span style="flex:1">${mod}</span>
-          <span class="tree-count">${modCount}</span>
-        </div>`;
-      }
-    }
-    tree.innerHTML = html;
-  }
-
-  function renderCompareMain() {
-    const title = compareSub || compareModule;
-    document.getElementById('compareMainTitle').textContent = title;
-    const totalScreens = getCompareScreenCount(compareModule, compareSub || undefined);
-    document.getElementById('compareMainMeta').textContent = totalScreens + ' screens across exchanges';
-
-    const rows = document.getElementById('compareRows');
-    const exchanges = ['binance', 'okx', 'bitget', 'coinbase'];
-    rows.innerHTML = exchanges.map((ex, idx) => {
-      const data = IA_DATA[ex]?.ios;
-      let screens = [];
-      if (data) {
-        const mod = data[compareModule];
-        if (mod) {
-          if (compareSub && mod.children?.[compareSub]) {
-            screens = mod.children[compareSub].screens || [];
-          } else if (compareSub && mod.screens) {
-            screens = mod.screens.filter(s => s.toLowerCase().includes(compareSub.toLowerCase()));
-          } else if (!compareSub) {
-            if (mod.screens) screens = mod.screens;
-            else if (mod.children) {
-              for (const c of Object.values(mod.children)) screens = screens.concat(c.screens || []);
-            }
-          }
-          if (screens.length === 0 && mod) {
-            if (mod.screens) screens = mod.screens.slice(0, 4);
-            else if (mod.children) {
-              const first = Object.values(mod.children)[0];
-              if (first?.screens) screens = first.screens.slice(0, 4);
-            }
-          }
-        }
-      }
-      const name = ex.charAt(0).toUpperCase() + ex.slice(1);
-      const color = EXCHANGE_COLORS[ex];
-      return `${idx > 0 ? '<hr class="compare-row-sep">' : ''}
-        <div class="compare-row">
-          <div class="compare-row-header">
-            <span class="exchange-dot" style="background:${color}"></span>
-            <span class="exchange-name">${name}</span>
-            <span class="row-count">${screens.length} screens</span>
-          </div>
-          <div class="compare-row-screens">
-            ${screens.length
-              ? screens.map(s => `<div class="screenshot-card">${createPhoneFrame(s, color)}<div class="sc-title">${s}</div></div>`).join('')
-              : '<div class="no-data">No screens captured</div>'}
-          </div>
-        </div>`;
-    }).join('');
-  }
-
-  function renderCompare() {
-    renderCompareTree();
-    renderCompareMain();
-  }
-
-  document.getElementById('compareTree').addEventListener('click', e => {
-    const label = e.target.closest('.tree-label');
-    if (!label) return;
-    const mod = label.dataset.cmpMod;
-    const sub = label.dataset.cmpSub;
-    const toggleKey = label.dataset.cmpToggle;
-
-    if (toggleKey && !sub) {
-      // Toggle expand/collapse
-      const children = document.getElementById('cmp-tc-' + toggleKey);
-      const arrow = label.querySelector('[data-cmp-arrow]');
-      if (children) { children.classList.toggle('open'); }
-      if (arrow) { arrow.classList.toggle('expanded'); }
-      // Select first sub
-      compareModule = mod;
-      compareSub = MODULES[mod]?.[0] || '';
-    } else if (sub) {
-      compareModule = mod;
-      compareSub = sub;
-    } else {
-      compareModule = mod;
-      compareSub = '';
-    }
-    renderCompare();
   });
 
   // ══════════ FLOWS VIEW ══════════
+  let flowsCurrentEx = 'binance';
+  let flowsCurrentPlat = 'web';
+  let flowsCurrentMod = null;
+
+  const FLOWS_PLAT_MAP = { ios: 'iOS', android: 'Android', web: 'Web' };
+
+  function getFlowsFiltered() {
+    const platLabel = FLOWS_PLAT_MAP[flowsCurrentPlat];
+    return FLOWS.filter(f => f.exchange === flowsCurrentEx && f.platform === platLabel);
+  }
+
+  function buildFlowModTree(flows) {
+    const tree = {};
+    flows.forEach(f => {
+      const parts = f.module.split('/');
+      const top = parts[0];
+      if (!tree[top]) tree[top] = { flows: [], children: {} };
+      if (parts.length > 1) {
+        const sub = parts[1];
+        if (!tree[top].children[sub]) tree[top].children[sub] = { flows: [] };
+        tree[top].children[sub].flows.push(f);
+      } else {
+        tree[top].flows.push(f);
+      }
+    });
+    return tree;
+  }
+
+  function countFlowNode(node) {
+    let c = node.flows.length;
+    for (const ch of Object.values(node.children)) c += ch.flows.length;
+    return c;
+  }
+
+  function flowsBestPlatform(ex) {
+    const counts = {};
+    FLOWS.filter(f => f.exchange === ex).forEach(f => {
+      const p = f.platform.toLowerCase();
+      counts[p] = (counts[p] || 0) + 1;
+    });
+    let best = flowsCurrentPlat, max = counts[best] || 0;
+    for (const [p, c] of Object.entries(counts)) { if (c > max) { max = c; best = p; } }
+    return best;
+  }
+
+  let flowsObserver = null;
+
+  function renderFlowsTree() {
+    const flows = getFlowsFiltered();
+    const tree = buildFlowModTree(flows);
+    const el = document.getElementById('flowsTree');
+
+    if (Object.keys(tree).length === 0) {
+      el.innerHTML = '<div style="padding:16px;color:var(--t3);font-size:13px">No flows for this combination</div>';
+      document.getElementById('flowsMain').innerHTML = '';
+      return;
+    }
+
+    let html = '';
+    let first = true;
+    for (const [modName, node] of Object.entries(tree)) {
+      const total = countFlowNode(node);
+      const hasChildren = Object.keys(node.children).length > 0;
+      const safeId = modName.replace(/\s+/g, '_');
+
+      html += `<div class="tree-label${first ? ' active' : ''}" data-fpath="${modName}">`;
+      if (hasChildren) html += `<span class="tree-arrow expanded" data-ftoggle="${safeId}">&#9654;</span>`;
+      else html += `<span style="width:14px"></span>`;
+      html += `<span>${modName}</span><span class="tree-count">${total}</span></div>`;
+
+      if (hasChildren) {
+        html += `<div class="tree-children open" id="ftc-${safeId}">`;
+        for (const [sub, subNode] of Object.entries(node.children)) {
+          const subPath = modName + '/' + sub;
+          html += `<div class="tree-label" data-fpath="${subPath}">
+            <span style="width:14px"></span><span>${sub}</span><span class="tree-count">${subNode.flows.length}</span>
+          </div>`;
+        }
+        html += '</div>';
+      }
+      first = false;
+    }
+    el.innerHTML = html;
+    renderAllFlowSections(flows);
+  }
+
+  function scrollToFlowSection(path) {
+    let safeId = path.replace(/\//g, '-').replace(/\s+/g, '_');
+    let section = document.getElementById('flow-sec-' + safeId);
+    // If parent has no direct section, find first child section
+    if (!section) {
+      const firstChild = document.querySelector(`#flowsMain .ia-section-block[data-fpath^="${path}/"]`);
+      if (firstChild) section = firstChild;
+    }
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.querySelectorAll('#flowsTree .tree-label').forEach(l => l.classList.remove('active'));
+      const label = document.querySelector(`#flowsTree .tree-label[data-fpath="${path}"]`);
+      if (label) label.classList.add('active');
+    }
+  }
+
+  function renderAllFlowSections(allFlows) {
+    const container = document.getElementById('flowsMain');
+    if (allFlows.length === 0) { container.innerHTML = ''; return; }
+
+    const isWeb = flowsCurrentPlat === 'web';
+    const color = EXCHANGE_COLORS[flowsCurrentEx];
+    const tree = buildFlowModTree(allFlows);
+    let html = '';
+
+    function renderFlowCards(flows) {
+      return flows.map(f => {
+        const flowGallery = f.steps.filter(s => s.img).map(s => ({src: s.img, title: s.label}));
+        return `<div class="flow-card">
+          <div class="flow-card-header" onclick="toggleFlow('${f.id}')">
+            <span class="flow-title">${f.title}</span>
+            <div class="flow-meta">
+              <span class="flow-steps-count">${f.steps.length} steps</span>
+              <span class="flow-toggle open" id="ft-${f.id}">&#9654;</span>
+            </div>
+          </div>
+          <div class="flow-detail open" id="fd-${f.id}">
+            <div class="flow-desc">${f.desc}</div>
+            <div class="flow-steps">
+              ${f.steps.map((s, i) => `
+                <div class="flow-step${isWeb ? '' : ' app-step'}">
+                  <div class="step-number">${i + 1}</div>
+                  ${s.img
+                    ? (isWeb
+                      ? `<div class="step-web-img" onclick="openScLightbox('${s.img}','${s.label.replace(/'/g,"\\'")}',${JSON.stringify(flowGallery).replace(/"/g,'&quot;')})">
+                          <div class="browser-bar"><span style="background:var(--red-700)"></span><span style="background:var(--brand-700)"></span><span style="background:var(--green-700)"></span></div>
+                          <img src="${s.img}" alt="${s.label}" loading="lazy">
+                        </div>`
+                      : `<div class="step-app-img" onclick="openScLightbox('${s.img}','${s.label.replace(/'/g,"\\'")}',${JSON.stringify(flowGallery).replace(/"/g,'&quot;')})">
+                          <img src="${s.img}" alt="${s.label}" loading="lazy">
+                        </div>`)
+                    : (isWeb ? createWebFrame(s.label, color) : createPhoneFrame(s.label, color))
+                  }
+                  <div class="step-label">${s.label}${s.url ? ` <a href="${s.url}" target="_blank" rel="noopener" class="step-link-icon" title="Open page" onclick="event.stopPropagation()">↗</a>` : ''}</div>
+                  <div class="step-note">${s.note}</div>
+                </div>
+                ${i < f.steps.length - 1 ? '<div class="flow-arrow">&#8594;</div>' : ''}
+              `).join('')}
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    for (const [modName, node] of Object.entries(tree)) {
+      const hasChildren = Object.keys(node.children).length > 0;
+      if (!hasChildren) {
+        const safeId = modName.replace(/\s+/g, '_');
+        html += `<div class="ia-section-block" data-fpath="${modName}" id="flow-sec-${safeId}">`;
+        html += `<div class="section-block-title">${modName}</div>`;
+        html += `<div class="section-block-meta">${node.flows.length} flow${node.flows.length !== 1 ? 's' : ''}</div>`;
+        html += `<div class="flow-list">${renderFlowCards(node.flows)}</div>`;
+        html += '</div>';
+      } else {
+        // Parent direct flows
+        if (node.flows.length > 0) {
+          const safeId = modName.replace(/\s+/g, '_');
+          html += `<div class="ia-section-block" data-fpath="${modName}" id="flow-sec-${safeId}">`;
+          html += `<div class="section-block-title">${modName}</div>`;
+          html += `<div class="section-block-meta">${node.flows.length} flow${node.flows.length !== 1 ? 's' : ''}</div>`;
+          html += `<div class="flow-list">${renderFlowCards(node.flows)}</div>`;
+          html += '</div>';
+        }
+        // Each child
+        for (const [sub, subNode] of Object.entries(node.children)) {
+          const subPath = modName + '/' + sub;
+          const safeId = subPath.replace(/\//g, '-').replace(/\s+/g, '_');
+          html += `<div class="ia-section-block" data-fpath="${subPath}" id="flow-sec-${safeId}">`;
+          html += `<div class="section-block-title">${modName} › ${sub}</div>`;
+          html += `<div class="section-block-meta">${subNode.flows.length} flow${subNode.flows.length !== 1 ? 's' : ''}</div>`;
+          html += `<div class="flow-list">${renderFlowCards(subNode.flows)}</div>`;
+          html += '</div>';
+        }
+      }
+    }
+
+    container.innerHTML = html;
+    setupFlowsScrollSpy();
+  }
+
+  function setupFlowsScrollSpy() {
+    if (flowsObserver) flowsObserver.disconnect();
+    const sections = document.querySelectorAll('#flowsMain .ia-section-block');
+    if (sections.length === 0) return;
+    flowsObserver = new IntersectionObserver((entries) => {
+      let topEntry = null;
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          if (!topEntry || entry.boundingClientRect.top < topEntry.boundingClientRect.top) topEntry = entry;
+        }
+      });
+      if (topEntry) {
+        const path = topEntry.target.dataset.fpath;
+        document.querySelectorAll('#flowsTree .tree-label').forEach(l => l.classList.remove('active'));
+        const label = document.querySelector(`#flowsTree .tree-label[data-fpath="${path}"]`);
+        if (label) {
+          label.classList.add('active');
+          label.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+        const parts = path.split('/');
+        if (parts.length > 1) {
+          const parentSafe = parts[0].replace(/\s+/g, '_');
+          const ch = document.getElementById('ftc-' + parentSafe);
+          const arr = document.querySelector(`[data-ftoggle="${parentSafe}"]`);
+          if (ch) ch.classList.add('open');
+          if (arr) arr.classList.add('expanded');
+        }
+      }
+    }, { rootMargin: '-120px 0px -60% 0px', threshold: 0 });
+    sections.forEach(s => flowsObserver.observe(s));
+  }
+
+  function renderFlowsView() { renderFlowsTree(); }
+
+  // Tree click
+  document.getElementById('flowsTree').addEventListener('click', e => {
+    const arrow = e.target.closest('.tree-arrow');
+    if (arrow) {
+      const key = arrow.dataset.ftoggle;
+      const ch = document.getElementById('ftc-' + key);
+      if (ch) ch.classList.toggle('open');
+      arrow.classList.toggle('expanded');
+      return; // don't scroll when just toggling children
+    }
+    const label = e.target.closest('.tree-label');
+    if (!label || !label.dataset.fpath) return;
+    scrollToFlowSection(label.dataset.fpath);
+  });
+
+  // Filter chips — same pattern as Screens
+  document.getElementById('flowsExTabs').addEventListener('click', e => {
+    const chip = e.target.closest('.filter-chip');
+    if (!chip) return;
+    if (chip.dataset.fex) {
+      document.querySelectorAll('#flowsExTabs .filter-chip[data-fex]').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      flowsCurrentEx = chip.dataset.fex;
+      // Auto-switch to best platform for this exchange
+      const best = flowsBestPlatform(flowsCurrentEx);
+      if (best !== flowsCurrentPlat) {
+        flowsCurrentPlat = best;
+        document.querySelectorAll('#flowsExTabs .flows-plat-chip').forEach(c => c.classList.remove('active'));
+        document.querySelector(`#flowsExTabs .flows-plat-chip[data-fplat="${best}"]`)?.classList.add('active');
+      }
+      flowsCurrentMod = null;
+      renderFlowsView();
+    } else if (chip.dataset.fplat) {
+      document.querySelectorAll('#flowsExTabs .flows-plat-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      flowsCurrentPlat = chip.dataset.fplat;
+      flowsCurrentMod = null;
+      renderFlowsView();
+    }
+  });
+
   function toggleFlow(id) {
     const detail = document.getElementById('fd-' + id);
     const toggle = document.getElementById('ft-' + id);
@@ -2727,7 +3510,7 @@
               const name = getScreenName(s);
               const img = getScreenImg(s);
               if (name.toLowerCase().includes(q)) {
-                hits.screens.push({ name, img: img ? 'screenshots/okx/' + img : null, exchange: ex, platform: plat, path });
+                hits.screens.push({ name, img: img ? 'screenshots/' + ex + '/' + img : null, exchange: ex, platform: plat, path });
               }
             });
           };
@@ -2824,24 +3607,31 @@
       document.querySelector(`#iaExTabs .ia-plat-chip[data-plat="${plat}"]`)?.classList.add('active');
       iaCurrentPlat = plat;
       renderIaTree();
-      selectIaNode(path);
+      setTimeout(() => scrollToIaSection(path), 100);
     } else if (action === 'flow') {
-      // Switch to the right exchange, set platform to web, navigate to the module
+      // Navigate to flows section
       const ex = hit.dataset.ex;
-      const mod = hit.dataset.mod;
       const flowId = hit.dataset.flow;
-      document.querySelectorAll('#iaExTabs .filter-chip[data-ex]').forEach(c => c.classList.remove('active'));
-      document.querySelector(`#iaExTabs .filter-chip[data-ex="${ex}"]`)?.classList.add('active');
-      iaCurrentEx = ex;
-      document.querySelectorAll('#iaExTabs .ia-plat-chip').forEach(c => c.classList.remove('active'));
-      document.querySelector('#iaExTabs .ia-plat-chip[data-plat="web"]')?.classList.add('active');
-      iaCurrentPlat = 'web';
-      renderIaTree();
-      selectIaNode(mod);
-      // Auto-expand the matching flow after a tick
+      const flow = FLOWS.find(f => f.id === flowId);
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      document.querySelector('.nav-link[data-nav="flows"]')?.classList.add('active');
+      switchSection('flows');
+      // Set exchange + platform + module
+      flowsCurrentEx = ex;
+      if (flow) {
+        const platKey = Object.entries(FLOWS_PLAT_MAP).find(([k,v]) => v === flow.platform)?.[0] || 'web';
+        flowsCurrentPlat = platKey;
+        flowsCurrentMod = flow.module.split('/')[0];
+      }
+      // Update chip UI
+      document.querySelectorAll('#flowsExTabs .filter-chip[data-fex]').forEach(c => c.classList.remove('active'));
+      document.querySelector(`#flowsExTabs .filter-chip[data-fex="${ex}"]`)?.classList.add('active');
+      document.querySelectorAll('#flowsExTabs .flows-plat-chip').forEach(c => c.classList.remove('active'));
+      document.querySelector(`#flowsExTabs .flows-plat-chip[data-fplat="${flowsCurrentPlat}"]`)?.classList.add('active');
+      renderFlowsView();
+      // Scroll to the flow
       setTimeout(() => {
         const detail = document.getElementById('fd-' + flowId);
-        if (detail && !detail.classList.contains('open')) toggleFlow(flowId);
         detail?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 100);
     }
@@ -2862,14 +3652,13 @@
 
   // ══════════ INIT NEW VIEWS ══════════
   renderIaTree();
-  renderCompare();
+  renderFlowsView();
 
   // i18n for new nav
-  i18n.zh.nav_screens = '界面 & 流程';
-  i18n.zh.nav_compare = '对比';
-  i18n.en.nav_screens = 'Screens & Flows';
-  i18n.en.nav_compare = 'Compare';
-  i18n.en.tab_flows = 'User Flows';
+  i18n.zh.nav_screens = '界面截图';
+  i18n.zh.nav_flows = '用户流程';
+  i18n.en.nav_screens = 'Screens';
+  i18n.en.nav_flows = 'Flows';
 </script>
 </body>
 </html>
